@@ -1,0 +1,23 @@
+/* public/assets/css/style.css */
+body {
+    background-color: #F8F9F5; /* Color crema claro del fondo */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.text-primary-dark { color: #1A3C34; } /* Verde oscuro */
+.bg-primary-dark { background-color: #1A3C34; }
+.btn-custom-outline {
+    border: 1px solid #1A3C34;
+    color: #1A3C34;
+    border-radius: 20px;
+}
+.btn-custom-solid {
+    background-color: #1A3C34;
+    color: white;
+    border-radius: 20px;
+}
+.btn-custom-light {
+    background-color: #C5E063; /* Verde claro/lima */
+    color: #1A3C34;
+    border-radius: 20px;
+    font-weight: bold;
+}
