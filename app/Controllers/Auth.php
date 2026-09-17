@@ -73,6 +73,7 @@ class Auth extends BaseController
         // Capturamos los datos del formulario
         $nombre = $this->request->getPost('nombre');
         $apellido = $this->request->getPost('apellido');
+        $dni = $this->request->getPost('dni');
         $email = $this->request->getPost('email');
         $password = $this->request->getPost('password');
         $repetir_password = $this->request->getPost('repetir_password');
@@ -83,26 +84,46 @@ class Auth extends BaseController
             return redirect()->back()->withInput();
         }
 
-        // 2. Validar que el correo no exista ya en la base de datos
+        // Dni formato valido
+        $dni = $this->request->getPost('dni');
+        if (!preg_match('/^[0-9]{7,8}$/', $dni)) {
+            session()->setFlashdata('error', 'El DNI ingresado no es válido. Debe tener números sin puntos.');
+            return redirect()->back()->withInput();
+        }
+
+        // control minimo de caracteres de contraseña
+        if (strlen($this->request->getPost('password')) < 8) {
+            $session->setFlashdata('error', 'La contraseña debe tener al menos 8 caracteres.');
+            return redirect()->back()->withInput();
+        }
+
+        // Validar que el dni no este registrado
+        if ($model->where('dni', $this->request->getPost('dni'))->first()) {
+        $session->setFlashdata('error', 'El DNI ya se encuentra registrado.');
+        return redirect()->back()->withInput();
+    }
+
+        // Validar que el correo no exista ya en la base de datos
         if ($model->where('email', $email)->first()) {
             $session->setFlashdata('error', 'El correo ya está registrado.');
             return redirect()->back()->withInput();
         }
 
-        // 3. Preparar los datos para insertar (hasheando la clave)
+        // Preparar los datos para insertar (hasheando la clave)
         $data = [
             'nombre'   => $nombre,
             'apellido' => $apellido,
+            'dni'      => $dni,
             'email'    => $email,
             'password' => password_hash($password, PASSWORD_DEFAULT),
             'rol'      => 'alumno', // Forzamos el rol por seguridad
             'estado'   => 'activo'
         ];
 
-        // 4. Guardar en la base de datos
+        // Guardar en la base de datos
         $model->insert($data);
 
-        // 5. Redirigir al login con mensaje de éxito
+        // Redirigir al login con mensaje de éxito
         $session->setFlashdata('success', 'Cuenta creada exitosamente. Ya podés iniciar sesión.');
         return redirect()->to('/login');
     }

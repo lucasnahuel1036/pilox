@@ -11,6 +11,10 @@
                     <label class="form-label text-primary-dark small fw-bold">Apellido</label>
                     <input type="text" class="form-control rounded-pill px-3" name="apellido" value="<?= esc($docente['apellido']) ?>" required>
                 </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label text-primary-dark small fw-bold">DNI</label>
+                    <input type="text" inputmode="numeric" pattern="[0-9]{7,8}" maxlength="8" title="Debe contener 7 u 8 números, sin puntos" class="form-control rounded-pill px-3" name="dni" required placeholder="Ej: 41987654">
+                </div>
             </div>
             <div class="mb-3">
                 <label class="form-label text-primary-dark small fw-bold">Email</label>
@@ -18,7 +22,7 @@
             </div>
             <div class="mb-3">
                 <label class="form-label text-primary-dark small fw-bold">Nueva Contraseña (dejar en blanco para no cambiarla)</label>
-                <input type="password" class="form-control rounded-pill px-3" name="password">
+                <input type="password" class="form-control rounded-pill px-3" name="password" minlength="8">
             </div>
             <div class="mb-3">
                 <label class="form-label text-primary-dark small fw-bold">Especialidad</label>

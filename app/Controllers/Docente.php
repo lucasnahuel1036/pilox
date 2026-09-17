@@ -21,7 +21,14 @@ class Docente extends BaseController
 
     public function guardar()
     {
-        $model = new UsuarioModel();
+        $model = new UsuarioModel();   
+
+        //Verifica que el dni sea valido
+        $dni = $this->request->getPost('dni');
+        if (!preg_match('/^[0-9]{7,8}$/', $dni)) {
+            session()->setFlashdata('error', 'El DNI ingresado no es válido. Debe tener números sin puntos.');
+            return redirect()->back()->withInput();
+        }
         
         // Verificamos que el mail no exista
         if ($model->where('email', $this->request->getPost('email'))->first()) {
@@ -29,9 +36,16 @@ class Docente extends BaseController
             return redirect()->back()->withInput();
         }
 
+        //Control minimo de caracteres contraseña
+        if (strlen($this->request->getPost('password')) < 8) {
+            $session->setFlashdata('error', 'La contraseña debe tener al menos 8 caracteres.');
+            return redirect()->back()->withInput();
+        }
+
         $model->insert([
             'nombre'       => $this->request->getPost('nombre'),
             'apellido'     => $this->request->getPost('apellido'),
+            'dni'          => $this->request->getPost('dni'),
             'email'        => $this->request->getPost('email'),
             'password'     => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
             'especialidad' => $this->request->getPost('especialidad'),
@@ -61,14 +75,19 @@ class Docente extends BaseController
         $data = [
             'nombre'       => $this->request->getPost('nombre'),
             'apellido'     => $this->request->getPost('apellido'),
+            'dni'          => $this->request->getPost('dni'),
             'email'        => $this->request->getPost('email'),
             'especialidad' => $this->request->getPost('especialidad'),
             'telefono'     => $this->request->getPost('telefono'),
         ];
 
-        // Si escribió una contraseña nueva, la actualizamos. Si lo dejó en blanco, conserva la anterior.
+        // Si escribió una contraseña nueva, la actualizamos. Si lo dejó en blanco, conserva la anterior y controla cant de caracteres
         $password = $this->request->getPost('password');
         if (!empty($password)) {
+            if (strlen($password) < 8) {
+                session()->setFlashdata('error', 'La nueva contraseña debe tener al menos 8 caracteres.');
+                return redirect()->back()->withInput();
+            }
             $data['password'] = password_hash($password, PASSWORD_DEFAULT);
         }
 

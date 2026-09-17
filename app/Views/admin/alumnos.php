@@ -24,13 +24,17 @@
                                 <input type="text" class="form-control rounded-pill px-3" name="apellido" required>
                             </div>
                         </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-primary-dark small fw-bold">DNI</label>
+                            <input type="number" class="form-control rounded-pill px-3" name="dni" required placeholder="Sin puntos">
+                        </div>
                         <div class="mb-3">
                             <label class="form-label text-primary-dark small fw-bold">Email</label>
                             <input type="email" class="form-control rounded-pill px-3" name="email" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label text-primary-dark small fw-bold">Contraseña Provisoria</label>
-                            <input type="password" class="form-control rounded-pill px-3" name="password" required>
+                            <input type="password" class="form-control rounded-pill px-3" name="password" minlength="8" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label text-primary-dark small fw-bold">Teléfono</label>
@@ -69,7 +73,7 @@
                                 <tbody>
                                     <?php foreach($alumnos as $alumno): ?>
                                         <tr>
-                                            <td class="fw-bold text-primary-dark"><?= esc($alumno['nombre'] . ' ' . $alumno['apellido']) ?></td>
+                                            <td class="fw-bold text-primary-dark"> <?= esc($alumno['nombre'] . ' ' . $alumno['apellido']) ?><br> <span class="small text-muted fw-normal">DNI: <?= esc($alumno['dni']) ?></span> </td>
                                             <td>
                                                 <div class="small"><?= esc($alumno['email']) ?></div>
                                                 <div class="small text-muted"><?= esc($alumno['telefono']) ?></div>

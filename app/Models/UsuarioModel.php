@@ -13,7 +13,7 @@ class UsuarioModel extends Model
     
     // Estos son los campos que permitimos que se guarden o modifiquen
     protected $allowedFields    = [
-        'nombre', 'apellido', 'email', 'password', 'rol', 
+        'nombre', 'apellido', 'dni', 'email', 'password', 'rol', 
         'estado', 'telefono', 'fecha_nacimiento', 'especialidad', 'cargo'
     ];
 }

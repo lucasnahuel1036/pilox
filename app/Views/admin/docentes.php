@@ -22,6 +22,10 @@
                                 <label class="form-label text-primary-dark small fw-bold">Apellido</label>
                                 <input type="text" class="form-control rounded-pill px-3" name="apellido" required>
                             </div>
+                            <div class="col-md-6 mb-3">
+                            <label class="form-label text-primary-dark small fw-bold">DNI</label>
+                            <input type="number" class="form-control rounded-pill px-3" name="dni" required placeholder="Sin puntos">
+                             </div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label text-primary-dark small fw-bold">Email (Usuario)</label>
@@ -29,7 +33,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label text-primary-dark small fw-bold">Contraseña</label>
-                            <input type="password" class="form-control rounded-pill px-3" name="password" required>
+                            <input type="password" class="form-control rounded-pill px-3" name="password" minlength="8" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label text-primary-dark small fw-bold">Especialidad</label>
@@ -64,10 +68,11 @@
                                         <th class="text-secondary small text-end">ACCIONES</th>
                                     </tr>
                                 </thead>
+                                //tablas
                                 <tbody>
                                     <?php foreach($docentes as $docente): ?>
                                         <tr>
-                                            <td class="fw-bold text-primary-dark"><?= esc($docente['nombre'] . ' ' . $docente['apellido']) ?></td>
+                                            <td class="fw-bold text-primary-dark"> <?= esc($docente['nombre'] . ' ' . $docente['apellido']) ?><br> <span class="small text-muted fw-normal">DNI: <?= esc($docente['dni']) ?></span> </td>
                                             <td>
                                                 <div class="small"><?= esc($docente['email']) ?></div>
                                                 <div class="small text-muted"><?= esc($docente['telefono']) ?></div>

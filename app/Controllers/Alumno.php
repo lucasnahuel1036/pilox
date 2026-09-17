@@ -23,6 +23,18 @@ class Alumno extends BaseController
     {
         $model = new UsuarioModel();
         
+        $dni = $this->request->getPost('dni');
+        if (!preg_match('/^[0-9]{7,8}$/', $dni)) {
+            session()->setFlashdata('error', 'El DNI ingresado no es válido. Debe tener números sin puntos.');
+            return redirect()->back()->withInput();
+        }
+
+        // Control contraseña cantidad de caracteres
+        if (strlen($this->request->getPost('password')) < 8) {
+            $session->setFlashdata('error', 'La contraseña debe tener al menos 8 caracteres.');
+            return redirect()->back()->withInput();
+        }
+
         if ($model->where('email', $this->request->getPost('email'))->first()) {
             session()->setFlashdata('error', 'El correo ya está registrado.');
             return redirect()->back()->withInput();
@@ -31,6 +43,7 @@ class Alumno extends BaseController
         $model->insert([
             'nombre'           => $this->request->getPost('nombre'),
             'apellido'         => $this->request->getPost('apellido'),
+            'dni'              => $this->request->getPost('dni'),
             'email'            => $this->request->getPost('email'),
             'password'         => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
             'telefono'         => $this->request->getPost('telefono'),
@@ -60,6 +73,7 @@ class Alumno extends BaseController
         $data = [
             'nombre'           => $this->request->getPost('nombre'),
             'apellido'         => $this->request->getPost('apellido'),
+            'dni'              => $this->request->getPost('dni'),
             'email'            => $this->request->getPost('email'),
             'telefono'         => $this->request->getPost('telefono'),
             'fecha_nacimiento' => $this->request->getPost('fecha_nacimiento') ?: null,
@@ -67,8 +81,13 @@ class Alumno extends BaseController
             'estado'           => $this->request->getPost('estado') // Y EL ESTADO
         ];
 
+        
         $password = $this->request->getPost('password');
         if (!empty($password)) {
+            if (strlen($password) < 8) {
+                session()->setFlashdata('error', 'La nueva contraseña debe tener al menos 8 caracteres.');
+                return redirect()->back()->withInput();
+            }
             $data['password'] = password_hash($password, PASSWORD_DEFAULT);
         }
 
