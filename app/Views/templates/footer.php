@@ -1,24 +1,53 @@
 <!-- app/Views/templates/footer.php -->
-    <footer class="bg-primary-dark text-white pt-5 pb-3 mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <h5 class="fw-bold text-light">Pilox</h5>
-                    <p class="small">Sistema de gestión para el centro deportivo Pilox. Pilates, Yoga, GAP y Pilates AFA en un solo lugar.</p>
+<footer class="bg-dark text-white pt-5 pb-4 mt-auto">
+    <div class="container">
+        <div class="row">
+            <!-- Columna 1: Marca y Descripción -->
+            <div class="col-md-5 mb-4">
+                <div class="d-flex align-items-center mb-3">
+                    <h5 class="ms-2 mb-0 fw-bold text-white">Pilox</h5>
                 </div>
-                <div class="col-md-3 mb-3">
-                    <h6 class="text-uppercase text-secondary">Disciplinas</h6>
-                    <ul class="list-unstyled small">
-                        <li>Pilates</li><li>Yoga</li><li>GAP</li><li>Pilates AFA</li>
-                    </ul>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <h6 class="text-uppercase text-secondary">Contacto</h6>
-                    <p class="small">📍 Córdoba, Argentina</p>
-                </div>
+                <p class="text-secondary small pe-md-5">
+                    Sistema de gestión para el centro deportivo Pilox.<br> Pilates, Yoga, GAP y Pilates AFA en un solo lugar.
+                </p>
+            </div>
+
+            <!-- Columna 2: Disciplinas -->
+            <div class="col-md-3 mb-4">
+                <h6 class="text-uppercase fw-bold mb-3 small text-white">Disciplinas</h6>
+                <ul class="list-unstyled small">
+                    <li class="mb-2"><a href="<?= base_url('/#disciplinas') ?>" class="text-secondary text-decoration-none">Pilates</a></li>
+                    <li class="mb-2"><a href="<?= base_url('/#disciplinas') ?>" class="text-secondary text-decoration-none">Yoga</a></li>
+                    <li class="mb-2"><a href="<?= base_url('/#disciplinas') ?>" class="text-secondary text-decoration-none">GAP</a></li>
+                    <li class="mb-2"><a href="<?= base_url('/#disciplinas') ?>" class="text-secondary text-decoration-none">Pilates AFA</a></li>
+                </ul>
+            </div>
+
+            <!-- Columna 3: Contacto -->
+            <div class="col-md-4 mb-4">
+                <h6 class="text-uppercase fw-bold mb-3 small text-white">Contacto</h6>
+                <ul class="list-unstyled text-secondary small">
+                    <li class="mb-3 d-flex">
+                        <i class="bi bi-geo-alt me-2 fs-6"></i> 
+                        <span>Av. Cornelio Saavedra 3663,<br>Marqués de Sobremonte, Córdoba</span>
+                    </li>
+                    <li class="mb-2">
+                        <a href="https://www.instagram.com/pilox.cba" target="_blank" class="text-secondary text-decoration-none d-flex align-items-center">
+                            <i class="bi bi-instagram me-2 fs-6"></i> 
+                            <span>@pilox.cba</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
-    </footer>
+
+        <!-- Línea divisoria y Copyright -->
+        <hr class="border-secondary mb-4 mt-2">
+        <div class="text-secondary small">
+            © <?= date('Y') ?> Pilox — Sistema de Gestión. Todos los derechos reservados.
+        </div>
+    </div>
+</footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
