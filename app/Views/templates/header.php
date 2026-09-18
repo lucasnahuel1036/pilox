@@ -1,4 +1,3 @@
-<!-- app/Views/templates/header.php -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,7 +11,7 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-transparent py-3">
     <div class="container">
-        <!-- 1. Logo y Textos -->
+        <!-- Logo y Textos -->
         <a class="navbar-brand d-flex align-items-center" href="<?= base_url('/') ?>">
             <img src="<?= base_url('assets/img/logo.jpg') ?>" alt="Logo Pilox" class="me-2 rounded-circle shadow-sm" style="width: 45px; height: 45px; object-fit: cover;">
             <div class="d-flex flex-column justify-content-center">
@@ -21,15 +20,14 @@
             </div>
         </a>
 
-        <!-- 2. Botón Hamburguesa (solo visible en celulares) -->
+        <!-- Botón Hamburguesa p celular -->
         <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="Abrir menú">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- 3. Todo lo que se colapsa en el celular -->
         <div class="collapse navbar-collapse" id="navbarMenu">
             
-            <!-- Lista centrada (mx-auto la empuja al medio) -->
+            <!-- Lista centrada -->
             <ul class="navbar-nav mx-auto mb-3 mb-lg-0 text-center">
                 <li class="nav-item">
                     <a class="nav-link" href="<?= base_url('/#disciplinas') ?>">Pilates</a>
@@ -48,8 +46,14 @@
             <!-- Botones a la derecha -->
             <div class="d-flex justify-content-center mt-2 mt-lg-0">
                 <?php if (session()->get('is_logged_in')): ?>
-                    <!-- Nota: Cambié a 'admin/dashboard' por la refactorización de rutas que hicimos -->
-                    <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-custom-outline me-2">Mi Panel</a>
+                    
+                    <?php if (session()->get('rol') == 'admin'): ?>
+                        <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-custom-outline me-2">Mi Panel</a>
+                    <?php else: ?>
+                        <!-- Si es alumno o docente, va a este panel provisorio -->
+                        <a href="<?= base_url('alumno/dashboard') ?>" class="btn btn-custom-outline me-2">Mi Panel</a>
+                    <?php endif; ?>
+                    
                     <a href="<?= base_url('logout') ?>" class="btn btn-danger rounded-pill">Salir</a>
                 <?php else: ?>
                     <a href="<?= base_url('login') ?>" class="btn btn-custom-outline px-4 me-2">Iniciar sesión</a>

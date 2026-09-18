@@ -11,7 +11,7 @@ class UsuarioModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     
-    // Estos son los campos que permitimos que se guarden o modifiquen
+    
     protected $allowedFields    = [
         'nombre', 'apellido', 'dni', 'email', 'password', 'rol', 
         'estado', 'telefono', 'fecha_nacimiento', 'especialidad', 'cargo'

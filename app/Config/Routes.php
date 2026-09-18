@@ -57,3 +57,5 @@ $routes->group('admin', ['filter' => 'admin'], function($routes) {
     $routes->get('turnos/masivo', 'Turno::masivo');
     $routes->post('turnos/generar_masivo', 'Turno::generar_masivo');
 });
+// Alumno
+$routes->get('alumno/dashboard', 'Alumno::dashboard');

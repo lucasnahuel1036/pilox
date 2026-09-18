@@ -1,8 +1,7 @@
-<!-- app/Views/templates/footer.php -->
 <footer class="bg-dark text-white pt-5 pb-4 mt-auto">
     <div class="container">
         <div class="row">
-            <!-- Columna 1: Marca y Descripción -->
+            <!--Marca y Descripción -->
             <div class="col-md-5 mb-4">
                 <div class="d-flex align-items-center mb-3">
                     <h5 class="ms-2 mb-0 fw-bold text-white">Pilox</h5>
@@ -12,7 +11,7 @@
                 </p>
             </div>
 
-            <!-- Columna 2: Disciplinas -->
+            <!-- Disciplinas -->
             <div class="col-md-3 mb-4">
                 <h6 class="text-uppercase fw-bold mb-3 small text-white">Disciplinas</h6>
                 <ul class="list-unstyled small">
@@ -23,7 +22,7 @@
                 </ul>
             </div>
 
-            <!-- Columna 3: Contacto -->
+            <!-- Contacto -->
             <div class="col-md-4 mb-4">
                 <h6 class="text-uppercase fw-bold mb-3 small text-white">Contacto</h6>
                 <ul class="list-unstyled text-secondary small">
@@ -41,7 +40,6 @@
             </div>
         </div>
 
-        <!-- Línea divisoria y Copyright -->
         <hr class="border-secondary mb-4 mt-2">
         <div class="text-secondary small">
             © <?= date('Y') ?> Pilox — Sistema de Gestión. Todos los derechos reservados.

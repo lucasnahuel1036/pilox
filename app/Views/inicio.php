@@ -1,4 +1,3 @@
-<!-- app/Views/inicio.php -->
 <main class="container mt-5">
     <div class="row align-items-center">
         <div class="col-md-6 pe-5">
@@ -10,7 +9,7 @@
                     <?php if (session()->get('rol') === 'admin'): ?>
                         <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-custom-solid px-4 py-2 me-3">Ir a mi Panel</a>
                     <?php else: ?>
-                        <a href="<?= base_url('turnos') ?>" class="btn btn-custom-solid px-4 py-2 me-3">Mis Reservas</a>
+                        <a href="<?= base_url('alumno/dashboard') ?>" class="btn btn-custom-solid px-4 py-2 me-3">Mis Reservas</a>
                     <?php endif; ?>
                 <?php else: ?>
                     <a href="<?= base_url('registro') ?>" class="btn btn-custom-solid px-4 py-2 me-3">Comenzar ahora</a>

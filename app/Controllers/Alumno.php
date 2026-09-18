@@ -111,4 +111,11 @@ class Alumno extends BaseController
         session()->setFlashdata('success', 'Alumno eliminado del sistema.');
         return redirect()->to('/admin/alumnos');
     }
+
+    public function dashboard()
+    {
+        return view('templates/header')
+             . view('alumno/dashboard')
+             . view('templates/footer');
+    }
 }

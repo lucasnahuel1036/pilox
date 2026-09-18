@@ -30,6 +30,13 @@ class Sucursal extends BaseController
             'direccion' => $this->request->getPost('direccion'),
             'telefono'  => $this->request->getPost('telefono'),
         ];
+       
+        // Validar que el nombre de la sucursal no exista
+        $nombre = $this->request->getPost('nombre');
+        if ($model->where('nombre', $nombre)->first()) {
+            session()->setFlashdata('error', 'Ya existe una sucursal con este nombre.');
+            return redirect()->back()->withInput();
+        }
 
         $model->insert($data);
         
@@ -68,6 +75,12 @@ class Sucursal extends BaseController
             'direccion' => $this->request->getPost('direccion'),
             'telefono'  => $this->request->getPost('telefono'),
         ];
+        
+        $nombre = $this->request->getPost('nombre');
+        if ($model->where('nombre', $nombre)->where('id_sucursal !=', $id)->first()) {
+            session()->setFlashdata('error', 'Ya existe otra sucursal con este nombre.');
+            return redirect()->back()->withInput();
+        }
 
         $model->update($id, $data);
         

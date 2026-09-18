@@ -19,13 +19,13 @@ class Turno extends BaseController
         $actividadModel = new ActividadModel();
         $usuarioModel = new UsuarioModel();
 
-        // 1. Mandamos los datos para llenar los <select> del formulario
+        // Mandamos los datos para llenar los <select> del formulario
         $data['sucursales'] = $sucursalModel->findAll();
         $data['actividades'] = $actividadModel->findAll();
         // Solo traemos a los usuarios que son docentes
         $data['docentes'] = $usuarioModel->where('rol', 'docente')->findAll();
         
-        // 2. Mandamos la lista de turnos (con los nombres de las tablas unidas)
+        // Mandamos la lista de turnos (con los nombres de las tablas unidas)
         $data['turnos'] = $turnoModel->getTurnosConDetalles();
 
         return view('templates/header')
@@ -39,6 +39,20 @@ class Turno extends BaseController
         
         // Capturamos la capacidad elegida
         $capacidad = $this->request->getPost('capacidad');
+        
+        $fecha = $this->request->getPost('fecha');
+        $horario = $this->request->getPost('horario');
+        $id_docente = $this->request->getPost('id_docente');
+
+        $existeTurno = $model->where('fecha', $fecha)
+                             ->where('horario', $horario)
+                             ->where('id_docente', $id_docente)
+                             ->first();
+
+        if ($existeTurno) {
+            session()->setFlashdata('error', 'El docente ya tiene una clase asignada en esa fecha y horario.');
+            return redirect()->back()->withInput();
+        }
 
         $model->insert([
             'fecha'             => $this->request->getPost('fecha'),
@@ -100,7 +114,7 @@ class Turno extends BaseController
         return redirect()->to('/admin/turnos');
     }
 
-    //Busca para aasignar turnos
+    // Busca para aasignar turnos
     public function masivo()
     {
         $sucursalModel = new \App\Models\SucursalModel();
@@ -116,41 +130,49 @@ class Turno extends BaseController
              . view('templates/footer');
     }
 
-    //Generar turnos reiterativos a largo plazo
+    // Generar turnos reiterativos a largo plazo
     public function generar_masivo()
     {
         $model = new TurnoModel();
         
-        // 1. Capturamos el rango de fechas
+        // Capturamos el rango de fechas
         $fecha_inicio = new \DateTime($this->request->getPost('fecha_inicio'));
         $fecha_fin = new \DateTime($this->request->getPost('fecha_fin'));
         $fecha_fin->modify('+1 day'); // Sumamos un día para que el bucle incluya la fecha final
         
-        // 2. Capturamos los datos fijos de la clase
+        // Capturamos los datos fijos de la clase
         $hora = $this->request->getPost('horario');
         $dias_seleccionados = $this->request->getPost('dias'); // Esto será un array (ej: [2, 4] para Mar y Jue)
         $capacidad = $this->request->getPost('capacidad');
         
-        // 3. Configuramos el iterador de PHP para avanzar de a 1 día
+        // Configuramos el iterador de PHP para avanzar de a 1 día
         $intervalo = new \DateInterval('P1D');
         $periodo = new \DatePeriod($fecha_inicio, $intervalo, $fecha_fin);
         
         $turnos_creados = 0;
 
-        // 4. Recorremos el calendario
+        //Recorremos el calendario
         foreach ($periodo as $fecha) {
             // El método format('N') devuelve 1 (Lunes) a 7 (Domingo)
             if (in_array($fecha->format('N'), $dias_seleccionados)) {
-                $model->insert([
-                    'fecha'             => $fecha->format('Y-m-d'),
-                    'horario'           => $hora,
-                    'capacidad'         => $capacidad,
-                    'cupos_disponibles' => $capacidad,
-                    'id_sucursal'       => $this->request->getPost('id_sucursal'),
-                    'id_actividad'      => $this->request->getPost('id_actividad'),
-                    'id_docente'        => $this->request->getPost('id_docente')
-                ]);
-                $turnos_creados++;
+                
+                $existeTurno = $model->where('fecha', $fecha->format('Y-m-d'))
+                                     ->where('horario', $hora)
+                                     ->where('id_docente', $this->request->getPost('id_docente'))
+                                     ->first();
+
+                if (!$existeTurno) {
+                    $model->insert([
+                        'fecha'             => $fecha->format('Y-m-d'),
+                        'horario'           => $hora,
+                        'capacidad'         => $capacidad,
+                        'cupos_disponibles' => $capacidad,
+                        'id_sucursal'       => $this->request->getPost('id_sucursal'),
+                        'id_actividad'      => $this->request->getPost('id_actividad'),
+                        'id_docente'        => $this->request->getPost('id_docente')
+                    ]);
+                    $turnos_creados++;
+                }
             }
         }
         

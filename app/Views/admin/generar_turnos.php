@@ -1,9 +1,8 @@
-<!-- app/Views/admin/generar_turnos.php -->
 <main class="container mt-5 mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="text-primary-dark fw-bold mb-0"><i class="bi bi-calendar-range"></i> Generador Masivo de Turnos</h2>
-            <p class="text-muted small">Automatizá la creación de la grilla mensual o cuatrimestral</p>
+            <h2 class="text-primary-dark fw-bold mb-0"><i class="bi bi-calendar-range"></i> Generador Periódico de Turnos</h2>
+            <p class="text-muted small">Planificá la grilla regular de clases a largo plazo</p>
         </div>
         <a href="<?= base_url('admin/turnos') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Volver a Turnos</a>
     </div>
@@ -94,7 +93,7 @@
                 </div>
 
                 <div class="d-flex justify-content-end mt-4">
-                    <button type="submit" class="btn btn-custom-solid rounded-pill px-5 py-2" onclick="return confirm('¿Confirmas la generación masiva de estos turnos?');">Generar Grilla</button>
+                    <button type="submit" class="btn btn-custom-solid rounded-pill px-5 py-2" onclick="return confirm('¿Confirmas la generación de esta grilla por periodo?');">Generar Grilla</button>
                 </div>
             </form>
         </div>

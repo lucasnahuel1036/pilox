@@ -81,7 +81,7 @@ class Docente extends BaseController
             'telefono'     => $this->request->getPost('telefono'),
         ];
 
-        // Si escribió una contraseña nueva, la actualizamos. Si lo dejó en blanco, conserva la anterior y controla cant de caracteres
+        // Si escribio una contraseña nueva, la actualizamos y controla cant de caracteres
         $password = $this->request->getPost('password');
         if (!empty($password)) {
             if (strlen($password) < 8) {

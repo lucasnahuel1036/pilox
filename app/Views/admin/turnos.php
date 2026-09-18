@@ -6,7 +6,7 @@
         </div>
         <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Volver al Panel</a>
         <a href="<?= base_url('admin/turnos/masivo') ?>" class="btn btn-success btn-sm rounded-pill px-3 me-2">
-    <i class="bi bi-magic"></i> Generación Masiva
+    <i class="bi bi-calendar-plus"></i> <strong>Generación por periodos</strong> 
 </a>
     </div>
 

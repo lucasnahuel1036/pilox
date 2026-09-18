@@ -41,11 +41,11 @@ class Auth extends BaseController
                 
             
                 // Redirigimos según el rol del usuario
-        if ($user['rol'] === 'admin') {
+        if ($user['rol'] == 'admin') {
             return redirect()->to('/admin/dashboard');
         } else {
-            return redirect()->to('/');
-        }
+            return redirect()->to('/alumno/dashboard');
+                }
             } else {
                 $session->setFlashdata('error', 'Contraseña incorrecta.');
                 return redirect()->to('/login');

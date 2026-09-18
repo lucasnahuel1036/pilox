@@ -21,6 +21,13 @@ class Actividad extends BaseController
     public function guardar()
     {
         $model = new ActividadModel();
+
+        // Validar que el nombre de la actividad no exista
+        $nombre = $this->request->getPost('nombre');
+        if ($model->where('nombre', $nombre)->first()) {
+            session()->setFlashdata('error', 'Esta actividad ya se encuentra registrada.');
+            return redirect()->back()->withInput();
+        }
         
         $model->insert([
             'nombre'      => $this->request->getPost('nombre'),
@@ -44,6 +51,13 @@ class Actividad extends BaseController
     public function actualizar($id)
     {
         $model = new ActividadModel();
+
+        $nombre = $this->request->getPost('nombre');
+
+        if ($model->where('nombre', $nombre)->where('id_actividad !=', $id)->first()) {
+            session()->setFlashdata('error', 'Esta actividad ya se encuentra registrada por otro registro.');
+            return redirect()->back()->withInput();
+        }
         
         $model->update($id, [
             'nombre'      => $this->request->getPost('nombre'),

@@ -2,6 +2,7 @@ CREATE TABLE usuarios (
     id_usuario INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     apellido VARCHAR(100) NOT NULL,
+    dni VARCHAR(15) NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     rol ENUM('alumno', 'docente', 'admin') DEFAULT 'alumno',
@@ -62,3 +63,25 @@ CREATE TABLE reservas (
     FOREIGN KEY (id_turno) REFERENCES turnos(id_turno),
     FOREIGN KEY (id_abono) REFERENCES abonos(id_abono)
 );
+-- --------------------------------------------------------
+-- DATOS DE PRUEBA 
+-- --------------------------------------------------------
+
+-- Insertar Administrador 
+INSERT INTO usuarios (nombre, apellido, dni, email, password, rol, estado) 
+VALUES ('Administrador', 'Pilox', '11111111', 'admin@pilox.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 'activo');
+
+-- Insertar Docente para probar los turnos 
+INSERT INTO usuarios (nombre, apellido, dni, email, password, rol, estado, especialidad) 
+VALUES ('Juan', 'Pérez', '22222222', 'profe@pilox.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'docente', 'activo', 'Instructorado Múltiple');
+
+-- Insertar Sucursal
+INSERT INTO sucursales (nombre, direccion, telefono) 
+VALUES ('Sede Central Córdoba', 'Av. Cornelio Saavedra 3663, Marqués de Sobremonte', '3510000000');
+
+-- Insertar Actividades Base
+INSERT INTO actividades (nombre, descripcion) VALUES 
+('Pilates', 'Clases de Pilates con equipamiento completo.'),
+('Yoga', 'Hatha Yoga para todos los niveles.'),
+('GAP', 'Glúteos, Abdomen y Piernas.'),
+('Pilates AFA', 'Pilates adaptado para rehabilitación.');

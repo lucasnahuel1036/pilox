@@ -1,4 +1,3 @@
-<!-- app/Views/admin/sucursales.php -->
 <main class="container mt-5 mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>

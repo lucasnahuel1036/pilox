@@ -25,7 +25,6 @@ class Dashboard extends BaseController
             'total_docentes'    => $usuarioModel->where('rol', 'docente')->countAllResults(),
             'total_actividades' => $actividadModel->countAllResults(),
             'total_sucursales'  => $sucursalModel->countAllResults(),
-            // Traemos solo los turnos de hoy en adelante
             'turnos_activos'    => $turnoModel->where('fecha >=', date('Y-m-d'))->countAllResults()
         ];
 

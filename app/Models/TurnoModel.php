@@ -22,8 +22,8 @@ class TurnoModel extends Model
     ];
 
     /**
-     * Esta función especial hace JOIN con las otras tablas para traer
-     * el nombre de la actividad, la sucursal y el docente, no solo sus IDs.
+     * Esta función hace JOIN con las otras tablas para traer
+     * el nombre de la actividad, la sucursal y el docente
      */
     public function getTurnosConDetalles()
     {
