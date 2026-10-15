@@ -8,11 +8,12 @@ class Docente extends BaseController
 {
     public function index()
     {
-      
+        $model    = new UsuarioModel();
+        $busqueda = $this->request->getGet('q');
 
-        $model = new UsuarioModel();
-        // Traemos solo a los usuarios que son docentes
-        $data['docentes'] = $model->where('rol', 'docente')->findAll();
+        $data['docentes'] = $model->buscarPorRol('docente', $busqueda)->paginate(10);
+        $data['pager']    = $model->pager;
+        $data['busqueda'] = $busqueda;
 
         return view('templates/header')
              . view('admin/docentes', $data)

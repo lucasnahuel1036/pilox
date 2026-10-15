@@ -44,6 +44,11 @@ class Turno extends BaseController
         $horario = $this->request->getPost('horario');
         $id_docente = $this->request->getPost('id_docente');
 
+        if ((int) $capacidad < 1) {
+            session()->setFlashdata('error', 'La capacidad debe ser al menos 1.');
+            return redirect()->back()->withInput();
+        }
+
         $existeTurno = $model->where('fecha', $fecha)
                              ->where('horario', $horario)
                              ->where('id_docente', $id_docente)
@@ -102,6 +107,17 @@ class Turno extends BaseController
             return redirect()->back()->withInput();
         }
 
+        $choque = $model->where('fecha', $this->request->getPost('fecha'))
+                        ->where('horario', $this->request->getPost('horario'))
+                        ->where('id_docente', $this->request->getPost('id_docente'))
+                        ->where('id_turno !=', $id)
+                        ->first();
+
+        if ($choque) {
+            session()->setFlashdata('error', 'El docente ya tiene una clase asignada en esa fecha y horario.');
+            return redirect()->back()->withInput();
+        }
+
         $model->update($id, [
             'fecha'             => $this->request->getPost('fecha'),
             'horario'           => $this->request->getPost('horario'),
@@ -122,7 +138,7 @@ class Turno extends BaseController
         session()->setFlashdata('error', 'No se puede eliminar el turno porque tiene reservas asociadas.');
         return redirect()->to('/admin/turnos');
         }
-        
+
         $model = new TurnoModel();
         $model->delete($id);
         

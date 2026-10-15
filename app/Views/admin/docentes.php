@@ -56,8 +56,18 @@
             <div class="card border-0 shadow-sm rounded-4">
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Staff Registrado</h5>
+                    <form action="<?= base_url('admin/docentes') ?>" method="GET" class="d-flex gap-2 mb-4">
+                        <input type="text" class="form-control rounded-pill px-3" name="q"
+                               value="<?= esc($busqueda ?? '') ?>" placeholder="Buscar por nombre, apellido, DNI o email">
+                        <button type="submit" class="btn btn-custom-solid rounded-pill px-3">Buscar</button>
+                        <?php if (!empty($busqueda)): ?>
+                            <a href="<?= base_url('admin/docentes') ?>" class="btn btn-outline-secondary rounded-pill px-3">Limpiar</a>
+                        <?php endif; ?>
+                    </form>
                     <?php if(empty($docentes)): ?>
-                        <div class="alert alert-light text-center text-muted" role="alert">Todavía no hay docentes registrados.</div>
+                        <div class="alert alert-light text-center text-muted" role="alert">
+                            <?= !empty($busqueda) ? 'No se encontraron docentes para esa búsqueda.' : 'No hay docentes registrados.' ?>
+                        </div>
                     <?php else: ?>
                         <div class="table-responsive">
                             <table class="table table-hover align-middle">
@@ -69,7 +79,7 @@
                                         <th class="text-secondary small text-end">ACCIONES</th>
                                     </tr>
                                 </thead>
-                                //tablas
+                            
                                 <tbody>
                                     <?php foreach($docentes as $docente): ?>
                                         <tr>
@@ -92,6 +102,7 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="mt-3"><?= $pager->links() ?></div>
                     <?php endif; ?>
                 </div>
             </div>

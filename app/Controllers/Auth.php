@@ -29,6 +29,15 @@ class Auth extends BaseController
         if ($user) {
             // Verificamos si la contraseña coincide con el hash de la base de datos
             if (password_verify($password, $user['password'])) {
+
+                // Las cuentas inactivas no pueden ingresar (las morosas sí, para ver su abono)
+                if ($user['estado'] === 'inactivo') {
+                    $session->setFlashdata('error', 'Tu cuenta está inactiva. Consultá en administración.');
+                    return redirect()->to('/login');
+                }
+
+                // Nuevo identificador de sesión al iniciar (evita fijación de sesión)
+                $session->regenerate();
                 // Si coincide, creamos las variables de sesión
                 $ses_data = [
                     'id_usuario'   => $user['id_usuario'],

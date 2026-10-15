@@ -60,6 +60,7 @@ $routes->group('admin', ['filter' => 'admin'], function($routes) {
     $routes->post('abonos/guardar', 'Abono::guardar');
     $routes->post('abonos/eliminar/(:num)', 'Abono::eliminar/$1');
     $routes->post('abonos/pago/(:num)', 'Abono::cambiarPago/$1');
+    $routes->get('alumnos/buscar', 'Alumno::buscar');
 });
 // Alumno
 $routes->get('alumno/dashboard', 'Alumno::dashboard', ['filter' => 'auth']);

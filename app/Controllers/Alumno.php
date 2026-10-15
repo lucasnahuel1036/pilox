@@ -8,11 +8,12 @@ class Alumno extends BaseController
 {
     public function index()
     {
-       
+        $model    = new UsuarioModel();
+        $busqueda = $this->request->getGet('q');
 
-        $model = new UsuarioModel();
-        // Traemos solo a los usuarios que son alumnos
-        $data['alumnos'] = $model->where('rol', 'alumno')->findAll();
+        $data['alumnos']  = $model->buscarPorRol('alumno', $busqueda)->paginate(10);
+        $data['pager']    = $model->pager;
+        $data['busqueda'] = $busqueda;
 
         return view('templates/header')
              . view('admin/alumnos', $data)
@@ -69,6 +70,24 @@ class Alumno extends BaseController
     public function actualizar($id)
     {
         $model = new UsuarioModel();
+        // Checkea rol/estado/dni/mail
+        $rol    = $this->request->getPost('rol');
+        $estado = $this->request->getPost('estado');
+
+        if (!in_array($rol, ['alumno', 'docente', 'admin'], true) || !in_array($estado, ['activo', 'inactivo', 'moroso'], true)) {
+            session()->setFlashdata('error', 'Rol o estado no válido.');
+            return redirect()->back()->withInput();
+        }
+
+        if (!preg_match('/^[0-9]{7,8}$/', (string) $this->request->getPost('dni'))) {
+            session()->setFlashdata('error', 'El DNI ingresado no es válido. Debe tener números sin puntos.');
+            return redirect()->back()->withInput();
+        }
+
+        if ($model->where('email', $this->request->getPost('email'))->where('id_usuario !=', $id)->first()) {
+            session()->setFlashdata('error', 'El correo ya está registrado en otro usuario.');
+            return redirect()->back()->withInput();
+        }
         
         $data = [
             'nombre'           => $this->request->getPost('nombre'),
@@ -135,5 +154,22 @@ class Alumno extends BaseController
         return view('templates/header')
              . view('alumno/dashboard', $data)
              . view('templates/footer');
+    }
+        
+    // Búsqueda rápida de alumnos activos (JSON, para el buscador de abonos)
+    public function buscar()
+    {
+        $q = trim((string) $this->request->getGet('q'));
+
+        if (mb_strlen($q) < 2) {
+            return $this->response->setJSON([]);
+        }
+
+        $alumnos = (new UsuarioModel())->buscarPorRol('alumno', $q)
+                                       ->where('estado', 'activo')
+                                       ->select('id_usuario, nombre, apellido, dni')
+                                       ->findAll(10);
+
+        return $this->response->setJSON($alumnos);
     }
 }

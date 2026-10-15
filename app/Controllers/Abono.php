@@ -7,17 +7,16 @@ use App\Models\UsuarioModel;
 
 class Abono extends BaseController
 {
-    // Lista de abonos y formulario para asignar uno nuevo
-    public function index()
-    {
-        $abonoModel   = new AbonoModel();
-        $usuarioModel = new UsuarioModel();
 
-        $data['abonos']  = $abonoModel->getAbonosConDetalles();
-        $data['alumnos'] = $usuarioModel->where('rol', 'alumno')
-                                        ->where('estado', 'activo')
-                                        ->orderBy('apellido', 'ASC')
-                                        ->findAll();
+       public function index()
+    {
+        $abonoModel = new AbonoModel();
+        $busqueda   = $this->request->getGet('q');
+
+        $data['vigentes']  = $abonoModel->vigentesConDetalles($busqueda)->paginate(10, 'vigentes');
+        $data['historial'] = $abonoModel->historialConDetalles($busqueda)->paginate(10, 'historial');
+        $data['pager']     = $abonoModel->pager;
+        $data['busqueda']  = $busqueda;
 
         return view('templates/header')
              . view('admin/abonos', $data)
@@ -94,7 +93,7 @@ class Abono extends BaseController
         $abonoModel->delete($id);
 
         session()->setFlashdata('success', 'Abono eliminado.');
-        return redirect()->to('/admin/abonos');
+        return redirect()->back();
     }
 
         // Alterna el estado de pago de un abono (pagado <-> pendiente)
@@ -126,6 +125,6 @@ class Abono extends BaseController
         }
 
         session()->setFlashdata('success', 'Estado de pago actualizado a ' . $nuevo . '.');
-        return redirect()->to('/admin/abonos');
+        return redirect()->back();
     }
 }

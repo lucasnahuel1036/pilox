@@ -15,16 +15,13 @@
                     <h5 class="fw-bold text-primary-dark mb-4">Asignar Abono</h5>
                     <form action="<?= base_url('admin/abonos/guardar') ?>" method="POST">
                         <?= csrf_field() ?>
-                        <div class="mb-3">
-                            <label for="id_usuario" class="form-label text-primary-dark small fw-bold">Alumno</label>
-                            <select class="form-select rounded-pill px-3" id="id_usuario" name="id_usuario" required>
-                                <option value="">Seleccioná un alumno</option>
-                                <?php foreach ($alumnos as $alumno): ?>
-                                    <option value="<?= $alumno['id_usuario'] ?>" <?= old('id_usuario') == $alumno['id_usuario'] ? 'selected' : '' ?>>
-                                        <?= esc($alumno['apellido'] . ', ' . $alumno['nombre']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
+                        <div class="mb-3 position-relative">
+                            <label for="buscar_alumno" class="form-label text-primary-dark small fw-bold">Alumno</label>
+                            <input type="text" class="form-control rounded-pill px-3" id="buscar_alumno"
+                                   placeholder="Buscar por nombre, apellido o DNI" autocomplete="off">
+                            <input type="hidden" name="id_usuario" id="id_usuario" value="">
+                            <div class="list-group position-absolute w-100 shadow-sm" id="resultados_alumnos" style="z-index: 10;"></div>
+                            <div class="form-text" id="alumno_elegido"></div>
                         </div>
                         <div class="mb-3">
                             <label for="clases" class="form-label text-primary-dark small fw-bold">Tipo de abono</label>
@@ -48,15 +45,27 @@
             </div>
         </div>
 
-        <!-- Tabla de abonos -->
+                <!-- Abonos vigentes e historial -->
         <div class="col-md-8">
-            <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-body p-4">
-                    <h5 class="fw-bold text-primary-dark mb-4">Abonos Registrados</h5>
 
-                    <?php if (empty($abonos)): ?>
-                        <div class="alert alert-light text-center text-muted" role="alert">
-                            Todavía no hay abonos asignados.
+            <!-- Buscador (filtra las dos tablas) -->
+            <form action="<?= base_url('admin/abonos') ?>" method="GET" class="d-flex gap-2 mb-4">
+                <input type="text" class="form-control rounded-pill px-3" name="q"
+                       value="<?= esc($busqueda ?? '') ?>" placeholder="Buscar por nombre, apellido o DNI del alumno">
+                <button type="submit" class="btn btn-custom-solid rounded-pill px-3">Buscar</button>
+                <?php if (!empty($busqueda)): ?>
+                    <a href="<?= base_url('admin/abonos') ?>" class="btn btn-outline-secondary rounded-pill px-3">Limpiar</a>
+                <?php endif; ?>
+            </form>
+
+            <!-- Vigentes -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold text-primary-dark mb-4">Abonos Vigentes</h5>
+
+                    <?php if (empty($vigentes)): ?>
+                        <div class="alert alert-light text-center text-muted mb-0" role="alert">
+                            <?= !empty($busqueda) ? 'No hay abonos vigentes para esa búsqueda.' : 'No hay abonos vigentes.' ?>
                         </div>
                     <?php else: ?>
                         <div class="table-responsive">
@@ -66,33 +75,22 @@
                                         <th class="text-secondary small">ALUMNO</th>
                                         <th class="text-secondary small">CLASES</th>
                                         <th class="text-secondary small">VIGENCIA</th>
-                                        <th class="text-secondary small">ESTADO</th>
                                         <th class="text-secondary small">PAGO</th>
                                         <th class="text-secondary small text-end">ACCIONES</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php $hoy = date('Y-m-d'); ?>
-                                    <?php foreach ($abonos as $abono): ?>
-                                        <?php
-                                            if ($abono['fecha_fin'] < $hoy) {
-                                                $estado = ['Vencido', 'secondary'];
-                                            } elseif ($abono['clases_restantes'] <= 0) {
-                                                $estado = ['Agotado', 'secondary'];
-                                            } else {
-                                                $estado = ['Vigente', 'success'];
-                                            }
-                                        ?>
+                                    <?php foreach ($vigentes as $abono): ?>
                                         <tr>
                                             <td class="fw-bold text-primary-dark">
                                                 <?= esc($abono['apellido'] . ', ' . $abono['nombre']) ?>
+                                                <div class="small text-muted fw-normal">DNI <?= esc($abono['dni']) ?></div>
                                             </td>
                                             <td><?= $abono['clases_restantes'] ?> / <?= $abono['clases_totales'] ?></td>
                                             <td class="small">
                                                 <?= date('d/m/Y', strtotime($abono['fecha_inicio'])) ?>
                                                 al <?= date('d/m/Y', strtotime($abono['fecha_fin'])) ?>
                                             </td>
-                                            <td><span class="badge bg-<?= $estado[1] ?>"><?= $estado[0] ?></span></td>
                                             <td>
                                                 <?php if ($abono['estado_pago'] === 'pagado'): ?>
                                                     <span class="badge bg-success">Pagado</span>
@@ -104,9 +102,9 @@
                                                 <form action="<?= base_url('admin/abonos/pago/' . $abono['id_abono']) ?>" method="POST" class="d-inline">
                                                     <?= csrf_field() ?>
                                                     <?php if ($abono['estado_pago'] === 'pagado'): ?>
-                                                    <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill px-3 me-1">Marcar pendiente</button>
+                                                        <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill px-3 me-1">Marcar pendiente</button>
                                                     <?php else: ?>
-                                                    <button type="submit" class="btn btn-sm btn-outline-success rounded-pill px-3 me-1">Marcar pagado</button>
+                                                        <button type="submit" class="btn btn-sm btn-outline-success rounded-pill px-3 me-1">Marcar pagado</button>
                                                     <?php endif; ?>
                                                 </form>
                                                 <form action="<?= base_url('admin/abonos/eliminar/' . $abono['id_abono']) ?>" method="POST" class="d-inline"
@@ -120,9 +118,136 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="mt-3"><?= $pager->links('vigentes') ?></div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Historial -->
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold text-primary-dark mb-1">Historial de Abonos</h5>
+                    <p class="text-muted small mb-4">Abonos vencidos o agotados. Los que quedaron sin pagar figuran en amarillo y se pueden regularizar.</p>
+
+                    <?php if (empty($historial)): ?>
+                        <div class="alert alert-light text-center text-muted mb-0" role="alert">
+                            <?= !empty($busqueda) ? 'No hay abonos en el historial para esa búsqueda.' : 'Todavía no hay abonos en el historial.' ?>
+                        </div>
+                    <?php else: ?>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="text-secondary small">ALUMNO</th>
+                                        <th class="text-secondary small">CLASES USADAS</th>
+                                        <th class="text-secondary small">VIGENCIA</th>
+                                        <th class="text-secondary small">MOTIVO</th>
+                                        <th class="text-secondary small">PAGO</th>
+                                        <th class="text-secondary small text-end">ACCIÓN</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($historial as $abono): ?>
+                                        <tr class="<?= $abono['estado_pago'] === 'pendiente' ? 'table-warning' : '' ?>">
+                                            <td class="fw-bold text-primary-dark">
+                                                <?= esc($abono['apellido'] . ', ' . $abono['nombre']) ?>
+                                                <div class="small text-muted fw-normal">DNI <?= esc($abono['dni']) ?></div>
+                                            </td>
+                                            <td><?= $abono['clases_totales'] - $abono['clases_restantes'] ?> / <?= $abono['clases_totales'] ?></td>
+                                            <td class="small">
+                                                <?= date('d/m/Y', strtotime($abono['fecha_inicio'])) ?>
+                                                al <?= date('d/m/Y', strtotime($abono['fecha_fin'])) ?>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">
+                                                    <?= $abono['clases_restantes'] <= 0 ? 'Agotado' : 'Vencido' ?>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <?php if ($abono['estado_pago'] === 'pagado'): ?>
+                                                    <span class="badge bg-success">Pagado</span>
+                                                <?php else: ?>
+                                                    <span class="badge bg-warning text-dark">Pendiente</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td class="text-end">
+                                                <?php if ($abono['estado_pago'] === 'pendiente'): ?>
+                                                    <form action="<?= base_url('admin/abonos/pago/' . $abono['id_abono']) ?>" method="POST" class="d-inline">
+                                                        <?= csrf_field() ?>
+                                                        <button type="submit" class="btn btn-sm btn-outline-success rounded-pill px-3">Marcar pagado</button>
+                                                    </form>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-3"><?= $pager->links('historial') ?></div>
                     <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
 </main>
+
+<script>
+(function () {
+    const input     = document.getElementById('buscar_alumno');
+    const hidden    = document.getElementById('id_usuario');
+    const lista     = document.getElementById('resultados_alumnos');
+    const elegido   = document.getElementById('alumno_elegido');
+    const urlBuscar = '<?= base_url('admin/alumnos/buscar') ?>';
+    let temporizador = null;
+
+    input.addEventListener('input', function () {
+        hidden.value = '';              // si vuelve a escribir, se anula la selección anterior
+        elegido.textContent = '';
+        clearTimeout(temporizador);
+
+        const texto = input.value.trim();
+        if (texto.length < 2) { lista.innerHTML = ''; return; }
+
+        // Esperamos 250 ms desde la última tecla para no saturar el servidor
+        temporizador = setTimeout(function () {
+            fetch(urlBuscar + '?q=' + encodeURIComponent(texto))
+                .then(function (r) { return r.json(); })
+                .then(function (alumnos) {
+                    lista.innerHTML = '';
+
+                    if (alumnos.length === 0) {
+                        const vacio = document.createElement('div');
+                        vacio.className = 'list-group-item small text-muted';
+                        vacio.textContent = 'Sin resultados';
+                        lista.appendChild(vacio);
+                        return;
+                    }
+
+                    alumnos.forEach(function (a) {
+                        const item = document.createElement('button');
+                        item.type = 'button';
+                        item.className = 'list-group-item list-group-item-action small';
+                        item.textContent = a.apellido + ', ' + a.nombre + (a.dni ? ' (DNI ' + a.dni + ')' : '');
+                        item.addEventListener('click', function () {
+                            hidden.value = a.id_usuario;
+                            input.value = a.apellido + ', ' + a.nombre;
+                            elegido.textContent = 'Alumno seleccionado ✔';
+                            lista.innerHTML = '';
+                        });
+                        lista.appendChild(item);
+                    });
+                })
+                .catch(function () { lista.innerHTML = ''; });
+        }, 250);
+    });
+
+    // No se puede enviar el formulario sin elegir un alumno de la lista
+    input.form.addEventListener('submit', function (e) {
+        if (!hidden.value) {
+            e.preventDefault();
+            elegido.textContent = 'Elegí un alumno de la lista.';
+            input.focus();
+        }
+    });
+})();
+</script>
