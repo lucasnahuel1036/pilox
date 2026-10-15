@@ -9,6 +9,7 @@
                     </div>
                     
                     <form action="<?= base_url('autenticar') ?>" method="POST">
+                        <?= csrf_field() ?>
                         <div class="mb-3">
                             <label for="email" class="form-label text-primary-dark fw-bold small">Correo Electrónico</label>
                             <input type="email" class="form-control rounded-pill px-3" id="email" name="email" required placeholder="tu@email.com">

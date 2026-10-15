@@ -70,6 +70,12 @@ class Actividad extends BaseController
 
     public function eliminar($id)
     {
+        $turnoModel = new \App\Models\TurnoModel();
+        if ($turnoModel->where('id_actividad', $id)->countAllResults() > 0) {
+            session()->setFlashdata('error', 'No se puede eliminar la actividad porque tiene turnos asociados.');
+            return redirect()->to('/admin/actividades');
+        }
+
         $model = new ActividadModel();
         $model->delete($id);
         

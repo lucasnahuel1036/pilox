@@ -47,6 +47,11 @@ class Sucursal extends BaseController
     // Elimina una sucursal por su ID
     public function eliminar($id)
     {
+        $turnoModel = new \App\Models\TurnoModel();
+        if ($turnoModel->where('id_sucursal', $id)->countAllResults() > 0) {
+            session()->setFlashdata('error', 'No se puede eliminar la sucursal porque tiene turnos asociados.');
+            return redirect()->to('/admin/sucursales');
+        }
         $model = new SucursalModel();
         $model->delete($id);
         

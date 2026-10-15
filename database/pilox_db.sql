@@ -11,20 +11,20 @@ CREATE TABLE usuarios (
     fecha_nacimiento DATE,
     especialidad VARCHAR(100),
     cargo VARCHAR(100)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE sucursales (
     id_sucursal INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     direccion VARCHAR(200) NOT NULL,
     telefono VARCHAR(20)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;;
 
 CREATE TABLE actividades (
     id_actividad INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     descripcion TEXT
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;;
 
 CREATE TABLE turnos (
     id_turno INT AUTO_INCREMENT PRIMARY KEY,
@@ -35,10 +35,10 @@ CREATE TABLE turnos (
     id_sucursal INT,
     id_actividad INT,
     id_docente INT,
-    FOREIGN KEY (id_sucursal) REFERENCES sucursales(id_sucursal),
-    FOREIGN KEY (id_actividad) REFERENCES actividades(id_actividad),
-    FOREIGN KEY (id_docente) REFERENCES usuarios(id_usuario)
-);
+    CONSTRAINT fk_turnos_sucursal  FOREIGN KEY (id_sucursal)  REFERENCES sucursales(id_sucursal)  ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT fk_turnos_actividad FOREIGN KEY (id_actividad) REFERENCES actividades(id_actividad) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT fk_turnos_docente   FOREIGN KEY (id_docente)   REFERENCES usuarios(id_usuario)      ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE abonos (
     id_abono INT AUTO_INCREMENT PRIMARY KEY,
@@ -48,8 +48,8 @@ CREATE TABLE abonos (
     clases_restantes INT NOT NULL,
     estado_pago ENUM('pagado', 'pendiente') DEFAULT 'pendiente',
     id_usuario INT,
-    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
-);
+    CONSTRAINT fk_abonos_usuario FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE reservas (
     id_reserva INT AUTO_INCREMENT PRIMARY KEY,
@@ -59,10 +59,11 @@ CREATE TABLE reservas (
     id_usuario INT,
     id_turno INT,
     id_abono INT,
-    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
-    FOREIGN KEY (id_turno) REFERENCES turnos(id_turno),
-    FOREIGN KEY (id_abono) REFERENCES abonos(id_abono)
-);
+    CONSTRAINT fk_reservas_usuario FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT fk_reservas_turno   FOREIGN KEY (id_turno)   REFERENCES turnos(id_turno)     ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT fk_reservas_abono   FOREIGN KEY (id_abono)   REFERENCES abonos(id_abono)     ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- --------------------------------------------------------
 -- DATOS DE PRUEBA 
 -- --------------------------------------------------------

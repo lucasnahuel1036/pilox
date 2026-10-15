@@ -13,6 +13,7 @@
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Nuevo Docente</h5>
                     <form action="<?= base_url('admin/docentes/guardar') ?>" method="POST">
+                        <?= csrf_field() ?>
                         <div class="row">
                             <div class="col-6 mb-3">
                                 <label class="form-label text-primary-dark small fw-bold">Nombre</label>
@@ -80,7 +81,11 @@
                                             <td><span class="badge bg-secondary"><?= esc($docente['especialidad']) ?></span></td>
                                             <td class="text-end">
                                                 <a href="<?= base_url('admin/docentes/editar/' . $docente['id_usuario']) ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3 me-1">Editar</a>
-                                                <a href="<?= base_url('admin/docentes/eliminar/' . $docente['id_usuario']) ?>" class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="return confirm('¿Seguro?');">Eliminar</a>
+                                                <form action="<?= base_url('admin/docentes/eliminar/' . $docente['id_usuario']) ?>" method="POST" class="d-inline"
+                                                    onsubmit="return confirm('¿Seguro que deseas eliminar este docente?');">
+                                                    <?= csrf_field() ?>
+                                                     <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">Eliminar</button>
+                                                </form>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

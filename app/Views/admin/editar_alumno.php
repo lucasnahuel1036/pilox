@@ -2,6 +2,7 @@
     <div class="card border-0 shadow-sm rounded-4 mx-auto p-4" style="max-width: 600px; background-color: #F8F9F5;">
         <h5 class="fw-bold text-primary-dark mb-4">Editar Perfil de Alumno</h5>
         <form action="<?= base_url('admin/alumnos/actualizar/' . $alumno['id_usuario']) ?>" method="POST">
+            <?= csrf_field() ?>
             <div class="row">
                 <div class="col-6 mb-3">
                     <label class="form-label text-primary-dark small fw-bold">Nombre</label>

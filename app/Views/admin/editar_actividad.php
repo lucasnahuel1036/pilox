@@ -2,6 +2,7 @@
     <div class="card border-0 shadow-sm rounded-4 mx-auto p-4" style="max-width: 500px; background-color: #F8F9F5;">
         <h5 class="fw-bold text-primary-dark mb-4">Editar Actividad</h5>
         <form action="<?= base_url('admin/actividades/actualizar/' . $actividad['id_actividad']) ?>" method="POST">
+            <?= csrf_field() ?>
             <div class="mb-3">
                 <label class="form-label text-primary-dark small fw-bold">Nombre</label>
                 <input type="text" class="form-control rounded-pill px-3" name="nombre" value="<?= esc($actividad['nombre']) ?>" required>

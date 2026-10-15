@@ -35,4 +35,42 @@ class TurnoModel extends Model
                     ->orderBy('turnos.horario', 'ASC')
                     ->findAll();
     }
+
+     /**
+     * Turnos futuros con cupo, filtrables por actividad, sucursal, día y franja horaria
+     */
+    public function getTurnosDisponibles($filtros = [])
+    {
+        $ahora = date('Y-m-d H:i:s');
+
+        $this->select('turnos.*, actividades.nombre as actividad, sucursales.nombre as sucursal, usuarios.nombre as docente_nombre, usuarios.apellido as docente_apellido')
+             ->join('actividades', 'actividades.id_actividad = turnos.id_actividad')
+             ->join('sucursales', 'sucursales.id_sucursal = turnos.id_sucursal')
+             ->join('usuarios', 'usuarios.id_usuario = turnos.id_docente')
+             ->where('turnos.cupos_disponibles >', 0)
+             ->where("TIMESTAMP(turnos.fecha, turnos.horario) > '" . $ahora . "'", null, false);
+
+        if (!empty($filtros['id_actividad'])) {
+            $this->where('turnos.id_actividad', $filtros['id_actividad']);
+        }
+        if (!empty($filtros['id_sucursal'])) {
+            $this->where('turnos.id_sucursal', $filtros['id_sucursal']);
+        }
+        if (!empty($filtros['fecha'])) {
+            $this->where('turnos.fecha', $filtros['fecha']);
+        }
+        if (!empty($filtros['franja'])) {
+            if ($filtros['franja'] === 'manana') {
+                $this->where('turnos.horario <', '12:00:00');
+            } elseif ($filtros['franja'] === 'tarde') {
+                $this->where('turnos.horario >=', '12:00:00')->where('turnos.horario <', '18:00:00');
+            } elseif ($filtros['franja'] === 'noche') {
+                $this->where('turnos.horario >=', '18:00:00');
+            }
+        }
+
+        return $this->orderBy('turnos.fecha', 'ASC')
+                    ->orderBy('turnos.horario', 'ASC')
+                    ->findAll();
+    }
 }

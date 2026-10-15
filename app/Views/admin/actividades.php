@@ -13,6 +13,7 @@
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Nueva Actividad</h5>
                     <form action="<?= base_url('admin/actividades/guardar') ?>" method="POST">
+                        <?= csrf_field() ?>
                         <div class="mb-3">
                             <label class="form-label text-primary-dark small fw-bold">Nombre</label>
                             <input type="text" class="form-control rounded-pill px-3" name="nombre" required placeholder="Ej: Pilates AFA">
@@ -52,7 +53,11 @@
                                             <td><small><?= esc($act['descripcion']) ?></small></td>
                                             <td class="text-end">
                                                 <a href="<?= base_url('admin/actividades/editar/' . $act['id_actividad']) ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3 me-1">Editar</a>
-                                                <a href="<?= base_url('admin/actividades/eliminar/' . $act['id_actividad']) ?>" class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="return confirm('¿Seguro?');">Eliminar</a>
+                                                <form action="<?= base_url('admin/actividades/eliminar/' . $act['id_actividad']) ?>" method="POST" class="d-inline"
+                                                    onsubmit="return confirm('¿Seguro que deseas eliminar esta actividad?');">
+                                                    <?= csrf_field() ?>
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">Eliminar</button>
+                                                </form>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

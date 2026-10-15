@@ -50,7 +50,7 @@
                 <div class="card-body">
                     <h5 class="fw-bold text-primary-dark">🏢 Sucursales</h5>
                     <p class="small text-muted">Gestioná los locales de Pilox.</p>
-                    <a href="<?= base_url('admin/sucursales') ?>" class="btn btn-sm btn-custom-outline">Gestionar</a>
+                    <a href="<?= base_url('admin/sucursales') ?>" class="btn btn-sm btn-custom-solid">Gestionar</a>
                 </div>
             </div>
         </div>
@@ -60,7 +60,7 @@
                 <div class="card-body">
                     <h5 class="fw-bold text-primary-dark">🧘‍♀️ Actividades</h5>
                     <p class="small text-muted">Pilates, Yoga, GAP y más.</p>
-                    <a href="<?= base_url('admin/actividades') ?>" class="btn btn-sm btn-custom-outline">Gestionar</a>
+                    <a href="<?= base_url('admin/actividades') ?>" class="btn btn-sm btn-custom-solid">Gestionar</a>
                 </div>
             </div>
         </div>
@@ -70,12 +70,12 @@
                 <div class="card-body">
                     <h5 class="fw-bold text-primary-dark">🗓️ Turnos</h5>
                     <p class="small text-muted">Configurá la grilla de horarios.</p>
-                    <a href="<?= base_url('admin/turnos') ?>" class="btn btn-sm btn-custom-outline">Gestionar</a>
+                    <a href="<?= base_url('admin/turnos') ?>" class="btn btn-sm btn-custom-solid">Gestionar</a>
                 </div>
             </div>
         </div>
         <!-- Alumnos  -->
-        <div class="col-md-6 mb-4">
+        <div class="col-md-4 mb-4">
             <div class="card h-100 border-0 shadow-sm rounded-4" style="background-color: #e9f2c6;">
                 <div class="card-body">
                     <h5 class="fw-bold text-primary-dark">👥 Alumnos</h5>
@@ -85,12 +85,22 @@
             </div>
         </div>
         <!-- Docentes  -->
-        <div class="col-md-6 mb-4">
+        <div class="col-md-4 mb-4">
             <div class="card h-100 border-0 shadow-sm rounded-4" style="background-color: #e9f2c6;">
                 <div class="card-body">
                     <h5 class="fw-bold text-primary-dark">👨‍🏫 Docentes</h5>
                     <p class="small text-muted">Administrá el staff de profesores.</p>
                     <a href="<?= base_url('admin/docentes') ?>" class="btn btn-sm btn-custom-solid">Gestionar</a>
+                </div>
+            </div>
+        </div>
+                <!-- Abonos -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4" style="background-color: #e9f2c6;">
+                <div class="card-body">
+                    <h5 class="fw-bold text-primary-dark">🎟️ Abonos</h5>
+                    <p class="small text-muted">Asigná abonos y controlá los pagos.</p>
+                    <a href="<?= base_url('admin/abonos') ?>" class="btn btn-sm btn-custom-solid">Gestionar</a>
                 </div>
             </div>
         </div>

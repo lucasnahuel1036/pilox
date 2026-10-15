@@ -17,6 +17,7 @@
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Nuevo Turno</h5>
                     <form action="<?= base_url('admin/turnos/guardar') ?>" method="POST">
+                        <?= csrf_field() ?>
                         
                         <div class="row">
                             <div class="col-6 mb-3">
@@ -111,7 +112,11 @@
                                             </td>
                                             <td class="text-end">
                                                 <a href="<?= base_url('admin/turnos/editar/' . $turno['id_turno']) ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3 me-1 mb-1">Editar</a>
-                                                <a href="<?= base_url('admin/turnos/eliminar/' . $turno['id_turno']) ?>" class="btn btn-sm btn-outline-danger rounded-pill px-3 mb-1" onclick="return confirm('¿Seguro que querés cancelar esta clase?');">Borrar</a>
+                                                <form action="<?= base_url('admin/turnos/eliminar/' . $turno['id_turno']) ?>" method="POST" class="d-inline"
+                                                    onsubmit="return confirm('¿Seguro que deseas eliminar este turno?');">
+                                                    <?= csrf_field() ?>
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3 mb-1">Eliminar</button>
+                                                </form>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

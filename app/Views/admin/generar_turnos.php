@@ -10,6 +10,7 @@
     <div class="card border-0 shadow-sm rounded-4" style="background-color: #F8F9F5;">
         <div class="card-body p-4 p-md-5">
             <form action="<?= base_url('admin/turnos/generar_masivo') ?>" method="POST">
+                <?= csrf_field() ?>
                 
                 <h5 class="fw-bold text-primary-dark mb-4 border-bottom pb-2">1. Definir Período y Días</h5>
                 <div class="row mb-4">

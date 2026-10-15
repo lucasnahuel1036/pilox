@@ -85,28 +85,44 @@ class Turno extends BaseController
              . view('templates/footer');
     }
 
-    public function actualizar($id)
+        public function actualizar($id)
     {
         $model = new TurnoModel();
-        
-        $capacidad = $this->request->getPost('capacidad');
+
+        $capacidad = (int) $this->request->getPost('capacidad');
+
+        // Reservas confirmadas que ya tiene el turno
+        $ocupados = db_connect()->table('reservas')
+                                ->where('id_turno', $id)
+                                ->where('estado', 'confirmada')
+                                ->countAllResults();
+
+        if ($capacidad < 1 || $capacidad < $ocupados) {
+            session()->setFlashdata('error', 'La capacidad no puede ser menor a las reservas confirmadas (' . $ocupados . ').');
+            return redirect()->back()->withInput();
+        }
 
         $model->update($id, [
             'fecha'             => $this->request->getPost('fecha'),
             'horario'           => $this->request->getPost('horario'),
             'capacidad'         => $capacidad,
-            'cupos_disponibles' => $capacidad, // Por ahora (sin alumnos inscriptos) reiniciamos los cupos
+            'cupos_disponibles' => $capacidad - $ocupados,
             'id_sucursal'       => $this->request->getPost('id_sucursal'),
             'id_actividad'      => $this->request->getPost('id_actividad'),
             'id_docente'        => $this->request->getPost('id_docente')
         ]);
-        
+
         session()->setFlashdata('success', 'Turno actualizado correctamente.');
         return redirect()->to('/admin/turnos');
     }
 
     public function eliminar($id)
     {
+        if (db_connect()->table('reservas')->where('id_turno', $id)->countAllResults() > 0) {
+        session()->setFlashdata('error', 'No se puede eliminar el turno porque tiene reservas asociadas.');
+        return redirect()->to('/admin/turnos');
+        }
+        
         $model = new TurnoModel();
         $model->delete($id);
         

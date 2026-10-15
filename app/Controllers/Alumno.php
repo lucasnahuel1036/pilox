@@ -31,7 +31,7 @@ class Alumno extends BaseController
 
         // Control contraseña cantidad de caracteres
         if (strlen($this->request->getPost('password')) < 8) {
-            $session->setFlashdata('error', 'La contraseña debe tener al menos 8 caracteres.');
+            session()->setFlashdata('error', 'La contraseña debe tener al menos 8 caracteres.');
             return redirect()->back()->withInput();
         }
 
@@ -95,16 +95,22 @@ class Alumno extends BaseController
         
         session()->setFlashdata('success', 'Perfil actualizado correctamente.');
         
-        // Si el admin le cambió el rol a docente o admin, lo redirigimos al dashboard porque ya no es alumno
-        if ($data['rol'] !== 'alumno') {
-            return redirect()->to('/dashboard');
-        }
+        
         
         return redirect()->to('/admin/alumnos');
     }
 
     public function eliminar($id)
     {
+        $db = db_connect();
+        $tieneAbonos   = $db->table('abonos')->where('id_usuario', $id)->countAllResults() > 0;
+        $tieneReservas = $db->table('reservas')->where('id_usuario', $id)->countAllResults() > 0;
+
+        if ($tieneAbonos || $tieneReservas) {
+            session()->setFlashdata('error', 'No se puede eliminar el alumno porque tiene abonos o reservas registrados. Podés pasarlo a inactivo.');
+            return redirect()->to('/admin/alumnos');
+        }
+
         $model = new UsuarioModel();
         $model->delete($id);
         
@@ -112,10 +118,22 @@ class Alumno extends BaseController
         return redirect()->to('/admin/alumnos');
     }
 
-    public function dashboard()
+        public function dashboard()
     {
+        // Los docentes siguen viendo la página provisoria hasta el Incremento 3
+        if (session()->get('rol') !== 'alumno') {
+            return view('templates/header')
+                 . view('alumno/en_construccion')
+                 . view('templates/footer');
+        }
+
+        $idUsuario = session()->get('id_usuario');
+
+        $data['alumno'] = (new \App\Models\UsuarioModel())->find($idUsuario);
+        $data['abono']  = (new \App\Models\AbonoModel())->getUltimoAbono($idUsuario);
+
         return view('templates/header')
-             . view('alumno/dashboard')
+             . view('alumno/dashboard', $data)
              . view('templates/footer');
     }
 }

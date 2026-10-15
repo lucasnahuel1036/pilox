@@ -14,6 +14,7 @@
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Nueva Sucursal</h5>
                     <form action="<?= base_url('admin/sucursales/guardar') ?>" method="POST">
+                        <?= csrf_field() ?>
                         <div class="mb-3">
                             <label for="nombre" class="form-label text-primary-dark small fw-bold">Nombre del Local</label>
                             <input type="text" class="form-control rounded-pill px-3" id="nombre" name="nombre" required placeholder="Ej: Pilox Centro">
@@ -62,11 +63,11 @@
                                             <td><?= esc($sucursal['direccion']) ?></td>
                                             <td><?= esc($sucursal['telefono']) ?: '-' ?></td>
                                             <td class="text-end">
-                                                <a href="<?= base_url('admin/sucursales/eliminar/' . $sucursal['id_sucursal']) ?>" 
-                                                   class="btn btn-sm btn-outline-danger rounded-pill px-3"
-                                                   onclick="return confirm('¿Estás seguro de eliminar esta sucursal?');">
-                                                   Eliminar
-                                                </a>
+                                                <form action="<?= base_url('admin/sucursales/eliminar/' . $sucursal['id_sucursal']) ?>" method="POST" class="d-inline"
+                                                    onsubmit="return confirm('¿Estás seguro de eliminar esta sucursal?');">
+                                                    <?= csrf_field() ?>
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">Eliminar</button>
+                                                </form>
                                                 <a href="<?= base_url('admin/sucursales/editar/' . $sucursal['id_sucursal']) ?>" 
                                                 class="btn btn-sm btn-outline-primary rounded-pill px-3 me-1">
                                                     Editar

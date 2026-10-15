@@ -2,6 +2,7 @@
     <div class="card border-0 shadow-sm rounded-4 mx-auto p-4" style="max-width: 500px; background-color: #F8F9F5;">
         <h5 class="fw-bold text-primary-dark mb-4">Editar Sucursal</h5>
         <form action="<?= base_url('admin/sucursales/actualizar/' . $sucursal['id_sucursal']) ?>" method="POST">
+            <?= csrf_field() ?>
             <div class="mb-3">
                 <label class="form-label text-primary-dark small fw-bold">Nombre del Local</label>
                 <input type="text" class="form-control rounded-pill px-3" name="nombre" value="<?= esc($sucursal['nombre']) ?>" required>

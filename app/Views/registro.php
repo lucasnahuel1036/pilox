@@ -9,6 +9,7 @@
                     </div>
                     
                     <form action="<?= base_url('registrar') ?>" method="POST">
+                        <?= csrf_field() ?>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="nombre" class="form-label text-primary-dark fw-bold small">Nombre</label>

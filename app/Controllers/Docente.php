@@ -38,7 +38,7 @@ class Docente extends BaseController
 
         //Control minimo de caracteres contraseña
         if (strlen($this->request->getPost('password')) < 8) {
-            $session->setFlashdata('error', 'La contraseña debe tener al menos 8 caracteres.');
+            session()->setFlashdata('error', 'La contraseña debe tener al menos 8 caracteres.');
             return redirect()->back()->withInput();
         }
 
@@ -99,6 +99,11 @@ class Docente extends BaseController
 
     public function eliminar($id)
     {
+        $turnoModel = new \App\Models\TurnoModel();
+        if ($turnoModel->where('id_docente', $id)->countAllResults() > 0) {
+            session()->setFlashdata('error', 'No se puede eliminar el docente porque tiene turnos asociados.');
+            return redirect()->to('/admin/docentes');
+        }
         $model = new UsuarioModel();
         $model->delete($id);
         
