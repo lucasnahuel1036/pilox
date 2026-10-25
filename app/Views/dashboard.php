@@ -7,6 +7,19 @@
         </div>
     </div>
 
+    <!-- Información general -->
+    <a href="<?= base_url('admin/informacion') ?>" class="text-decoration-none">
+        <div class="card border-0 shadow-sm rounded-4 mb-4 p-3" style="background-color: #1A3C34;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="fw-bold mb-1" style="color: #C5E063;">📊 Información general</h5>
+                    <p class="small mb-0 text-white-50">Ingresos, ocupación, asistencia, reservas y alumnos del centro.</p>
+                </div>
+                <span class="btn btn-custom-light btn-sm">Ver métricas</span>
+            </div>
+        </div>
+    </a>
+
     <!-- Tarjetas de Métricas -->
     <div class="row mb-5">
         <div class="col-md-4 mb-3">
@@ -101,6 +114,16 @@
                     <h5 class="fw-bold text-primary-dark">🎟️ Abonos</h5>
                     <p class="small text-muted">Asigná abonos y controlá los pagos.</p>
                     <a href="<?= base_url('admin/abonos') ?>" class="btn btn-sm btn-custom-solid">Gestionar</a>
+                </div>
+            </div>
+        </div>
+                <!-- Tarifas -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4" style="background-color: #e9f2c6;">
+                <div class="card-body">
+                    <h5 class="fw-bold text-primary-dark">💲 Tarifas</h5>
+                    <p class="small text-muted">Definí el precio de los abonos de 4, 8 y 12 clases.</p>
+                    <a href="<?= base_url('admin/tarifas') ?>" class="btn btn-sm btn-custom-solid">Configurar</a>
                 </div>
             </div>
         </div>

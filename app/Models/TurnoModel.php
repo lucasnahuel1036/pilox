@@ -73,4 +73,37 @@ class TurnoModel extends Model
                     ->orderBy('turnos.horario', 'ASC')
                     ->findAll();
     }
+        
+    /**
+    * Clases de un docente. $periodo: 'proximas' (de hoy en adelante) o 'anteriores'.
+    * Devuelve el modelo para poder encadenar paginate() o findAll().
+    */
+    public function getClasesDeDocente($idDocente, $periodo = 'proximas')
+    {
+            $this->select('turnos.*, actividades.nombre as actividad, sucursales.nombre as sucursal, (turnos.capacidad - turnos.cupos_disponibles) as inscriptos, (SELECT COUNT(*) FROM reservas WHERE reservas.id_turno = turnos.id_turno AND reservas.estado = \'confirmada\' AND reservas.asistencia IS NULL) as sin_registrar', false)
+             ->join('actividades', 'actividades.id_actividad = turnos.id_actividad')
+             ->join('sucursales', 'sucursales.id_sucursal = turnos.id_sucursal')
+             ->where('turnos.id_docente', $idDocente);
+
+        if ($periodo === 'anteriores') {
+            return $this->where('turnos.fecha <', date('Y-m-d'))
+                        ->orderBy('turnos.fecha', 'DESC')
+                        ->orderBy('turnos.horario', 'DESC');
+        }
+
+        return $this->where('turnos.fecha >=', date('Y-m-d'))
+                    ->orderBy('turnos.fecha', 'ASC')
+                    ->orderBy('turnos.horario', 'ASC');
+    }
+
+    // Una clase puntual, solo si pertenece al docente indicado
+    public function getClaseDeDocente($idTurno, $idDocente)
+    {
+        return $this->select('turnos.*, actividades.nombre as actividad, sucursales.nombre as sucursal')
+                    ->join('actividades', 'actividades.id_actividad = turnos.id_actividad')
+                    ->join('sucursales', 'sucursales.id_sucursal = turnos.id_sucursal')
+                    ->where('turnos.id_turno', $idTurno)
+                    ->where('turnos.id_docente', $idDocente)
+                    ->first();
+    }
 }

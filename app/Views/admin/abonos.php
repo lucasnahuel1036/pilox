@@ -26,9 +26,11 @@
                         <div class="mb-3">
                             <label for="clases" class="form-label text-primary-dark small fw-bold">Tipo de abono</label>
                             <select class="form-select rounded-pill px-3" id="clases" name="clases" required>
-                                <option value="4"  <?= old('clases') == 4  ? 'selected' : '' ?>>4 clases</option>
-                                <option value="8"  <?= old('clases') == 8  ? 'selected' : '' ?>>8 clases</option>
-                                <option value="12" <?= old('clases') == 12 ? 'selected' : '' ?>>12 clases</option>
+                                <?php foreach ($tarifas as $tarifa): ?>
+                                    <option value="<?= $tarifa['clases'] ?>" <?= old('clases') == $tarifa['clases'] ? 'selected' : '' ?>>
+                                        <?= $tarifa['clases'] ?> clases — $<?= number_format((float) $tarifa['precio'], 0, ',', '.') ?>
+                                    </option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="mb-4">
@@ -94,9 +96,13 @@
                                             <td>
                                                 <?php if ($abono['estado_pago'] === 'pagado'): ?>
                                                     <span class="badge bg-success">Pagado</span>
+                                                    <?php if (!empty($abono['fecha_pago'])): ?>
+                                                        <div class="small text-muted"><?= date('d/m/Y', strtotime($abono['fecha_pago'])) ?></div>
+                                                    <?php endif; ?>
                                                 <?php else: ?>
                                                     <span class="badge bg-warning text-dark">Pendiente</span>
                                                 <?php endif; ?>
+                                                <div class="small text-muted">$<?= number_format((float) $abono['precio'], 0, ',', '.') ?></div>
                                             </td>
                                             <td class="text-end">
                                                 <form action="<?= base_url('admin/abonos/pago/' . $abono['id_abono']) ?>" method="POST" class="d-inline">

@@ -49,8 +49,9 @@
                     
                     <?php if (session()->get('rol') == 'admin'): ?>
                         <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-custom-outline me-2">Mi Panel</a>
+                    <?php elseif (session()->get('rol') == 'docente'): ?>
+                        <a href="<?= base_url('docente/dashboard') ?>" class="btn btn-custom-outline me-2">Mi Panel</a>
                     <?php else: ?>
-                        <!-- Si es alumno o docente, va a este panel provisorio -->
                         <a href="<?= base_url('alumno/dashboard') ?>" class="btn btn-custom-outline me-2">Mi Panel</a>
                     <?php endif; ?>
                     

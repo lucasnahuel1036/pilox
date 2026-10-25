@@ -25,7 +25,7 @@ class ReservaModel extends Model
                     ->first() !== null;
     }
 
-    // ¿El alumno ya tiene una reserva confirmada en esa fecha y horario?
+    // Consulta si el alumno ya tiene una reserva confirmada en esa fecha y horario
     public function existeReservaEnHorario($idUsuario, $fecha, $horario)
     {
         return $this->select('reservas.id_reserva')
@@ -48,6 +48,17 @@ class ReservaModel extends Model
                     ->where('reservas.id_usuario', $idUsuario)
                     ->orderBy('turnos.fecha', 'DESC')
                     ->orderBy('turnos.horario', 'DESC')
+                    ->findAll();
+    }
+        // Lo usa el docente: alumnos con reserva confirmada en un turno 
+    public function getInscriptosDeTurno($idTurno)
+    {
+        return $this->select('reservas.id_reserva, reservas.asistencia, usuarios.nombre, usuarios.apellido, usuarios.dni')
+                    ->join('usuarios', 'usuarios.id_usuario = reservas.id_usuario')
+                    ->where('reservas.id_turno', $idTurno)
+                    ->where('reservas.estado', 'confirmada')
+                    ->orderBy('usuarios.apellido', 'ASC')
+                    ->orderBy('usuarios.nombre', 'ASC')
                     ->findAll();
     }
 }

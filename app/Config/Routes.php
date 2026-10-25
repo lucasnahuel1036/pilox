@@ -61,7 +61,13 @@ $routes->group('admin', ['filter' => 'admin'], function($routes) {
     $routes->post('abonos/eliminar/(:num)', 'Abono::eliminar/$1');
     $routes->post('abonos/pago/(:num)', 'Abono::cambiarPago/$1');
     $routes->get('alumnos/buscar', 'Alumno::buscar');
+    // Tarifas
+    $routes->get('tarifas', 'Tarifa::index');
+    $routes->post('tarifas/actualizar', 'Tarifa::actualizar');
+    // Informacion
+    $routes->get('informacion', 'Informacion::index');
 });
+
 // Alumno
 $routes->get('alumno/dashboard', 'Alumno::dashboard', ['filter' => 'auth']);
 $routes->group('alumno', ['filter' => 'alumno'], function($routes) {
@@ -69,4 +75,11 @@ $routes->group('alumno', ['filter' => 'alumno'], function($routes) {
     $routes->post('reservar/(:num)', 'Reserva::reservar/$1');
     $routes->get('reservas', 'Reserva::misReservas');
     $routes->post('reservas/cancelar/(:num)', 'Reserva::cancelar/$1');
+});
+
+$routes->group('docente', ['filter' => 'docente'], function($routes) {
+    $routes->get('dashboard', 'PanelDocente::dashboard');
+    $routes->get('clases', 'PanelDocente::clases');
+    $routes->get('clases/(:num)', 'PanelDocente::alumnos/$1');
+    $routes->post('clases/(:num)/asistencia', 'PanelDocente::registrarAsistencia/$1');
 });

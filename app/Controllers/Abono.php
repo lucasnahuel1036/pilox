@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\AbonoModel;
 use App\Models\UsuarioModel;
+use App\Models\TarifaModel;
 
 class Abono extends BaseController
 {
@@ -13,6 +14,7 @@ class Abono extends BaseController
         $abonoModel = new AbonoModel();
         $busqueda   = $this->request->getGet('q');
 
+        $data['tarifas'] = (new TarifaModel())->getTarifas();
         $data['vigentes']  = $abonoModel->vigentesConDetalles($busqueda)->paginate(10, 'vigentes');
         $data['historial'] = $abonoModel->historialConDetalles($busqueda)->paginate(10, 'historial');
         $data['pager']     = $abonoModel->pager;
@@ -36,6 +38,12 @@ class Abono extends BaseController
         // Solo existen abonos de 4, 8 o 12 clases
         if (!in_array($clases, [4, 8, 12], true)) {
             session()->setFlashdata('error', 'El abono debe ser de 4, 8 o 12 clases.');
+            return redirect()->back()->withInput();
+        }
+        // El precio queda fijo en el abono según la tarifa vigente al asignarlo
+        $precio = (new TarifaModel())->getPrecio($clases);
+        if ($precio === null) {
+            session()->setFlashdata('error', 'No hay una tarifa cargada para ese tipo de abono.');
             return redirect()->back()->withInput();
         }
 
@@ -74,6 +82,7 @@ class Abono extends BaseController
             'clases_restantes' => $clases,
             'estado_pago'      => 'pendiente',
             'id_usuario'       => $idUsuario,
+            'precio'           => $precio,
         ]);
 
         session()->setFlashdata('success', 'Abono asignado correctamente.');
@@ -108,9 +117,12 @@ class Abono extends BaseController
         }
 
         $nuevo = ($abono['estado_pago'] === 'pagado') ? 'pendiente' : 'pagado';
-        $abonoModel->update($id, ['estado_pago' => $nuevo]);
+        $abonoModel->update($id, [
+            'estado_pago' => $nuevo,
+            'fecha_pago'  => ($nuevo === 'pagado') ? date('Y-m-d') : null,
+        ]);
 
-        // Si se regulariza el pago el alumno morosov uelve a estar activo
+        // Si se regulariza el pago el alumno moroso vuelve a estar activo
         if ($nuevo === 'pagado') {
             $pendientes = $abonoModel->where('id_usuario', $abono['id_usuario'])
                                      ->where('estado_pago', 'pendiente')

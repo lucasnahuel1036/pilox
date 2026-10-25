@@ -13,7 +13,7 @@ class AbonoModel extends Model
 
     protected $allowedFields    = [
         'fecha_inicio', 'fecha_fin', 'clases_totales',
-        'clases_restantes', 'estado_pago', 'id_usuario'
+        'clases_restantes', 'precio', 'estado_pago', 'fecha_pago', 'id_usuario'
     ];
 
         // Base común: une al alumno y aplica la búsqueda por nombre, apellido o DNI

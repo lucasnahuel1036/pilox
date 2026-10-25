@@ -8,6 +8,8 @@
                 <?php if (session()->get('is_logged_in')): ?>
                     <?php if (session()->get('rol') === 'admin'): ?>
                         <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-custom-solid px-4 py-2 me-3">Ir a mi Panel</a>
+                    <?php elseif (session()->get('rol') === 'docente'): ?>
+                        <a href="<?= base_url('docente/clases') ?>" class="btn btn-custom-solid px-4 py-2 me-3">Mis Clases</a>
                     <?php else: ?>
                         <a href="<?= base_url('alumno/dashboard') ?>" class="btn btn-custom-solid px-4 py-2 me-3">Mis Reservas</a>
                     <?php endif; ?>

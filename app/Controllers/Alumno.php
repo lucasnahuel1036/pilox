@@ -139,11 +139,13 @@ class Alumno extends BaseController
 
         public function dashboard()
     {
-        // Los docentes siguen viendo la página provisoria hasta el Incremento 3
-        if (session()->get('rol') !== 'alumno') {
-            return view('templates/header')
-                 . view('alumno/en_construccion')
-                 . view('templates/footer');
+       
+        $rol = session()->get('rol');
+        if ($rol === 'docente') {
+            return redirect()->to('/docente/dashboard');
+        }
+        if ($rol !== 'alumno') {
+            return redirect()->to('/admin/dashboard');
         }
 
         $idUsuario = session()->get('id_usuario');

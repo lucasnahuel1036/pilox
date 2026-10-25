@@ -18,13 +18,18 @@ CREATE TABLE sucursales (
     nombre VARCHAR(100) NOT NULL,
     direccion VARCHAR(200) NOT NULL,
     telefono VARCHAR(20)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE actividades (
     id_actividad INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     descripcion TEXT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS tarifas (
+    clases INT PRIMARY KEY,
+    precio DECIMAL(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE turnos (
     id_turno INT AUTO_INCREMENT PRIMARY KEY,
@@ -46,7 +51,9 @@ CREATE TABLE abonos (
     fecha_fin DATE NOT NULL,
     clases_totales INT NOT NULL,
     clases_restantes INT NOT NULL,
+    precio DECIMAL(10,2) NOT NULL DEFAULT 0,
     estado_pago ENUM('pagado', 'pendiente') DEFAULT 'pendiente',
+    fecha_pago DATE NULL,
     id_usuario INT,
     CONSTRAINT fk_abonos_usuario FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -55,7 +62,7 @@ CREATE TABLE reservas (
     id_reserva INT AUTO_INCREMENT PRIMARY KEY,
     fecha_reserva DATETIME DEFAULT CURRENT_TIMESTAMP,
     estado ENUM('confirmada', 'cancelada') DEFAULT 'confirmada',
-    asistencia BOOLEAN DEFAULT FALSE,
+    asistencia BOOLEAN NULL DEFAULT NULL,
     id_usuario INT,
     id_turno INT,
     id_abono INT,
@@ -86,3 +93,5 @@ INSERT INTO actividades (nombre, descripcion) VALUES
 ('Yoga', 'Hatha Yoga para todos los niveles.'),
 ('GAP', 'Glúteos, Abdomen y Piernas.'),
 ('Pilates AFA', 'Pilates adaptado para rehabilitación.');
+--  Insertar Tarifas Base
+INSERT INTO tarifas (clases, precio) VALUES (4, 25000), (8, 27000), (12, 30000);
