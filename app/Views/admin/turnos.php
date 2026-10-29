@@ -77,13 +77,24 @@
         <div class="col-md-8">
             <div class="card border-0 shadow-sm rounded-4">
                 <div class="card-body p-4">
-                    <h5 class="fw-bold text-primary-dark mb-4">Grilla de Clases</h5>
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold text-primary-dark mb-2 mb-sm-0">Grilla de Clases</h5>
+                        <ul class="nav nav-pills">
+                            <li class="nav-item">
+                                <a class="nav-link rounded-pill py-1 px-3 <?= $periodo === 'proximos' ? 'active' : '' ?>" href="<?= base_url('admin/turnos') ?>">Próximos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link rounded-pill py-1 px-3 <?= $periodo === 'anteriores' ? 'active' : '' ?>" href="<?= base_url('admin/turnos?ver=anteriores') ?>">Anteriores</a>
+                            </li>
+                        </ul>
+                    </div>
                     
                     <?php if(empty($turnos)): ?>
                         <div class="alert alert-light text-center text-muted" role="alert">
-                            Todavía no hay clases programadas.
+                            <?= $periodo === 'proximos' ? 'No hay clases próximas programadas.' : 'Todavía no hay clases anteriores.' ?>
                         </div>
                     <?php else: ?>
+                        <?php $hoy = date('Y-m-d'); ?>
                         <div class="table-responsive">
                             <table class="table table-hover align-middle">
                                 <thead class="table-light">
@@ -99,7 +110,12 @@
                                     <?php foreach($turnos as $turno): ?>
                                         <tr>
                                             <td>
-                                                <div class="fw-bold text-primary-dark"><?= date('d/m/Y', strtotime($turno['fecha'])) ?></div>
+                                                <div class="fw-bold text-primary-dark">
+                                                    <?= date('d/m/Y', strtotime($turno['fecha'])) ?>
+                                                    <?php if ($turno['fecha'] === $hoy): ?>
+                                                        <span class="badge bg-success ms-1">Hoy</span>
+                                                    <?php endif; ?>
+                                                </div>
                                                 <div class="small text-muted"><?= date('H:i', strtotime($turno['horario'])) ?> hs</div>
                                             </td>
                                             <td><span class="badge bg-secondary"><?= esc($turno['actividad']) ?></span></td>
@@ -123,6 +139,7 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="mt-3"><?= $pager->links() ?></div>
                     <?php endif; ?>
                 </div>
             </div>

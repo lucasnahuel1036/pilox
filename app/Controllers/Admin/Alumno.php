@@ -38,6 +38,11 @@ class Alumno extends BaseController
             return redirect()->back()->withInput();
         }
 
+        if ($model->where('dni', $dni)->first()) {
+            session()->setFlashdata('error', 'El DNI ya se encuentra registrado.');
+            return redirect()->back()->withInput();
+        }
+
         if ($model->where('email', $this->request->getPost('email'))->first()) {
             session()->setFlashdata('error', 'El correo ya está registrado.');
             return redirect()->back()->withInput();
@@ -62,7 +67,14 @@ class Alumno extends BaseController
     public function editar($id)
     {
         $model = new UsuarioModel();
-        $data['alumno'] = $model->find($id);
+        $alumno = $model->find($id);
+
+        if (!$alumno) {
+            session()->setFlashdata('error', 'El alumno no existe.');
+            return redirect()->to('/admin/alumnos');
+        }
+
+        $data['alumno'] = $alumno;
 
         return view('templates/header')
              . view('admin/editar_alumno', $data)
@@ -75,14 +87,20 @@ class Alumno extends BaseController
         // Checkea rol/estado/dni/mail
         $rol    = $this->request->getPost('rol');
         $estado = $this->request->getPost('estado');
+        $dni    = (string) $this->request->getPost('dni');
 
         if (!in_array($rol, ['alumno', 'docente', 'admin'], true) || !in_array($estado, ['activo', 'inactivo', 'moroso'], true)) {
             session()->setFlashdata('error', 'Rol o estado no válido.');
             return redirect()->back()->withInput();
         }
 
-        if (!preg_match('/^[0-9]{7,8}$/', (string) $this->request->getPost('dni'))) {
+        if (!preg_match('/^[0-9]{7,8}$/', $dni)) {
             session()->setFlashdata('error', 'El DNI ingresado no es válido. Debe tener números sin puntos.');
+            return redirect()->back()->withInput();
+        }
+
+        if ($model->where('dni', $dni)->where('id_usuario !=', $id)->first()) {
+            session()->setFlashdata('error', 'El DNI ya está registrado en otro usuario.');
             return redirect()->back()->withInput();
         }
 

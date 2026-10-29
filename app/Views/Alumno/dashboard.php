@@ -61,7 +61,7 @@
     </div>
 
     <div class="row">
-        <div class="col-md-6 mb-4">
+        <div class="col-md-4 mb-4">
             <div class="card h-100 border-0 shadow-sm rounded-4" style="background-color: #F8F9F5;">
                 <div class="card-body">
                     <h5 class="fw-bold text-primary-dark">📅 Turnos</h5>
@@ -70,12 +70,21 @@
                 </div>
             </div>
         </div>
-                <div class="col-md-6 mb-4">
+        <div class="col-md-4 mb-4">
             <div class="card h-100 border-0 shadow-sm rounded-4" style="background-color: #F8F9F5;">
                 <div class="card-body">
                     <h5 class="fw-bold text-primary-dark">✅ Mis Reservas</h5>
                     <p class="small text-muted">Revisá tus próximas clases, tu historial y cancelá si lo necesitás.</p>
                     <a href="<?= base_url('alumno/reservas') ?>" class="btn btn-sm btn-custom-solid">Ver reservas</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4" style="background-color: #F8F9F5;">
+                <div class="card-body">
+                    <h5 class="fw-bold text-primary-dark">👤 Mi Perfil</h5>
+                    <p class="small text-muted">Actualizá tus datos personales y cambiá tu contraseña.</p>
+                    <a href="<?= base_url('perfil') ?>" class="btn btn-sm btn-custom-solid">Editar perfil</a>
                 </div>
             </div>
         </div>

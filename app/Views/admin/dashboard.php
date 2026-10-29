@@ -127,5 +127,15 @@
                 </div>
             </div>
         </div>
+        <!-- Mi Perfil -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4" style="background-color: #e9f2c6;">
+                <div class="card-body">
+                    <h5 class="fw-bold text-primary-dark">👤 Mi Perfil</h5>
+                    <p class="small text-muted">Actualizá tus datos de cuenta y tu contraseña de acceso.</p>
+                    <a href="<?= base_url('perfil') ?>" class="btn btn-sm btn-custom-solid">Editar perfil</a>
+                </div>
+            </div>
+        </div>
     </div>
 </main>

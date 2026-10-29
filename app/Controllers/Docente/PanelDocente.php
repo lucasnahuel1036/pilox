@@ -11,12 +11,16 @@ class PanelDocente extends BaseController
 {
     // Días posteriores al inicio de la clase en que se puede registrar o corregir la asistencia
     const DIAS_LIMITE_ASISTENCIA = 7;
-    // Panel principal: próximas clases del docente
+    // Panel principal: resumen del docente, agenda del día y accesos rápidos
     public function dashboard()
     {
-        $idDocente = session()->get('id_usuario');
+        $idDocente  = session()->get('id_usuario');
+        $turnoModel = new TurnoModel();
 
-        $data['clases'] = (new TurnoModel())->getClasesDeDocente($idDocente, 'proximas')->findAll(8);
+        $data['resumen']   = $turnoModel->getResumenDeDocente($idDocente, self::DIAS_LIMITE_ASISTENCIA);
+        $data['clasesHoy'] = $turnoModel->getClasesDeDocente($idDocente, 'proximas')
+                                        ->where('turnos.fecha', date('Y-m-d'))
+                                        ->findAll();
 
         return view('templates/header')
              . view('docente/dashboard', $data)

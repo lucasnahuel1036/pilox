@@ -23,17 +23,26 @@ class TurnoModel extends Model
 
     /**
      * Esta función hace JOIN con las otras tablas para traer
-     * el nombre de la actividad, la sucursal y el docente
+     * el nombre de la actividad, la sucursal y el docente.
+     * $periodo: 'proximos' (de hoy en adelante) o 'anteriores'.
+     * Devuelve el modelo para poder encadenar paginate() o findAll().
      */
-    public function getTurnosConDetalles()
+    public function getTurnosConDetalles($periodo = 'proximos')
     {
-        return $this->select('turnos.*, actividades.nombre as actividad, sucursales.nombre as sucursal, usuarios.nombre as docente_nombre, usuarios.apellido as docente_apellido')
-                    ->join('actividades', 'actividades.id_actividad = turnos.id_actividad')
-                    ->join('sucursales', 'sucursales.id_sucursal = turnos.id_sucursal')
-                    ->join('usuarios', 'usuarios.id_usuario = turnos.id_docente')
+        $this->select('turnos.*, actividades.nombre as actividad, sucursales.nombre as sucursal, usuarios.nombre as docente_nombre, usuarios.apellido as docente_apellido')
+             ->join('actividades', 'actividades.id_actividad = turnos.id_actividad')
+             ->join('sucursales', 'sucursales.id_sucursal = turnos.id_sucursal')
+             ->join('usuarios', 'usuarios.id_usuario = turnos.id_docente');
+
+        if ($periodo === 'anteriores') {
+            return $this->where('turnos.fecha <', date('Y-m-d'))
+                        ->orderBy('turnos.fecha', 'DESC')
+                        ->orderBy('turnos.horario', 'DESC');
+        }
+
+        return $this->where('turnos.fecha >=', date('Y-m-d'))
                     ->orderBy('turnos.fecha', 'ASC')
-                    ->orderBy('turnos.horario', 'ASC')
-                    ->findAll();
+                    ->orderBy('turnos.horario', 'ASC');
     }
 
      /**
@@ -105,5 +114,39 @@ class TurnoModel extends Model
                     ->where('turnos.id_turno', $idTurno)
                     ->where('turnos.id_docente', $idDocente)
                     ->first();
+    }
+
+    // Resumen de métricas para el panel principal del docente
+    public function getResumenDeDocente($idDocente, $diasLimiteAsistencia = 7)
+    {
+        $hoy   = date('Y-m-d');
+        $ahora = date('Y-m-d H:i:s');
+        $desde = date('Y-m-d H:i:s', strtotime("-{$diasLimiteAsistencia} days"));
+
+        $clasesHoy = $this->db->table('turnos')
+                              ->where('id_docente', $idDocente)
+                              ->where('fecha', $hoy)
+                              ->countAllResults();
+
+        $clasesProximas = $this->db->table('turnos')
+                                   ->where('id_docente', $idDocente)
+                                   ->where('fecha >=', $hoy)
+                                   ->countAllResults();
+
+        // Clases ya iniciadas dentro de la ventana habilitada que aún tienen alumnos sin asistencia registrada
+        $pendientes = $this->db->query(
+            "SELECT COUNT(DISTINCT t.id_turno) AS total
+             FROM turnos t
+             JOIN reservas r ON r.id_turno = t.id_turno AND r.estado = 'confirmada' AND r.asistencia IS NULL
+             WHERE t.id_docente = ?
+               AND TIMESTAMP(t.fecha, t.horario) BETWEEN ? AND ?",
+            [$idDocente, $desde, $ahora]
+        )->getRowArray();
+
+        return [
+            'clases_hoy'             => $clasesHoy,
+            'clases_proximas'        => $clasesProximas,
+            'asistencias_pendientes' => (int) ($pendientes['total'] ?? 0),
+        ];
     }
 }

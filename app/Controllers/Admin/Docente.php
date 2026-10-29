@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 
 use App\Models\UsuarioModel;
+use App\Models\TurnoModel;
 
 class Docente extends BaseController
 {
@@ -30,6 +31,11 @@ class Docente extends BaseController
         $dni = $this->request->getPost('dni');
         if (!preg_match('/^[0-9]{7,8}$/', $dni)) {
             session()->setFlashdata('error', 'El DNI ingresado no es válido. Debe tener números sin puntos.');
+            return redirect()->back()->withInput();
+        }
+
+        if ($model->where('dni', $dni)->first()) {
+            session()->setFlashdata('error', 'El DNI ya se encuentra registrado.');
             return redirect()->back()->withInput();
         }
         
@@ -64,7 +70,14 @@ class Docente extends BaseController
     public function editar($id)
     {
         $model = new UsuarioModel();
-        $data['docente'] = $model->find($id);
+        $docente = $model->find($id);
+
+        if (!$docente) {
+            session()->setFlashdata('error', 'El docente no existe.');
+            return redirect()->to('/admin/docentes');
+        }
+
+        $data['docente'] = $docente;
 
         return view('templates/header')
              . view('admin/editar_docente', $data)
@@ -74,6 +87,22 @@ class Docente extends BaseController
     public function actualizar($id)
     {
         $model = new UsuarioModel();
+
+        $dni = (string) $this->request->getPost('dni');
+        if (!preg_match('/^[0-9]{7,8}$/', $dni)) {
+            session()->setFlashdata('error', 'El DNI ingresado no es válido. Debe tener números sin puntos.');
+            return redirect()->back()->withInput();
+        }
+
+        if ($model->where('dni', $dni)->where('id_usuario !=', $id)->first()) {
+            session()->setFlashdata('error', 'El DNI ya está registrado en otro usuario.');
+            return redirect()->back()->withInput();
+        }
+
+        if ($model->where('email', $this->request->getPost('email'))->where('id_usuario !=', $id)->first()) {
+            session()->setFlashdata('error', 'El correo ya está registrado en otro usuario.');
+            return redirect()->back()->withInput();
+        }
         
         $data = [
             'nombre'       => $this->request->getPost('nombre'),
@@ -102,7 +131,7 @@ class Docente extends BaseController
 
     public function eliminar($id)
     {
-        $turnoModel = new \App\Models\TurnoModel();
+        $turnoModel = new TurnoModel();
         if ($turnoModel->where('id_docente', $id)->countAllResults() > 0) {
             session()->setFlashdata('error', 'No se puede eliminar el docente porque tiene turnos asociados.');
             return redirect()->to('/admin/docentes');

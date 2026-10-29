@@ -59,7 +59,7 @@
             Swal.fire({
                 icon: 'success',
                 title: '¡Éxito!',
-                text: '<?= session()->getFlashdata('success') ?>',
+                text: '<?= esc(session()->getFlashdata('success'), 'js') ?>',
                 confirmButtonColor: '#1A3C34'
             });
         <?php endif; ?>
@@ -68,7 +68,7 @@
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
-                text: '<?= session()->getFlashdata('error') ?>',
+                text: '<?= esc(session()->getFlashdata('error'), 'js') ?>',
                 confirmButtonColor: '#1A3C34'
             });
         <?php endif; ?>

@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 
 use App\Models\SucursalModel;
+use App\Models\TurnoModel;
 
 class Sucursal extends BaseController
 {
@@ -49,7 +50,7 @@ class Sucursal extends BaseController
     // Elimina una sucursal por su ID
     public function eliminar($id)
     {
-        $turnoModel = new \App\Models\TurnoModel();
+        $turnoModel = new TurnoModel();
         if ($turnoModel->where('id_sucursal', $id)->countAllResults() > 0) {
             session()->setFlashdata('error', 'No se puede eliminar la sucursal porque tiene turnos asociados.');
             return redirect()->to('/admin/sucursales');
@@ -65,7 +66,14 @@ class Sucursal extends BaseController
     public function editar($id)
     {
         $model = new SucursalModel();
-        $data['sucursal'] = $model->find($id);
+        $sucursal = $model->find($id);
+
+        if (!$sucursal) {
+            session()->setFlashdata('error', 'La sucursal no existe.');
+            return redirect()->to('/admin/sucursales');
+        }
+
+        $data['sucursal'] = $sucursal;
 
         return view('templates/header')
              . view('admin/editar_sucursal', $data)

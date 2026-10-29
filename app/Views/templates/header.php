@@ -48,7 +48,7 @@
                 <?php if (session()->get('is_logged_in')): ?>
                     
                     <a href="<?= base_url(url_panel()) ?>" class="btn btn-custom-outline me-2">Mi Panel</a>
-                    
+                    <a href="<?= base_url('perfil') ?>" class="btn btn-custom-outline me-2" title="Mi Perfil"><i class="bi bi-person-circle"></i></a>
                     <a href="<?= base_url('logout') ?>" class="btn btn-danger rounded-pill">Salir</a>
                 <?php else: ?>
                     <a href="<?= base_url('login') ?>" class="btn btn-custom-outline px-4 me-2">Iniciar sesión</a>

@@ -13,13 +13,13 @@ class Turno extends BaseController
 {
     public function index()
     {
-        
-
         // Instanciamos todos los modelos que necesitamos
         $turnoModel = new TurnoModel();
         $sucursalModel = new SucursalModel();
         $actividadModel = new ActividadModel();
         $usuarioModel = new UsuarioModel();
+
+        $periodo = ($this->request->getGet('ver') === 'anteriores') ? 'anteriores' : 'proximos';
 
         // Mandamos los datos para llenar los <select> del formulario
         $data['sucursales'] = $sucursalModel->findAll();
@@ -27,8 +27,10 @@ class Turno extends BaseController
         // Solo traemos a los usuarios que son docentes
         $data['docentes'] = $usuarioModel->where('rol', 'docente')->findAll();
         
-        // Mandamos la lista de turnos (con los nombres de las tablas unidas)
-        $data['turnos'] = $turnoModel->getTurnosConDetalles();
+        // Mandamos la lista de turnos paginada según el período elegido
+        $data['turnos']  = $turnoModel->getTurnosConDetalles($periodo)->paginate(10);
+        $data['pager']   = $turnoModel->pager;
+        $data['periodo'] = $periodo;
 
         return view('templates/header')
              . view('admin/turnos', $data)
@@ -78,11 +80,18 @@ class Turno extends BaseController
     public function editar($id)
     {
         $turnoModel = new TurnoModel();
+        $turno = $turnoModel->find($id);
+
+        if (!$turno) {
+            session()->setFlashdata('error', 'El turno no existe.');
+            return redirect()->to('/admin/turnos');
+        }
+
         $sucursalModel = new SucursalModel();
         $actividadModel = new ActividadModel();
         $usuarioModel = new UsuarioModel();
 
-        $data['turno'] = $turnoModel->find($id);
+        $data['turno'] = $turno;
         $data['sucursales'] = $sucursalModel->findAll();
         $data['actividades'] = $actividadModel->findAll();
         $data['docentes'] = $usuarioModel->where('rol', 'docente')->findAll();
@@ -151,9 +160,9 @@ class Turno extends BaseController
     // Busca para aasignar turnos
     public function masivo()
     {
-        $sucursalModel = new \App\Models\SucursalModel();
-        $actividadModel = new \App\Models\ActividadModel();
-        $usuarioModel = new \App\Models\UsuarioModel();
+        $sucursalModel = new SucursalModel();
+        $actividadModel = new ActividadModel();
+        $usuarioModel = new UsuarioModel();
 
         $data['sucursales'] = $sucursalModel->findAll();
         $data['actividades'] = $actividadModel->findAll();
@@ -169,15 +178,38 @@ class Turno extends BaseController
     {
         $model = new TurnoModel();
         
-        // Capturamos el rango de fechas
-        $fecha_inicio = new \DateTime($this->request->getPost('fecha_inicio'));
-        $fecha_fin = new \DateTime($this->request->getPost('fecha_fin'));
-        $fecha_fin->modify('+1 day'); // Sumamos un día para que el bucle incluya la fecha final
-        
-        // Capturamos los datos fijos de la clase
-        $hora = $this->request->getPost('horario');
+        $inicioStr          = (string) $this->request->getPost('fecha_inicio');
+        $finStr             = (string) $this->request->getPost('fecha_fin');
         $dias_seleccionados = $this->request->getPost('dias'); // Esto será un array (ej: [2, 4] para Mar y Jue)
-        $capacidad = $this->request->getPost('capacidad');
+        $capacidad          = (int) $this->request->getPost('capacidad');
+        $hora               = $this->request->getPost('horario');
+
+        // Validamos que haya elegido al menos un día de la semana
+        if (empty($dias_seleccionados) || !is_array($dias_seleccionados)) {
+            session()->setFlashdata('error', 'Debés seleccionar al menos un día de la semana.');
+            return redirect()->back()->withInput();
+        }
+
+        // Validamos fechas y rango
+        $fecha_inicio = \DateTime::createFromFormat('Y-m-d', $inicioStr);
+        $fecha_fin    = \DateTime::createFromFormat('Y-m-d', $finStr);
+
+        if (!$fecha_inicio || $fecha_inicio->format('Y-m-d') !== $inicioStr || !$fecha_fin || $fecha_fin->format('Y-m-d') !== $finStr) {
+            session()->setFlashdata('error', 'Las fechas ingresadas no son válidas.');
+            return redirect()->back()->withInput();
+        }
+
+        if ($fecha_fin < $fecha_inicio) {
+            session()->setFlashdata('error', 'La fecha de fin no puede ser anterior a la fecha de inicio.');
+            return redirect()->back()->withInput();
+        }
+
+        if ($capacidad < 1) {
+            session()->setFlashdata('error', 'La capacidad debe ser al menos 1.');
+            return redirect()->back()->withInput();
+        }
+
+        $fecha_fin->modify('+1 day'); // Sumamos un día para que el bucle incluya la fecha final
         
         // Configuramos el iterador de PHP para avanzar de a 1 día
         $intervalo = new \DateInterval('P1D');

@@ -50,7 +50,7 @@
             <div class="mb-4">
                 <label class="form-label text-primary-dark small fw-bold">Capacidad Total</label>
                 <input type="number" class="form-control rounded-pill px-3" name="capacidad" value="<?= $turno['capacidad'] ?>" min="1" required>
-                <div class="form-text small">Nota: Al actualizar, los cupos disponibles se reiniciarán a este valor.</div>
+                <div class="form-text small">Nota: Los cupos disponibles se recalcularán automáticamente según las reservas confirmadas.</div>
             </div>
 
             <div class="d-grid gap-2">

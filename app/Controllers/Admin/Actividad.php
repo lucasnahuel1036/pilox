@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 
 use App\Models\ActividadModel;
+use App\Models\TurnoModel;
 
 class Actividad extends BaseController
 {
@@ -43,7 +44,14 @@ class Actividad extends BaseController
     public function editar($id)
     {
         $model = new ActividadModel();
-        $data['actividad'] = $model->find($id);
+        $actividad = $model->find($id);
+
+        if (!$actividad) {
+            session()->setFlashdata('error', 'La actividad no existe.');
+            return redirect()->to('/admin/actividades');
+        }
+
+        $data['actividad'] = $actividad;
 
         return view('templates/header')
              . view('admin/editar_actividad', $data)
@@ -72,7 +80,7 @@ class Actividad extends BaseController
 
     public function eliminar($id)
     {
-        $turnoModel = new \App\Models\TurnoModel();
+        $turnoModel = new TurnoModel();
         if ($turnoModel->where('id_actividad', $id)->countAllResults() > 0) {
             session()->setFlashdata('error', 'No se puede eliminar la actividad porque tiene turnos asociados.');
             return redirect()->to('/admin/actividades');

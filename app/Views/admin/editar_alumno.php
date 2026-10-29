@@ -14,7 +14,11 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label text-primary-dark small fw-bold">DNI</label>
-                    <input type="text" inputmode="numeric" pattern="[0-9]{7,8}" maxlength="8" title="Debe contener 7 u 8 números, sin puntos" class="form-control rounded-pill px-3" name="dni" required placeholder="Ej: 41987654">
+                    <input type="text" inputmode="numeric" pattern="[0-9]{7,8}" maxlength="8" title="Debe contener 7 u 8 números, sin puntos" class="form-control rounded-pill px-3" name="dni" value="<?= esc($alumno['dni']) ?>" required placeholder="Ej: 41987654">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label text-primary-dark small fw-bold">Fecha de Nacimiento</label>
+                    <input type="date" class="form-control rounded-pill px-3" name="fecha_nacimiento" value="<?= esc($alumno['fecha_nacimiento']) ?>">
                 </div>
             </div>
             

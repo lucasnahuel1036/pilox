@@ -33,3 +33,64 @@ body {
     border-radius: 20px;
     font-weight: bold;
 }
+
+/* ---- Paginación y Pestañas Pilox ---- */
+.pagination-pilox {
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.pagination-pilox .page-item .page-link {
+    color: #1A3C34;
+    background-color: #F8F9F5;
+    border: 1px solid #dce3dc;
+    border-radius: 50rem;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: 0 1px 2px rgba(26, 60, 52, 0.05);
+    transition: background-color 0.22s ease, color 0.22s ease, transform 0.2s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.pagination-pilox .page-item .page-link:hover {
+    background-color: #e9f2c6;
+    border-color: #C5E063;
+    color: #1A3C34;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(26, 60, 52, 0.12);
+}
+
+.pagination-pilox .page-item .page-link:focus {
+    box-shadow: 0 0 0 0.2rem rgba(197, 224, 99, 0.45);
+}
+
+.pagination-pilox .page-item.active .page-link {
+    background-color: #1A3C34;
+    border-color: #1A3C34;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(26, 60, 52, 0.22);
+    transform: translateY(-1px);
+}
+
+/* Pestañas nav-pills (Turnos y Clases del Docente) con la paleta Pilox */
+.nav-pills .nav-link {
+    color: #1A3C34;
+    font-weight: 600;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.nav-pills .nav-link:hover:not(.active) {
+    background-color: #e9f2c6;
+    color: #1A3C34;
+    transform: translateY(-1px);
+}
+
+.nav-pills .nav-link.active {
+    background-color: #1A3C34;
+    color: #ffffff;
+}

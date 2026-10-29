@@ -16,6 +16,13 @@ $routes->post('registrar', 'Auth::registrar');
 // Ruta para cerrar sesión
 $routes->get('logout', 'Auth::logout');
 
+// Rutas de Perfil (para cualquier usuario autenticado: admin, docente o alumno)
+$routes->group('perfil', ['filter' => 'auth'], function($routes) {
+    $routes->get('/', 'Perfil::index');
+    $routes->post('actualizar', 'Perfil::actualizar');
+    $routes->post('password', 'Perfil::cambiarPassword');
+});
+
 
 
 // Rutas exclusivas del Panel de Administración
@@ -82,4 +89,14 @@ $routes->group('docente', ['filter' => 'docente', 'namespace' => 'App\Controller
     $routes->get('clases', 'PanelDocente::clases');
     $routes->get('clases/(:num)', 'PanelDocente::alumnos/$1');
     $routes->post('clases/(:num)/asistencia', 'PanelDocente::registrarAsistencia/$1');
+});
+
+
+// Pagina error 404 personalizada
+$routes->set404Override(function () {
+    response()->setStatusCode(404);
+
+    return view('templates/header')
+         . view('public/error404') 
+         . view('templates/footer');
 });
