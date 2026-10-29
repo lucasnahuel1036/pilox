@@ -3,6 +3,18 @@
 $dinero = fn($n) => '$' . number_format((float) $n, 0, ',', '.');
 $entero = fn($n) => number_format((int) $n, 0, ',', '.');
 $porc   = fn($n) => number_format((float) $n, 1, ',', '.') . '%';
+$fechaCorta = fn($f) => $f ? date('d/m/Y', strtotime($f)) : '—';
+
+$valorKpi = fn($valor, $tipo) => $tipo === 'dinero' ? $dinero($valor) : ($tipo === 'porcentaje' ? $porc($valor) : $entero($valor));
+
+// Textos del filtro que se muestran en cada sección
+$periodoTexto   = $fechaCorta($desde) . ' al ' . $fechaCorta($hasta);
+$nombreSucursal = 'Todas las sucursales';
+foreach ($sucursales as $suc) {
+    if ($suc['id_sucursal'] == $idSucursal) {
+        $nombreSucursal = $suc['nombre'];
+    }
+}
 
 // Color de la barra según el porcentaje (ocupación y asistencia)
 $colorBarra = function ($pct) {
@@ -11,19 +23,57 @@ $colorBarra = function ($pct) {
     return 'barra-baja';
 };
 
-// Tarjeta con un número grande (los números se animan al cargar la página)
-$kpi = function ($etiqueta, $valor, $tipo, $detalle = '', $clase = '') use ($dinero, $entero, $porc) {
-    $texto     = $tipo === 'dinero' ? $dinero($valor) : ($tipo === 'porcentaje' ? $porc($valor) : $entero($valor));
+// Encabezado de cada sección: icono, título, la pregunta que responde y qué filtros usa
+$encabezado = function ($icono, $titulo, $pregunta, $alcance) {
+    ?>
+    <div class="seccion-encabezado">
+        <div class="d-flex align-items-center gap-3">
+            <div class="seccion-icono"><?= $icono ?></div>
+            <div>
+                <h4 class="mb-0 text-primary-dark fw-bold"><?= esc($titulo) ?></h4>
+                <div class="text-muted small"><?= esc($pregunta) ?></div>
+            </div>
+        </div>
+        <span class="badge-alcance"><?= esc($alcance) ?></span>
+    </div>
+    <?php
+};
+
+// Tarjeta principal de la sección: grande y en verde (los números se animan al cargar)
+$kpiHero = function ($etiqueta, $valor, $tipo, $detalle = '', $pct = null) use ($valorKpi) {
     $decimales = $tipo === 'porcentaje' ? 1 : 0;
     ?>
-    <div class="col-6 col-lg-3 mb-3">
-        <div class="kpi-card <?= $clase ?>">
-            <div class="kpi-etiqueta"><?= esc($etiqueta) ?></div>
-            <div class="kpi-valor">
-                <span class="contador" data-valor="<?= (float) $valor ?>" data-tipo="<?= $tipo ?>" data-decimales="<?= $decimales ?>"><?= $texto ?></span>
+    <div class="col-lg-5">
+        <div class="kpi-hero">
+            <div class="kpi-hero-etiqueta"><?= esc($etiqueta) ?></div>
+            <div class="kpi-hero-valor">
+                <span class="contador" data-valor="<?= (float) $valor ?>" data-tipo="<?= $tipo ?>" data-decimales="<?= $decimales ?>"><?= $valorKpi($valor, $tipo) ?></span>
+            </div>
+            <?php if ($pct !== null): ?>
+                <div class="progress kpi-hero-barra">
+                    <div class="progress-bar" role="progressbar" style="width: <?= min(100, (float) $pct) ?>%"></div>
+                </div>
+            <?php endif; ?>
+            <?php if ($detalle !== ''): ?>
+                <div class="kpi-hero-detalle"><?= esc($detalle) ?></div>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php
+};
+
+// Tarjeta secundaria: blanca y más chica
+$kpiMini = function ($etiqueta, $valor, $tipo, $detalle = '', $clase = '') use ($valorKpi) {
+    $decimales = $tipo === 'porcentaje' ? 1 : 0;
+    ?>
+    <div class="col-12 col-sm-4">
+        <div class="kpi-mini <?= $clase ?>">
+            <div class="kpi-mini-etiqueta"><?= esc($etiqueta) ?></div>
+            <div class="kpi-mini-valor">
+                <span class="contador" data-valor="<?= (float) $valor ?>" data-tipo="<?= $tipo ?>" data-decimales="<?= $decimales ?>"><?= $valorKpi($valor, $tipo) ?></span>
             </div>
             <?php if ($detalle !== ''): ?>
-                <div class="kpi-detalle"><?= esc($detalle) ?></div>
+                <div class="kpi-mini-detalle"><?= esc($detalle) ?></div>
             <?php endif; ?>
         </div>
     </div>
@@ -80,9 +130,9 @@ $tablaOcupacion = function ($titulo, $columna, $filas) use ($barra, $entero) {
     </div>
     <?php
 };
-
-$fechaCorta = fn($f) => $f ? date('d/m/Y', strtotime($f)) : '—';
 ?>
+<link rel="stylesheet" href="<?= base_url('assets/css/informe.css') ?>">
+
 <main class="container mt-5 mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -121,272 +171,320 @@ $fechaCorta = fn($f) => $f ? date('d/m/Y', strtotime($f)) : '—';
                 </div>
             </form>
             <div class="form-text mt-3">
-                Los ingresos se cuentan por <strong>fecha de pago</strong>. La ocupación, la asistencia y las reservas
-                usan la <strong>fecha de los turnos</strong> y respetan la sucursal elegida. La deuda y los alumnos
-                se muestran al día de hoy.
+                Cada sección indica arriba a la derecha qué filtros usa: algunas respetan el período y la sucursal,
+                y otras muestran el total o el estado de hoy.
             </div>
         </div>
     </div>
+
+    <!-- Índice de accesos rápidos -->
+    <nav class="indice-informe" aria-label="Secciones de la página">
+        <a href="#ingresos">💰 Ingresos</a>
+        <a href="#ocupacion">🏋️ Ocupación</a>
+        <a href="#asistencia">✅ Asistencia</a>
+        <a href="#reservas">📅 Reservas</a>
+        <a href="#alumnos">👥 Alumnos</a>
+    </nav>
 
     <!-- ===================== INGRESOS ===================== -->
-    <h4 class="seccion-titulo">💰 Ingresos</h4>
-    <div class="row">
-        <?php $kpi('Cobrado en el período', $ingresos['total']['monto'], 'dinero', date('d/m', strtotime($desde)) . ' al ' . date('d/m', strtotime($hasta)), 'kpi-destacado'); ?>
-        <?php $kpi('Abonos cobrados', $ingresos['total']['cantidad'], 'entero'); ?>
-        <?php $kpi('Deuda pendiente', $deuda['resumen']['monto'], 'dinero', 'Abonos sin pagar, a hoy', 'kpi-alerta'); ?>
-        <?php $kpi('Abonos con deuda', $deuda['resumen']['cantidad'], 'entero', '', 'kpi-alerta'); ?>
-    </div>
+    <section id="ingresos" class="panel-seccion">
+        <?php $encabezado('💰', 'Ingresos', '¿Cuánto entró y cuánto falta cobrar?', 'Período: ' . $periodoTexto . ' · Todas las sucursales'); ?>
+        <p class="nota-seccion">
+            ℹ️ Los abonos sirven en todas las sucursales, por eso lo cobrado no se separa por sucursal.
+            Se cuenta por fecha de pago.
+        </p>
 
-    <div class="row">
-        <div class="col-lg-7 mb-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body p-4">
-                    <h6 class="fw-bold text-primary-dark mb-3">Cobrado en los últimos 6 meses</h6>
-                    <div class="grafico-contenedor"><canvas id="graficoIngresos"></canvas></div>
+        <div class="row g-3 mb-4">
+            <?php $kpiHero('Cobrado en el período', $ingresos['total']['monto'], 'dinero', $entero($ingresos['total']['cantidad']) . ' abonos cobrados'); ?>
+            <div class="col-lg-7">
+                <div class="row g-3 h-100">
+                    <?php $kpiMini('Abonos cobrados', $ingresos['total']['cantidad'], 'entero', 'En el período'); ?>
+                    <?php $kpiMini('Deuda pendiente', $deuda['resumen']['monto'], 'dinero', 'Abonos sin pagar, a hoy', 'kpi-alerta'); ?>
+                    <?php $kpiMini('Abonos con deuda', $deuda['resumen']['cantidad'], 'entero', 'A hoy', 'kpi-alerta'); ?>
                 </div>
             </div>
         </div>
-        <div class="col-lg-5 mb-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body p-4">
-                    <h6 class="fw-bold text-primary-dark mb-3">Por tipo de abono (período elegido)</h6>
-                    <?php if (empty($ingresos['por_tipo'])): ?>
-                        <p class="text-muted small mb-0">No hay abonos cobrados en el período.</p>
-                    <?php else: ?>
-                        <table class="table table-sm align-middle tabla-informe mb-0">
-                            <thead>
-                                <tr><th>Abono</th><th class="text-center">Vendidos</th><th class="text-end">Monto</th></tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($ingresos['por_tipo'] as $tipo): ?>
-                                    <tr>
-                                        <td class="fw-bold text-primary-dark"><?= $tipo['clases'] ?> clases</td>
-                                        <td class="text-center"><?= $entero($tipo['cantidad']) ?></td>
-                                        <td class="text-end"><?= $dinero($tipo['monto']) ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    <?php endif; ?>
+
+        <div class="row g-4 mb-4">
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+                        <h6 class="fw-bold text-primary-dark mb-3">Cobrado en los últimos 6 meses</h6>
+                        <div class="grafico-contenedor"><canvas id="graficoIngresos"></canvas></div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="card border-0 shadow-sm rounded-4">
-        <div class="card-body p-4">
-            <h6 class="fw-bold text-primary-dark mb-3">Pagos pendientes</h6>
-            <?php if (empty($deuda['lista'])): ?>
-                <p class="text-muted small mb-0">No hay abonos pendientes de pago.</p>
-            <?php else: ?>
-                <div class="table-responsive">
-                    <table class="table table-sm align-middle tabla-informe mb-0">
-                        <thead>
-                            <tr><th>Alumno</th><th>DNI</th><th>Abono</th><th>Desde</th><th class="text-end">Monto</th></tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($deuda['lista'] as $d): ?>
-                                <tr>
-                                    <td class="fw-bold text-primary-dark"><?= esc($d['apellido'] . ', ' . $d['nombre']) ?></td>
-                                    <td><?= esc($d['dni']) ?></td>
-                                    <td><?= $d['clases_totales'] ?> clases</td>
-                                    <td><?= $fechaCorta($d['fecha_inicio']) ?></td>
-                                    <td class="text-end"><?= $dinero($d['precio']) ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-                <?php if ($deuda['resumen']['cantidad'] > count($deuda['lista'])): ?>
-                    <p class="text-muted small mt-2 mb-0">
-                        Se muestran los 10 más antiguos de <?= $entero($deuda['resumen']['cantidad']) ?>.
-                        Podés regularizarlos desde Abonos.
-                    </p>
-                <?php endif; ?>
-            <?php endif; ?>
-        </div>
-    </div>
-
-    <!-- ===================== OCUPACIÓN ===================== -->
-    <h4 class="seccion-titulo">🏋️ Ocupación de las clases</h4>
-    <div class="row">
-        <?php $kpi('Ocupación general', $ocupacion['pct'], 'porcentaje', $entero($ocupacion['ocupados']) . ' de ' . $entero($ocupacion['capacidad']) . ' cupos', 'kpi-destacado'); ?>
-        <?php $kpi('Turnos del período', $ocupacion['turnos'], 'entero'); ?>
-        <?php $kpi('Turnos llenos', $ocupacion['llenos'], 'entero', 'Sin cupos disponibles'); ?>
-        <?php $kpi('Turnos casi vacíos', $ocupacion['casi_vacios'], 'entero', 'Menos del ' . \App\Models\InformeModel::UMBRAL_CASI_VACIO . '% de ocupación', 'kpi-alerta'); ?>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-6 mb-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body p-4">
-                    <h6 class="fw-bold text-primary-dark mb-3">Ocupación por día de la semana</h6>
-                    <?php if (empty($ocupacionDia)): ?>
-                        <p class="text-muted small mb-0">No hay turnos en el período elegido.</p>
-                    <?php else: ?>
-                        <div class="grafico-contenedor"><canvas id="graficoOcupacionDia"></canvas></div>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-6 mb-4">
-            <?php $tablaOcupacion('Ocupación por franja horaria', 'Franja', $ocupacionFranja); ?>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-6 mb-4">
-            <?php $tablaOcupacion('Ocupación por actividad', 'Actividad', $ocupacionActividad); ?>
-        </div>
-        <div class="col-lg-6 mb-4">
-            <?php $tablaOcupacion('Ocupación por sucursal', 'Sucursal', $ocupacionSucursal); ?>
-        </div>
-    </div>
-
-    <!-- ===================== ASISTENCIA ===================== -->
-    <h4 class="seccion-titulo">✅ Asistencia</h4>
-    <div class="row">
-        <?php $kpi('Asistencia', $asistencia['pct'], 'porcentaje', 'Sobre la asistencia registrada', 'kpi-destacado'); ?>
-        <?php $kpi('Presentes', $asistencia['presentes'], 'entero'); ?>
-        <?php $kpi('Ausentes', $asistencia['ausentes'], 'entero'); ?>
-        <?php $kpi('Sin registrar', $asistencia['sin_registrar'], 'entero', 'En clases ya realizadas', 'kpi-alerta'); ?>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-7 mb-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body p-4">
-                    <h6 class="fw-bold text-primary-dark mb-3">Asistencia por actividad</h6>
-                    <?php if (empty($asistenciaActividad)): ?>
-                        <p class="text-muted small mb-0">Todavía no hay clases realizadas en el período.</p>
-                    <?php else: ?>
-                        <div class="table-responsive">
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+                        <h6 class="fw-bold text-primary-dark mb-3">Por tipo de abono (período elegido)</h6>
+                        <?php if (empty($ingresos['por_tipo'])): ?>
+                            <p class="text-muted small mb-0">No hay abonos cobrados en el período.</p>
+                        <?php else: ?>
                             <table class="table table-sm align-middle tabla-informe mb-0">
                                 <thead>
-                                    <tr>
-                                        <th>Actividad</th>
-                                        <th class="text-center">Presentes</th>
-                                        <th class="text-center">Ausentes</th>
-                                        <th style="min-width: 150px;">Asistencia</th>
-                                    </tr>
+                                    <tr><th>Abono</th><th class="text-center">Vendidos</th><th class="text-end">Monto</th></tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($asistenciaActividad as $fila): ?>
+                                    <?php foreach ($ingresos['por_tipo'] as $tipo): ?>
                                         <tr>
-                                            <td class="fw-bold text-primary-dark"><?= esc($fila['etiqueta']) ?></td>
-                                            <td class="text-center"><?= $entero($fila['presentes']) ?></td>
-                                            <td class="text-center"><?= $entero($fila['ausentes']) ?></td>
-                                            <td><?php $barra($fila['pct']); ?></td>
+                                            <td class="fw-bold text-primary-dark"><?= $tipo['clases'] ?> clases</td>
+                                            <td class="text-center"><?= $entero($tipo['cantidad']) ?></td>
+                                            <td class="text-end"><?= $dinero($tipo['monto']) ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>
-                        </div>
-                    <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-5 mb-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body p-4">
-                    <h6 class="fw-bold text-primary-dark mb-3">Clases con asistencia sin registrar</h6>
-                    <?php if (empty($sinAsistencia)): ?>
-                        <p class="text-muted small mb-0">Todas las clases realizadas tienen su asistencia registrada.</p>
-                    <?php else: ?>
+
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+                <h6 class="fw-bold text-primary-dark mb-3">Pagos pendientes</h6>
+                <?php if (empty($deuda['lista'])): ?>
+                    <p class="text-muted small mb-0">No hay abonos pendientes de pago.</p>
+                <?php else: ?>
+                    <div class="table-responsive">
                         <table class="table table-sm align-middle tabla-informe mb-0">
                             <thead>
-                                <tr><th>Docente</th><th class="text-end">Clases pendientes</th></tr>
+                                <tr><th>Alumno</th><th>DNI</th><th>Abono</th><th>Desde</th><th class="text-end">Monto</th></tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($sinAsistencia as $fila): ?>
+                                <?php foreach ($deuda['lista'] as $d): ?>
                                     <tr>
-                                        <td class="fw-bold text-primary-dark"><?= esc($fila['apellido'] . ', ' . $fila['nombre']) ?></td>
-                                        <td class="text-end"><span class="badge bg-warning text-dark"><?= $entero($fila['clases']) ?></span></td>
+                                        <td class="fw-bold text-primary-dark"><?= esc($d['apellido'] . ', ' . $d['nombre']) ?></td>
+                                        <td><?= esc($d['dni']) ?></td>
+                                        <td><?= $d['clases_totales'] ?> clases</td>
+                                        <td><?= $fechaCorta($d['fecha_inicio']) ?></td>
+                                        <td class="text-end"><?= $dinero($d['precio']) ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
+                    </div>
+                    <?php if ($deuda['resumen']['cantidad'] > count($deuda['lista'])): ?>
+                        <p class="text-muted small mt-2 mb-0">
+                            Se muestran los 10 más antiguos de <?= $entero($deuda['resumen']['cantidad']) ?>.
+                            Podés regularizarlos desde Abonos.
+                        </p>
                     <?php endif; ?>
+                <?php endif; ?>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== OCUPACIÓN ===================== -->
+    <section id="ocupacion" class="panel-seccion">
+        <?php $encabezado('🏋️', 'Ocupación de las clases', '¿Qué clases se llenan y cuáles quedan vacías?', 'Período: ' . $periodoTexto . ' · ' . $nombreSucursal); ?>
+
+        <div class="row g-3 mb-4">
+            <?php $kpiHero('Ocupación general', $ocupacion['pct'], 'porcentaje', $entero($ocupacion['ocupados']) . ' de ' . $entero($ocupacion['capacidad']) . ' cupos usados', $ocupacion['pct']); ?>
+            <div class="col-lg-7">
+                <div class="row g-3 h-100">
+                    <?php $kpiMini('Turnos del período', $ocupacion['turnos'], 'entero'); ?>
+                    <?php $kpiMini('Turnos llenos', $ocupacion['llenos'], 'entero', 'Sin cupos disponibles'); ?>
+                    <?php $kpiMini('Turnos casi vacíos', $ocupacion['casi_vacios'], 'entero', 'Menos del ' . \App\Models\InformeModel::UMBRAL_CASI_VACIO . '% de ocupación', 'kpi-alerta'); ?>
                 </div>
             </div>
         </div>
-    </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+                        <h6 class="fw-bold text-primary-dark mb-3">Ocupación por día de la semana</h6>
+                        <?php if (empty($ocupacionDia)): ?>
+                            <p class="text-muted small mb-0">No hay turnos en el período elegido.</p>
+                        <?php else: ?>
+                            <div class="grafico-contenedor"><canvas id="graficoOcupacionDia"></canvas></div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <?php $tablaOcupacion('Ocupación por franja horaria', 'Franja', $ocupacionFranja); ?>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <?php $tablaOcupacion('Ocupación por actividad', 'Actividad', $ocupacionActividad); ?>
+            </div>
+            <div class="col-lg-6">
+                <?php $tablaOcupacion('Ocupación por sucursal', 'Sucursal', $ocupacionSucursal); ?>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== ASISTENCIA ===================== -->
+    <section id="asistencia" class="panel-seccion">
+        <?php $encabezado('✅', 'Asistencia', '¿Los alumnos vienen a lo que reservan?', 'Período: ' . $periodoTexto . ' · ' . $nombreSucursal); ?>
+        <p class="nota-seccion">ℹ️ Solo cuenta las clases que ya se realizaron. El porcentaje se calcula sobre la asistencia ya registrada.</p>
+
+        <div class="row g-3 mb-4">
+            <?php $kpiHero('Asistencia', $asistencia['pct'], 'porcentaje', $entero($asistencia['presentes']) . ' presentes de ' . $entero($asistencia['presentes'] + $asistencia['ausentes']) . ' registrados', $asistencia['pct']); ?>
+            <div class="col-lg-7">
+                <div class="row g-3 h-100">
+                    <?php $kpiMini('Presentes', $asistencia['presentes'], 'entero'); ?>
+                    <?php $kpiMini('Ausentes', $asistencia['ausentes'], 'entero'); ?>
+                    <?php $kpiMini('Sin registrar', $asistencia['sin_registrar'], 'entero', 'En clases ya realizadas', 'kpi-alerta'); ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+                        <h6 class="fw-bold text-primary-dark mb-3">Asistencia por actividad</h6>
+                        <?php if (empty($asistenciaActividad)): ?>
+                            <p class="text-muted small mb-0">Todavía no hay clases realizadas en el período.</p>
+                        <?php else: ?>
+                            <div class="table-responsive">
+                                <table class="table table-sm align-middle tabla-informe mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Actividad</th>
+                                            <th class="text-center">Presentes</th>
+                                            <th class="text-center">Ausentes</th>
+                                            <th style="min-width: 150px;">Asistencia</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($asistenciaActividad as $fila): ?>
+                                            <tr>
+                                                <td class="fw-bold text-primary-dark"><?= esc($fila['etiqueta']) ?></td>
+                                                <td class="text-center"><?= $entero($fila['presentes']) ?></td>
+                                                <td class="text-center"><?= $entero($fila['ausentes']) ?></td>
+                                                <td><?php $barra($fila['pct']); ?></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+                        <h6 class="fw-bold text-primary-dark mb-3">Clases con asistencia sin registrar</h6>
+                        <?php if (empty($sinAsistencia)): ?>
+                            <p class="text-muted small mb-0">Todas las clases realizadas tienen su asistencia registrada.</p>
+                        <?php else: ?>
+                            <table class="table table-sm align-middle tabla-informe mb-0">
+                                <thead>
+                                    <tr><th>Docente</th><th class="text-end">Clases pendientes</th></tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($sinAsistencia as $fila): ?>
+                                        <tr>
+                                            <td class="fw-bold text-primary-dark"><?= esc($fila['apellido'] . ', ' . $fila['nombre']) ?></td>
+                                            <td class="text-end"><span class="badge bg-warning text-dark"><?= $entero($fila['clases']) ?></span></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- ===================== RESERVAS ===================== -->
-    <h4 class="seccion-titulo">📅 Reservas</h4>
-    <div class="row">
-        <?php $kpi('Reservas del período', $reservas['total'], 'entero', 'Sobre los turnos del período', 'kpi-destacado'); ?>
-        <?php $kpi('Confirmadas', $reservas['confirmadas'], 'entero'); ?>
-        <?php $kpi('Canceladas', $reservas['canceladas'], 'entero'); ?>
-        <?php $kpi('Cancelaciones', $reservas['pct_cancelacion'], 'porcentaje', 'Del total de reservas', 'kpi-alerta'); ?>
-    </div>
+    <section id="reservas" class="panel-seccion">
+        <?php $encabezado('📅', 'Reservas', '¿Cuánto se reserva y cuánto se cancela?', 'Período: ' . $periodoTexto . ' · ' . $nombreSucursal); ?>
+
+        <div class="row g-3">
+            <?php $kpiHero('Reservas del período', $reservas['total'], 'entero', 'Sobre los turnos del período'); ?>
+            <div class="col-lg-7">
+                <div class="row g-3 h-100">
+                    <?php $kpiMini('Confirmadas', $reservas['confirmadas'], 'entero'); ?>
+                    <?php $kpiMini('Canceladas', $reservas['canceladas'], 'entero'); ?>
+                    <?php $kpiMini('Cancelaciones', $reservas['pct_cancelacion'], 'porcentaje', 'Del total de reservas', 'kpi-alerta'); ?>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- ===================== ALUMNOS ===================== -->
-    <h4 class="seccion-titulo">👥 Alumnos</h4>
-    <div class="row">
-        <?php $kpi('Alumnos activos', $alumnos['activos'], 'entero', '', 'kpi-destacado'); ?>
-        <?php $kpi('Morosos', $alumnos['morosos'], 'entero', '', 'kpi-alerta'); ?>
-        <?php $kpi('Inactivos', $alumnos['inactivos'], 'entero'); ?>
-        <?php $kpi('Activos sin abono vigente', count($alumnos['sin_abono']), 'entero', 'Para ofrecerles renovar', 'kpi-alerta'); ?>
-    </div>
+    <section id="alumnos" class="panel-seccion">
+        <?php $encabezado('👥', 'Alumnos', '¿A quién hay que renovarle o cobrarle?', 'Al día de hoy · Todas las sucursales'); ?>
 
-    <div class="row">
-        <div class="col-lg-6 mb-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body p-4">
-                    <h6 class="fw-bold text-primary-dark mb-3">Abonos que vencen en los próximos 7 días</h6>
-                    <?php if (empty($alumnos['por_vencer'])): ?>
-                        <p class="text-muted small mb-0">No hay abonos por vencer en la próxima semana.</p>
-                    <?php else: ?>
-                        <table class="table table-sm align-middle tabla-informe mb-0">
-                            <thead>
-                                <tr><th>Alumno</th><th>Vence</th><th class="text-center">Clases sin usar</th></tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($alumnos['por_vencer'] as $a): ?>
-                                    <tr>
-                                        <td class="fw-bold text-primary-dark"><?= esc($a['apellido'] . ', ' . $a['nombre']) ?></td>
-                                        <td><?= $fechaCorta($a['fecha_fin']) ?></td>
-                                        <td class="text-center"><?= $a['clases_restantes'] ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    <?php endif; ?>
+        <div class="row g-3 mb-4">
+            <?php $kpiHero('Alumnos activos', $alumnos['activos'], 'entero', 'Con la cuenta habilitada'); ?>
+            <div class="col-lg-7">
+                <div class="row g-3 h-100">
+                    <?php $kpiMini('Morosos', $alumnos['morosos'], 'entero', '', 'kpi-alerta'); ?>
+                    <?php $kpiMini('Inactivos', $alumnos['inactivos'], 'entero'); ?>
+                    <?php $kpiMini('Activos sin abono vigente', count($alumnos['sin_abono']), 'entero', 'Para ofrecerles renovar', 'kpi-alerta'); ?>
                 </div>
             </div>
         </div>
-        <div class="col-lg-6 mb-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body p-4">
-                    <h6 class="fw-bold text-primary-dark mb-3">Alumnos activos sin abono vigente</h6>
-                    <?php if (empty($alumnos['sin_abono'])): ?>
-                        <p class="text-muted small mb-0">Todos los alumnos activos tienen un abono vigente.</p>
-                    <?php else: ?>
-                        <table class="table table-sm align-middle tabla-informe mb-0">
-                            <thead>
-                                <tr><th>Alumno</th><th>DNI</th><th>Último vencimiento</th></tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach (array_slice($alumnos['sin_abono'], 0, 10) as $a): ?>
-                                    <tr>
-                                        <td class="fw-bold text-primary-dark"><?= esc($a['apellido'] . ', ' . $a['nombre']) ?></td>
-                                        <td><?= esc($a['dni']) ?></td>
-                                        <td><?= $a['ultimo_vencimiento'] ? $fechaCorta($a['ultimo_vencimiento']) : 'Sin abonos' ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                        <?php if (count($alumnos['sin_abono']) > 10): ?>
-                            <p class="text-muted small mt-2 mb-0">
-                                Se muestran 10 de <?= $entero(count($alumnos['sin_abono'])) ?>. Los demás se ven en Alumnos.
-                            </p>
+
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+                        <h6 class="fw-bold text-primary-dark mb-3">Abonos que vencen en los próximos 7 días</h6>
+                        <?php if (empty($alumnos['por_vencer'])): ?>
+                            <p class="text-muted small mb-0">No hay abonos por vencer en la próxima semana.</p>
+                        <?php else: ?>
+                            <table class="table table-sm align-middle tabla-informe mb-0">
+                                <thead>
+                                    <tr><th>Alumno</th><th>Vence</th><th class="text-center">Clases sin usar</th></tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($alumnos['por_vencer'] as $a): ?>
+                                        <tr>
+                                            <td class="fw-bold text-primary-dark"><?= esc($a['apellido'] . ', ' . $a['nombre']) ?></td>
+                                            <td><?= $fechaCorta($a['fecha_fin']) ?></td>
+                                            <td class="text-center"><?= $a['clases_restantes'] ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
                         <?php endif; ?>
-                    <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+                        <h6 class="fw-bold text-primary-dark mb-3">Alumnos activos sin abono vigente</h6>
+                        <?php if (empty($alumnos['sin_abono'])): ?>
+                            <p class="text-muted small mb-0">Todos los alumnos activos tienen un abono vigente.</p>
+                        <?php else: ?>
+                            <table class="table table-sm align-middle tabla-informe mb-0">
+                                <thead>
+                                    <tr><th>Alumno</th><th>DNI</th><th>Último vencimiento</th></tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach (array_slice($alumnos['sin_abono'], 0, 10) as $a): ?>
+                                        <tr>
+                                            <td class="fw-bold text-primary-dark"><?= esc($a['apellido'] . ', ' . $a['nombre']) ?></td>
+                                            <td><?= esc($a['dni']) ?></td>
+                                            <td><?= $a['ultimo_vencimiento'] ? $fechaCorta($a['ultimo_vencimiento']) : 'Sin abonos' ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                            <?php if (count($alumnos['sin_abono']) > 10): ?>
+                                <p class="text-muted small mt-2 mb-0">
+                                    Se muestran 10 de <?= $entero(count($alumnos['sin_abono'])) ?>. Los demás se ven en Alumnos.
+                                </p>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 </main>
 
 <!-- Chart.js (misma CDN que Bootstrap) -->
@@ -433,7 +531,7 @@ $fechaCorta = fn($f) => $f ? date('d/m/Y', strtotime($f)) : '—';
         canvas.parentElement.innerHTML = '<p class="text-muted small mb-0">No se pudo cargar el gráfico. Los datos están en las tarjetas y tablas.</p>';
     }
 
-    const lienzoIngresos = document.getElementById('graficoIngresos');
+    const lienzoIngresos  = document.getElementById('graficoIngresos');
     const lienzoOcupacion = document.getElementById('graficoOcupacionDia');
 
     if (typeof Chart === 'undefined') {

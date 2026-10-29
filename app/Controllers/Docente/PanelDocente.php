@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Docente;
+
+use App\Controllers\BaseController;
 
 use App\Models\TurnoModel;
 use App\Models\ReservaModel;

@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="text-primary-dark fw-bold mb-0">Mis Reservas</h2>
-            <p class="text-muted small">Podés cancelar hasta <?= \App\Controllers\Reserva::HORAS_CANCELACION ?> horas antes de la clase</p>
+            <p class="text-muted small">Podés cancelar hasta <?= \App\Controllers\Alumno\Reserva::HORAS_CANCELACION ?> horas antes de la clase</p>
         </div>
         <a href="<?= base_url('alumno/dashboard') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Volver al Panel</a>
     </div>

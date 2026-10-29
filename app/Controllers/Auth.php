@@ -10,7 +10,7 @@ class Auth extends BaseController
     public function login(): string
     {
         return view('templates/header')
-             . view('login')
+             . view('public/login')
              . view('templates/footer');
     }
 
@@ -50,13 +50,7 @@ class Auth extends BaseController
                 
             
                 // Redirigimos según el rol del usuario
-                if ($user['rol'] == 'admin') {
-                    return redirect()->to('/admin/dashboard');
-                } elseif ($user['rol'] == 'docente') {
-                    return redirect()->to('/docente/dashboard');
-                } else {
-                    return redirect()->to('/alumno/dashboard');
-                }
+                return redirect()->to('/' . url_panel($user['rol']));
             } else {
                 $session->setFlashdata('error', 'Contraseña incorrecta.');
                 return redirect()->to('/login');
@@ -71,7 +65,7 @@ class Auth extends BaseController
     public function registro(): string
     {
         return view('templates/header')
-             . view('registro')
+             . view('public/registro')
              . view('templates/footer');
     }
 

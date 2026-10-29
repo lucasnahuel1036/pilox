@@ -19,9 +19,9 @@ $routes->get('logout', 'Auth::logout');
 
 
 // Rutas exclusivas del Panel de Administración
-$routes->group('admin', ['filter' => 'admin'], function($routes) {
+$routes->group('admin', ['filter' => 'admin', 'namespace' => 'App\Controllers\Admin'], function($routes) {
     // Ruta para dashboard admin
-    $routes->get('dashboard', 'Dashboard::index');
+    $routes->get('dashboard', 'PanelAdmin::dashboard');
     // ABM de Sucursales
     $routes->get('sucursales', 'Sucursal::index');
     $routes->post('sucursales/guardar', 'Sucursal::guardar');
@@ -46,6 +46,7 @@ $routes->group('admin', ['filter' => 'admin'], function($routes) {
     $routes->post('alumnos/eliminar/(:num)', 'Alumno::eliminar/$1');
     $routes->get('alumnos/editar/(:num)', 'Alumno::editar/$1');
     $routes->post('alumnos/actualizar/(:num)', 'Alumno::actualizar/$1');
+    $routes->get('alumnos/buscar', 'Alumno::buscar');
     // ABM de Turnos
     $routes->get('turnos', 'Turno::index');
     $routes->post('turnos/guardar', 'Turno::guardar');
@@ -60,7 +61,6 @@ $routes->group('admin', ['filter' => 'admin'], function($routes) {
     $routes->post('abonos/guardar', 'Abono::guardar');
     $routes->post('abonos/eliminar/(:num)', 'Abono::eliminar/$1');
     $routes->post('abonos/pago/(:num)', 'Abono::cambiarPago/$1');
-    $routes->get('alumnos/buscar', 'Alumno::buscar');
     // Tarifas
     $routes->get('tarifas', 'Tarifa::index');
     $routes->post('tarifas/actualizar', 'Tarifa::actualizar');
@@ -69,15 +69,15 @@ $routes->group('admin', ['filter' => 'admin'], function($routes) {
 });
 
 // Alumno
-$routes->get('alumno/dashboard', 'Alumno::dashboard', ['filter' => 'auth']);
-$routes->group('alumno', ['filter' => 'alumno'], function($routes) {
+$routes->group('alumno', ['filter' => 'alumno', 'namespace' => 'App\Controllers\Alumno'], function($routes) {
+    $routes->get('dashboard', 'PanelAlumno::dashboard');
     $routes->get('turnos', 'Reserva::turnos');
     $routes->post('reservar/(:num)', 'Reserva::reservar/$1');
     $routes->get('reservas', 'Reserva::misReservas');
     $routes->post('reservas/cancelar/(:num)', 'Reserva::cancelar/$1');
 });
 
-$routes->group('docente', ['filter' => 'docente'], function($routes) {
+$routes->group('docente', ['filter' => 'docente', 'namespace' => 'App\Controllers\Docente'], function($routes) {
     $routes->get('dashboard', 'PanelDocente::dashboard');
     $routes->get('clases', 'PanelDocente::clases');
     $routes->get('clases/(:num)', 'PanelDocente::alumnos/$1');

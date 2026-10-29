@@ -47,13 +47,7 @@
             <div class="d-flex justify-content-center mt-2 mt-lg-0">
                 <?php if (session()->get('is_logged_in')): ?>
                     
-                    <?php if (session()->get('rol') == 'admin'): ?>
-                        <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-custom-outline me-2">Mi Panel</a>
-                    <?php elseif (session()->get('rol') == 'docente'): ?>
-                        <a href="<?= base_url('docente/dashboard') ?>" class="btn btn-custom-outline me-2">Mi Panel</a>
-                    <?php else: ?>
-                        <a href="<?= base_url('alumno/dashboard') ?>" class="btn btn-custom-outline me-2">Mi Panel</a>
-                    <?php endif; ?>
+                    <a href="<?= base_url(url_panel()) ?>" class="btn btn-custom-outline me-2">Mi Panel</a>
                     
                     <a href="<?= base_url('logout') ?>" class="btn btn-danger rounded-pill">Salir</a>
                 <?php else: ?>

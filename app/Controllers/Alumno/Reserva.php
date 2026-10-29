@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Alumno;
+
+use App\Controllers\BaseController;
 
 use App\Models\TurnoModel;
 use App\Models\SucursalModel;

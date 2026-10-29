@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Admin;
+
+use App\Controllers\BaseController;
 
 use App\Models\TurnoModel;
 use App\Models\SucursalModel;
@@ -158,7 +160,7 @@ class Turno extends BaseController
         $data['docentes'] = $usuarioModel->where('rol', 'docente')->findAll();
 
         return view('templates/header')
-             . view('admin/generar_turnos', $data)
+             . view('admin/turnos_masivo', $data)
              . view('templates/footer');
     }
 

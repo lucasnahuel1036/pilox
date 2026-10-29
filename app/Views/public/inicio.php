@@ -6,13 +6,7 @@
             <p class="mt-4 text-muted">En Pilox creemos que el bienestar empieza con el movimiento consciente. Gestioná tus clases, seguí tu progreso y formá parte de una comunidad que cuida tu cuerpo y tu mente.</p>
            <div class="mt-4">
                 <?php if (session()->get('is_logged_in')): ?>
-                    <?php if (session()->get('rol') === 'admin'): ?>
-                        <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-custom-solid px-4 py-2 me-3">Ir a mi Panel</a>
-                    <?php elseif (session()->get('rol') === 'docente'): ?>
-                        <a href="<?= base_url('docente/clases') ?>" class="btn btn-custom-solid px-4 py-2 me-3">Mis Clases</a>
-                    <?php else: ?>
-                        <a href="<?= base_url('alumno/dashboard') ?>" class="btn btn-custom-solid px-4 py-2 me-3">Mis Reservas</a>
-                    <?php endif; ?>
+                    <a href="<?= base_url(url_panel()) ?>" class="btn btn-custom-solid px-4 py-2 me-3">Ir a mi Panel</a>
                 <?php else: ?>
                     <a href="<?= base_url('registro') ?>" class="btn btn-custom-solid px-4 py-2 me-3">Comenzar ahora</a>
                 <?php endif; ?>

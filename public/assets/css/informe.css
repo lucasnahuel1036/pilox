@@ -1,0 +1,215 @@
+/*Estilos para dashboard infacion general */
+html {
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+/* Índice de accesos rápidos (queda fijo arriba al hacer scroll) */
+.indice-informe {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    display: flex;
+    gap: .5rem;
+    overflow-x: auto;
+    padding: .75rem 0;
+    margin-top: 1.5rem;
+    background: rgba(248, 249, 245, .95);
+    backdrop-filter: blur(6px);
+}
+
+.indice-informe a {
+    white-space: nowrap;
+    padding: .4rem 1rem;
+    border: 1px solid #1A3C34;
+    border-radius: 2rem;
+    color: #1A3C34;
+    font-size: .85rem;
+    font-weight: 600;
+    text-decoration: none;
+    background: #fff;
+}
+
+.indice-informe a:hover {
+    background: #1A3C34;
+    color: #fff;
+}
+
+/* Cada sección es un bloque con fondo propio */
+.panel-seccion {
+    background: #eef3dc;
+    border-radius: 1.5rem;
+    padding: 1.75rem;
+    margin-top: 1.75rem;
+    scroll-margin-top: 4.5rem;
+}
+
+.seccion-encabezado {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: .75rem;
+    margin-bottom: 1.25rem;
+}
+
+.seccion-icono {
+    width: 3rem;
+    height: 3rem;
+    flex-shrink: 0;
+    border-radius: 1rem;
+    background: #1A3C34;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+}
+
+.badge-alcance {
+    font-size: .75rem;
+    background: #fff;
+    border: 1px solid #cfdcae;
+    color: #1A3C34;
+    border-radius: 2rem;
+    padding: .3rem .85rem;
+}
+
+.nota-seccion {
+    font-size: .82rem;
+    color: #5c6b66;
+    margin: -.5rem 0 1.25rem;
+}
+
+/* Tarjeta principal de cada sección: grande y en verde */
+.kpi-hero {
+    background: linear-gradient(135deg, #1A3C34 0%, #26564b 100%);
+    color: #fff;
+    border-radius: 1.25rem;
+    padding: 1.6rem 1.8rem;
+    height: 100%;
+    box-shadow: 0 .5rem 1.2rem rgba(26, 60, 52, .25);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.kpi-hero-etiqueta {
+    font-size: .8rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #C5E063;
+    font-weight: 600;
+}
+
+.kpi-hero-valor {
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin: .35rem 0;
+}
+
+.kpi-hero-detalle {
+    font-size: .85rem;
+    opacity: .8;
+}
+
+.kpi-hero-barra {
+    height: .5rem;
+    background: rgba(255, 255, 255, .2);
+    border-radius: 1rem;
+    margin: .5rem 0 .6rem;
+}
+
+.kpi-hero-barra .progress-bar {
+    background: #C5E063;
+    border-radius: 1rem;
+}
+
+/* Tarjetas secundarias: blancas y chicas */
+.kpi-mini {
+    background: #fff;
+    border-radius: 1rem;
+    padding: 1rem 1.1rem;
+    height: 100%;
+    box-shadow: 0 .125rem .5rem rgba(26, 60, 52, .08);
+    border-left: 5px solid #C5E063;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.kpi-mini.kpi-alerta {
+    border-left-color: #e0a800;
+}
+
+.kpi-mini-etiqueta {
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #6c757d;
+    font-weight: 600;
+}
+
+.kpi-mini-valor {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: #1A3C34;
+}
+
+.kpi-mini-detalle {
+    font-size: .75rem;
+    color: #6c757d;
+}
+
+/* Gráficos, barras y tablas */
+.grafico-contenedor {
+    position: relative;
+    height: 280px;
+}
+
+.barra-metrica {
+    height: .7rem;
+    border-radius: 1rem;
+    background-color: #e9ecef;
+}
+
+.barra-metrica .progress-bar {
+    border-radius: 1rem;
+}
+
+.barra-alta {
+    background-color: #1A3C34;
+}
+
+.barra-media {
+    background-color: #8fb339;
+}
+
+.barra-baja {
+    background-color: #e0a800;
+}
+
+.barra-valor {
+    min-width: 3.4rem;
+    text-align: right;
+    color: #1A3C34;
+}
+
+.tabla-informe th {
+    font-size: .72rem;
+    color: #6c757d;
+    text-transform: uppercase;
+}
+
+@media (max-width: 576px) {
+    .panel-seccion {
+        padding: 1.1rem;
+        border-radius: 1.1rem;
+    }
+}

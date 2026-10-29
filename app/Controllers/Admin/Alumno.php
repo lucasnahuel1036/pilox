@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Admin;
+
+use App\Controllers\BaseController;
 
 use App\Models\UsuarioModel;
 
@@ -137,27 +139,6 @@ class Alumno extends BaseController
         return redirect()->to('/admin/alumnos');
     }
 
-        public function dashboard()
-    {
-       
-        $rol = session()->get('rol');
-        if ($rol === 'docente') {
-            return redirect()->to('/docente/dashboard');
-        }
-        if ($rol !== 'alumno') {
-            return redirect()->to('/admin/dashboard');
-        }
-
-        $idUsuario = session()->get('id_usuario');
-
-        $data['alumno'] = (new \App\Models\UsuarioModel())->find($idUsuario);
-        $data['abono']  = (new \App\Models\AbonoModel())->getUltimoAbono($idUsuario);
-
-        return view('templates/header')
-             . view('alumno/dashboard', $data)
-             . view('templates/footer');
-    }
-        
     // Búsqueda rápida de alumnos activos (JSON, para el buscador de abonos)
     public function buscar()
     {

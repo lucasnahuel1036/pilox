@@ -7,7 +7,7 @@ class Home extends BaseController
     public function index(): string
     {
         return view('templates/header')
-             . view('inicio')
+             . view('public/inicio')
              . view('templates/footer');
     }
 }

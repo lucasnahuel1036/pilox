@@ -1,20 +1,19 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Admin;
+
+use App\Controllers\BaseController;
 
 use App\Models\UsuarioModel;
 use App\Models\ActividadModel;
 use App\Models\SucursalModel;
 use App\Models\TurnoModel;
 
-class Dashboard extends BaseController
+class PanelAdmin extends BaseController
 {
-    public function index(): string|\CodeIgniter\HTTP\RedirectResponse
+    // Panel principal del administrador: totales generales
+    public function dashboard(): string
     {
-        $session = session();
-        
-       
-
         $usuarioModel = new UsuarioModel();
         $actividadModel = new ActividadModel();
         $sucursalModel = new SucursalModel();
@@ -29,7 +28,7 @@ class Dashboard extends BaseController
         ];
 
         return view('templates/header')
-             . view('dashboard', $data)
+             . view('admin/dashboard', $data)
              . view('templates/footer');
     }
 }

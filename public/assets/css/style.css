@@ -1,41 +1,35 @@
 /* public/assets/css/style.css */
 body {
-    background-color: #F8F9F5; /* Color crema claro del fondo */
+    background-color: #F8F9F5;
+    /* Color crema claro del fondo */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-.text-primary-dark { color: #1A3C34; } /* Verde oscuro */
-.bg-primary-dark { background-color: #1A3C34; }
+
+.text-primary-dark {
+    color: #1A3C34;
+}
+
+/* Verde oscuro */
+.bg-primary-dark {
+    background-color: #1A3C34;
+}
+
 .btn-custom-outline {
     border: 1px solid #1A3C34;
     color: #1A3C34;
     border-radius: 20px;
 }
+
 .btn-custom-solid {
     background-color: #1A3C34;
     color: white;
     border-radius: 20px;
 }
+
 .btn-custom-light {
-    background-color: #C5E063; /* Verde claro/lima */
+    background-color: #C5E063;
+    /* Verde claro/lima */
     color: #1A3C34;
     border-radius: 20px;
     font-weight: bold;
 }
-
-/* Pantalla de información general */
-.seccion-titulo { color: #1A3C34; font-weight: 700; margin: 2.5rem 0 1rem; padding-bottom: .5rem; border-bottom: 2px solid #C5E063; }
-.kpi-card { background: #fff; border-radius: 1rem; padding: 1.1rem 1.2rem; height: 100%; box-shadow: 0 .125rem .5rem rgba(26, 60, 52, .08); border-left: 5px solid #C5E063; }
-.kpi-card.kpi-destacado { background: #1A3C34; color: #fff; }
-.kpi-card.kpi-alerta { border-left-color: #e0a800; }
-.kpi-etiqueta { font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; opacity: .75; }
-.kpi-valor { font-size: 1.9rem; font-weight: 700; line-height: 1.25; }
-.kpi-card:not(.kpi-destacado) .kpi-valor { color: #1A3C34; }
-.kpi-detalle { font-size: .78rem; opacity: .7; }
-.grafico-contenedor { position: relative; height: 280px; }
-.barra-metrica { height: .7rem; border-radius: 1rem; background-color: #e9ecef; }
-.barra-metrica .progress-bar { border-radius: 1rem; }
-.barra-alta { background-color: #1A3C34; }
-.barra-media { background-color: #8fb339; }
-.barra-baja { background-color: #e0a800; }
-.barra-valor { min-width: 3.4rem; text-align: right; color: #1A3C34; }
-.tabla-informe th { font-size: .72rem; color: #6c757d; text-transform: uppercase; }
