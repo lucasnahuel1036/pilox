@@ -16,7 +16,7 @@
         </li>
     </ul>
 
-    <div class="card border-0 shadow-sm rounded-4">
+    <div class="card border-0 shadow-sm rounded-4 pd-reveal">
         <div class="card-body p-4">
             <?php if (empty($clases)): ?>
                 <div class="alert alert-light text-center text-muted mb-0" role="alert">

@@ -6,7 +6,7 @@
         </div>
         <div class="d-flex flex-wrap gap-2">
             <a href="<?= base_url('admin/turnos/asignar') ?>" class="btn btn-primary btn-sm rounded-pill px-3">
-                <i class="bi bi-person-check"></i> <strong>Asignar a alumno</strong>
+                <i class="bi bi-person-check"></i> <strong>Asignar turno a alumno</strong>
             </a>
             <a href="<?= base_url('admin/turnos/masivo') ?>" class="btn btn-success btn-sm rounded-pill px-3">
                 <i class="bi bi-calendar-plus"></i> <strong>Generación por periodos</strong>
@@ -18,7 +18,7 @@
     <div class="row">
         <!-- Formulario para crear un nuevo turno -->
         <div class="col-md-4 mb-4">
-            <div class="card border-0 shadow-sm rounded-4" style="background-color: #F8F9F5;">
+            <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="background-color: #F8F9F5;">
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Nuevo Turno</h5>
                     <form action="<?= base_url('admin/turnos/guardar') ?>" method="POST">
@@ -80,7 +80,7 @@
 
         <!-- Tabla con el listado de turnos -->
         <div class="col-md-8">
-            <div class="card border-0 shadow-sm rounded-4">
+            <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="--pd-delay: .08s">
                 <div class="card-body p-4">
                     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
                         <h5 class="fw-bold text-primary-dark mb-2 mb-sm-0">Grilla de Clases</h5>

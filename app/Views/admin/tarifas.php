@@ -9,7 +9,7 @@
 
     <div class="row">
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm rounded-4" style="background-color: #F8F9F5;">
+            <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="background-color: #F8F9F5;">
                 <div class="card-body p-4">
                     <form action="<?= base_url('admin/tarifas/actualizar') ?>" method="POST">
                         <?= csrf_field() ?>

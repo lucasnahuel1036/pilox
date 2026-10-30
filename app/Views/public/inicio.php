@@ -1,6 +1,6 @@
 <main class="container mt-5">
     <div class="row align-items-center">
-        <div class="col-md-6 pe-5">
+        <div class="col-md-6 pe-5 pd-reveal">
             <span class="badge bg-secondary mb-3">CENTRO DEPORTIVO - CÓRDOBA</span>
             <h1 class="display-3 text-primary-dark" style="font-family: serif; font-style: italic;">Movimiento<br>que transforma</h1>
             <p class="mt-4 text-muted">En Pilox creemos que el bienestar empieza con el movimiento consciente. Gestioná tus clases, seguí tu progreso y formá parte de una comunidad que cuida tu cuerpo y tu mente.</p>
@@ -12,10 +12,10 @@
                 <?php endif; ?>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 pd-reveal" style="--pd-delay: .1s">
             
              
-            <div class="rounded-4 overflow-hidden shadow-sm" style="height: 400px; width: 100%;">
+            <div class="rounded-4 overflow-hidden shadow-sm hero-img-zoom" style="height: 400px; width: 100%;">
                 <img src="<?= base_url('assets/img/principal.png') ?>" alt="Clases Pilox" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
             
@@ -25,7 +25,7 @@
     <div id="disciplinas" class="row mt-5 pt-4">
         <!-- Tarjeta 1 -->
         <div class="col-md-3 mb-4">
-            <div class="card h-100 border-0 shadow-sm" style="background-color: #F8F9F5;">
+            <div class="card h-100 border-0 shadow-sm card-disciplina pd-reveal" style="background-color: #F8F9F5;">
                 <div class="rounded-top overflow-hidden" style="height: 150px; width: 100%;">
                     <img src="<?= base_url('assets/img/pilates.png') ?>" class="card-img-top" alt="Clase de Pilates" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
@@ -40,7 +40,7 @@
         </div>
         <!-- Tarjeta 2 -->
         <div class="col-md-3 mb-4">
-            <div class="card h-100 border-0 shadow-sm" style="background-color: #F8F9F5;">
+            <div class="card h-100 border-0 shadow-sm card-disciplina pd-reveal" style="background-color: #F8F9F5; --pd-delay: .08s">
                 <div class="rounded-top overflow-hidden" style="height: 150px; width: 100%;">
                     <img src="<?= base_url('assets/img/yoga.png') ?>" class="card-img-top" alt="Clase de Yoga" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
@@ -55,7 +55,7 @@
         </div>
         <!-- Tarjeta 3 -->
         <div class="col-md-3 mb-4">
-            <div class="card h-100 border-0 shadow-sm" style="background-color: #F8F9F5;">
+            <div class="card h-100 border-0 shadow-sm card-disciplina pd-reveal" style="background-color: #F8F9F5; --pd-delay: .16s">
                 <div class="rounded-top overflow-hidden" style="height: 150px; width: 100%;">
                     <img src="<?= base_url('assets/img/GAP.png') ?>" class="card-img-top" alt="Clase de GAP" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
@@ -70,7 +70,7 @@
         </div>
         <!-- Tarjeta 4 -->
         <div class="col-md-3 mb-4">
-            <div class="card h-100 border-0 shadow-sm" style="background-color: #F8F9F5;">
+            <div class="card h-100 border-0 shadow-sm card-disciplina pd-reveal" style="background-color: #F8F9F5; --pd-delay: .24s">
                 <div class="rounded-top overflow-hidden" style="height: 150px; width: 100%;">
                     <img src="<?= base_url('assets/img/pilatesAFA.png') ?>" class="card-img-top" alt="Clase de Pilates AFA" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
@@ -88,7 +88,7 @@
     <!-- Seccion banner -->
     <div class="row mt-5 mb-5 pb-4">
         <div class="col-12">
-            <div class="card border-0 rounded-4 p-4 p-md-5 bg-primary-dark text-white shadow-sm">
+            <div class="card border-0 rounded-4 p-4 p-md-5 bg-primary-dark text-white shadow-sm pd-reveal">
                 <div class="row align-items-center">
                     <div class="col-md-7 mb-3 mb-md-0">
                         <h2 class="display-6 fw-bold" style="font-family: serif; font-style: italic;">¿Lista para empezar?</h2>

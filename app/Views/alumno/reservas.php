@@ -8,7 +8,7 @@
     </div>
 
     <!-- Próximas clases -->
-    <div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card border-0 shadow-sm rounded-4 mb-4 pd-reveal">
         <div class="card-body p-4">
             <h5 class="fw-bold text-primary-dark mb-4">Próximas clases</h5>
 
@@ -60,7 +60,7 @@
     </div>
 
     <!-- Historial -->
-    <div class="card border-0 shadow-sm rounded-4">
+    <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="--pd-delay: .08s">
         <div class="card-body p-4">
             <h5 class="fw-bold text-primary-dark mb-4">Historial</h5>
 

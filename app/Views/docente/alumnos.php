@@ -37,7 +37,7 @@
         </div>
     <?php endif; ?>
 
-    <div class="card border-0 shadow-sm rounded-4">
+    <div class="card border-0 shadow-sm rounded-4 pd-reveal">
         <div class="card-body p-4">
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
                 <h5 class="fw-bold text-primary-dark mb-2 mb-md-0">

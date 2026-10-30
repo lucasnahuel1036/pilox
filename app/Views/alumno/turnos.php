@@ -19,7 +19,7 @@
     <?php endif; ?>
 
     <!-- Filtros -->
-    <div class="card border-0 shadow-sm rounded-4 mb-4" style="background-color: #F8F9F5;">
+    <div class="card border-0 shadow-sm rounded-4 mb-4 pd-reveal" style="background-color: #F8F9F5;">
         <div class="card-body p-4">
             <form action="<?= base_url('alumno/turnos') ?>" method="GET" class="row g-3 align-items-end">
                 <div class="col-md-3">
@@ -66,7 +66,7 @@
     </div>
 
     <!-- Lista de turnos -->
-    <div class="card border-0 shadow-sm rounded-4">
+    <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="--pd-delay: .08s">
         <div class="card-body p-4">
             <?php if (empty($turnos)): ?>
                 <div class="alert alert-light text-center text-muted mb-0" role="alert">

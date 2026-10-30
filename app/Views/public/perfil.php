@@ -10,7 +10,7 @@
     <div class="row">
         <!-- Datos Personales -->
         <div class="col-md-7 mb-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100" style="background-color: #F8F9F5;">
+            <div class="card border-0 shadow-sm rounded-4 h-100 pd-reveal" style="background-color: #F8F9F5;">
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-4"><i class="bi bi-person-lines-fill me-2"></i>Datos Personales</h5>
                     <form action="<?= base_url('perfil/actualizar') ?>" method="POST">
@@ -65,7 +65,7 @@
 
         <!-- Cambiar Contraseña -->
         <div class="col-md-5 mb-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100" style="background-color: #F8F9F5;">
+            <div class="card border-0 shadow-sm rounded-4 h-100 pd-reveal" style="background-color: #F8F9F5; --pd-delay: .08s">
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-4"><i class="bi bi-shield-lock me-2"></i>Cambiar Contraseña</h5>
                     <form action="<?= base_url('perfil/password') ?>" method="POST">

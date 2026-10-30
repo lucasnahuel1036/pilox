@@ -1,7 +1,7 @@
 <main class="container mt-5 mb-5">
     <div class="row justify-content-center">
         <div class="col-md-5">
-            <div class="card border-0 shadow-sm rounded-4" style="background-color: #F8F9F5;">
+            <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="background-color: #F8F9F5;">
                 <div class="card-body p-5">
                     <div class="text-center mb-4">
                         <h2 class="text-primary-dark fw-bold">Iniciar Sesión</h2>

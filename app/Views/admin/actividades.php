@@ -9,7 +9,7 @@
 
     <div class="row">
         <div class="col-md-4 mb-4">
-            <div class="card border-0 shadow-sm rounded-4" style="background-color: #F8F9F5;">
+            <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="background-color: #F8F9F5;">
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Nueva Actividad</h5>
                     <form action="<?= base_url('admin/actividades/guardar') ?>" method="POST">
@@ -31,7 +31,7 @@
         </div>
 
         <div class="col-md-8">
-            <div class="card border-0 shadow-sm rounded-4">
+            <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="--pd-delay: .08s">
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Disciplinas Registradas</h5>
                     <?php if(empty($actividades)): ?>

@@ -94,3 +94,638 @@ body {
     background-color: #1A3C34;
     color: #ffffff;
 }
+
+
+/* =====================================================================
+   DASHBOARDS (admin, docente y alumno) — prefijo pd- (Pilox Dashboard)
+   Paleta: verde oscuro #1A3C34 · verde medio #26564b · lima #C5E063
+           lima suave #e9f2c6 · salvia #8fb339 · crema #F8F9F5 · ámbar #e0a800
+   ===================================================================== */
+:root {
+    --pd-verde: #1A3C34;
+    --pd-verde-medio: #26564b;
+    --pd-lima: #C5E063;
+    --pd-lima-suave: #e9f2c6;
+    --pd-salvia: #8fb339;
+    --pd-crema: #F8F9F5;
+    --pd-ambar: #e0a800;
+    --pd-texto-suave: #5c6b66;
+    --pd-sombra: 0 .25rem .9rem rgba(26, 60, 52, .08);
+    --pd-sombra-hover: 0 .75rem 1.6rem rgba(26, 60, 52, .16);
+}
+
+/* ---- Bienvenida (hero) ---- */
+.pd-hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--pd-verde) 0%, var(--pd-verde-medio) 100%);
+    color: #fff;
+    border-radius: 1.5rem;
+    padding: 1.75rem 1.75rem 1.5rem;
+    box-shadow: 0 .75rem 1.75rem rgba(26, 60, 52, .25);
+}
+
+/* Círculos decorativos de fondo */
+.pd-hero::before,
+.pd-hero::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: var(--pd-lima);
+    opacity: .12;
+    pointer-events: none;
+}
+
+.pd-hero::before { width: 220px; height: 220px; top: -90px; right: -60px; }
+.pd-hero::after  { width: 140px; height: 140px; bottom: -70px; right: 120px; opacity: .08; }
+
+.pd-hero > * { position: relative; z-index: 1; }
+
+.pd-hero-fecha {
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--pd-lima);
+    font-weight: 600;
+}
+
+.pd-hero-titulo {
+    font-size: clamp(1.5rem, 4.5vw, 2.1rem);
+    font-weight: 800;
+    margin: .25rem 0 .35rem;
+    line-height: 1.15;
+}
+
+.pd-hero-sub {
+    color: rgba(255, 255, 255, .78);
+    font-size: .95rem;
+    margin-bottom: 0;
+}
+
+/* Botones de acción rápida dentro del hero */
+.pd-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin-top: 1.25rem;
+}
+
+.pd-btn-lima,
+.pd-btn-glass {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    border-radius: 50rem;
+    padding: .55rem 1.1rem;
+    font-size: .88rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform .2s ease, background-color .2s ease, box-shadow .2s ease;
+}
+
+.pd-btn-lima {
+    background: var(--pd-lima);
+    color: var(--pd-verde);
+}
+
+.pd-btn-lima:hover {
+    color: var(--pd-verde);
+    transform: translateY(-2px);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .2);
+}
+
+.pd-btn-glass {
+    background: rgba(255, 255, 255, .12);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, .25);
+}
+
+.pd-btn-glass:hover {
+    background: rgba(255, 255, 255, .22);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* ---- Títulos de sección ---- */
+.pd-seccion-titulo {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-size: .8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--pd-texto-suave);
+    margin: 2rem 0 .9rem;
+}
+
+.pd-seccion-titulo::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #dce3dc;
+}
+
+/* ---- Tarjetas de métricas ---- */
+.pd-stat {
+    background: #fff;
+    border-radius: 1.1rem;
+    padding: 1rem 1.1rem;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+    box-shadow: var(--pd-sombra);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.pd-stat:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--pd-sombra-hover);
+}
+
+.pd-stat-icono {
+    width: 2.8rem;
+    height: 2.8rem;
+    flex-shrink: 0;
+    border-radius: .9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    background: var(--pd-lima-suave);
+    color: var(--pd-verde);
+}
+
+.pd-stat-icono.pd-icono-oscuro { background: var(--pd-verde); color: var(--pd-lima); }
+.pd-stat-icono.pd-icono-ambar  { background: #fff3cd; color: #9a7300; }
+
+.pd-stat-valor {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--pd-verde);
+    line-height: 1.1;
+}
+
+.pd-stat-etiqueta {
+    font-size: .76rem;
+    color: var(--pd-texto-suave);
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.pd-stat.pd-stat-alerta { box-shadow: inset 4px 0 0 var(--pd-ambar), var(--pd-sombra); }
+
+/* ---- Accesos a módulos (tiles) ---- */
+.pd-tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: .55rem;
+    height: 100%;
+    background: #fff;
+    border-radius: 1.1rem;
+    padding: 1.1rem;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: var(--pd-sombra);
+    border: 1px solid transparent;
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+
+.pd-tile:hover,
+.pd-tile:focus-visible {
+    transform: translateY(-4px);
+    box-shadow: var(--pd-sombra-hover);
+    border-color: var(--pd-lima);
+    color: inherit;
+}
+
+.pd-tile:focus-visible { outline: 3px solid rgba(197, 224, 99, .6); outline-offset: 2px; }
+
+.pd-tile-icono {
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: .85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    background: var(--pd-lima-suave);
+    color: var(--pd-verde);
+    transition: background-color .25s ease, color .25s ease, transform .25s ease;
+}
+
+.pd-tile:hover .pd-tile-icono {
+    background: var(--pd-verde);
+    color: var(--pd-lima);
+    transform: scale(1.06) rotate(-4deg);
+}
+
+.pd-tile-titulo {
+    font-weight: 700;
+    color: var(--pd-verde);
+    font-size: 1rem;
+    margin: 0;
+}
+
+.pd-tile-texto {
+    font-size: .8rem;
+    color: var(--pd-texto-suave);
+    margin: 0;
+    line-height: 1.35;
+}
+
+.pd-tile-flecha {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    color: #b7c4bd;
+    transition: transform .25s ease, color .25s ease;
+}
+
+.pd-tile:hover .pd-tile-flecha { transform: translateX(3px); color: var(--pd-verde); }
+
+/* Tile destacado (oscuro) */
+.pd-tile.pd-tile-destacado {
+    background: linear-gradient(135deg, var(--pd-verde) 0%, var(--pd-verde-medio) 100%);
+}
+
+.pd-tile.pd-tile-destacado .pd-tile-titulo { color: #fff; }
+.pd-tile.pd-tile-destacado .pd-tile-texto  { color: rgba(255, 255, 255, .75); }
+.pd-tile.pd-tile-destacado .pd-tile-icono  { background: var(--pd-lima); color: var(--pd-verde); }
+.pd-tile.pd-tile-destacado .pd-tile-flecha { color: var(--pd-lima); }
+
+/* ---- Alertas del panel ---- */
+.pd-alerta {
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+    flex-wrap: wrap;
+    background: #fff8e1;
+    border: 1px solid #f3dc8b;
+    border-radius: 1.1rem;
+    padding: .9rem 1.1rem;
+    color: #6b5200;
+}
+
+.pd-alerta-icono {
+    width: 2.4rem;
+    height: 2.4rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--pd-ambar);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+/* ---- Agenda del docente (tarjetas en lugar de tabla, ideal en celular) ---- */
+.pd-agenda {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+}
+
+.pd-agenda-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: #fff;
+    border-radius: 1.1rem;
+    padding: .9rem 1rem;
+    box-shadow: var(--pd-sombra);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.pd-agenda-item:hover { transform: translateX(4px); box-shadow: var(--pd-sombra-hover); }
+
+.pd-agenda-hora {
+    min-width: 4.2rem;
+    text-align: center;
+    background: var(--pd-lima-suave);
+    color: var(--pd-verde);
+    border-radius: .85rem;
+    padding: .5rem .4rem;
+    font-weight: 800;
+    font-size: 1.05rem;
+    line-height: 1.1;
+}
+
+.pd-agenda-hora small {
+    display: block;
+    font-size: .65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    opacity: .7;
+}
+
+.pd-agenda-item.pd-en-curso .pd-agenda-hora { background: var(--pd-verde); color: var(--pd-lima); }
+.pd-agenda-item.pd-finalizada { opacity: .7; }
+
+.pd-agenda-info { flex: 1; min-width: 0; }
+
+.pd-agenda-titulo {
+    font-weight: 700;
+    color: var(--pd-verde);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pd-agenda-meta {
+    font-size: .78rem;
+    color: var(--pd-texto-suave);
+}
+
+.pd-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    font-size: .7rem;
+    font-weight: 700;
+    border-radius: 50rem;
+    padding: .2rem .6rem;
+    background: var(--pd-lima-suave);
+    color: var(--pd-verde);
+}
+
+.pd-chip.pd-chip-oscuro { background: var(--pd-verde); color: var(--pd-lima); }
+.pd-chip.pd-chip-ambar  { background: #fff3cd; color: #8a6700; }
+.pd-chip.pd-chip-gris   { background: #e9ecef; color: #495057; }
+
+.pd-btn-circulo {
+    width: 2.4rem;
+    height: 2.4rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--pd-verde);
+    color: #fff;
+    text-decoration: none;
+    transition: transform .2s ease, background-color .2s ease;
+}
+
+.pd-btn-circulo:hover { background: var(--pd-verde-medio); color: var(--pd-lima); transform: scale(1.08); }
+
+.pd-vacio {
+    text-align: center;
+    background: #fff;
+    border: 2px dashed #dce3dc;
+    border-radius: 1.1rem;
+    padding: 2rem 1rem;
+    color: var(--pd-texto-suave);
+}
+
+.pd-vacio i { font-size: 2rem; color: var(--pd-salvia); display: block; margin-bottom: .5rem; }
+
+/* ---- Abono del alumno con anillo de progreso ---- */
+.pd-abono {
+    background: #fff;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    box-shadow: var(--pd-sombra);
+}
+
+.pd-anillo {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+}
+
+.pd-anillo svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+
+.pd-anillo-fondo { fill: none; stroke: var(--pd-lima-suave); stroke-width: 12; }
+
+.pd-anillo-valor {
+    fill: none;
+    stroke: var(--pd-verde);
+    stroke-width: 12;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1.2s cubic-bezier(.22, 1, .36, 1);
+}
+
+.pd-anillo-centro {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.pd-anillo-numero { font-size: 2.4rem; font-weight: 800; color: var(--pd-verde); line-height: 1; }
+.pd-anillo-texto  { font-size: .72rem; color: var(--pd-texto-suave); font-weight: 600; }
+
+.pd-dato {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .7rem 0;
+    border-bottom: 1px solid #eef1ec;
+}
+
+.pd-dato:last-child { border-bottom: 0; }
+
+.pd-dato-icono {
+    width: 2.2rem;
+    height: 2.2rem;
+    flex-shrink: 0;
+    border-radius: .7rem;
+    background: var(--pd-crema);
+    color: var(--pd-verde);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pd-dato-etiqueta { font-size: .72rem; color: var(--pd-texto-suave); text-transform: uppercase; letter-spacing: .05em; font-weight: 600; }
+.pd-dato-valor    { font-weight: 700; color: var(--pd-verde); }
+
+/* CTA principal grande (alumno: reservar) */
+.pd-cta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--pd-lima);
+    color: var(--pd-verde);
+    border-radius: 1.25rem;
+    padding: 1.1rem 1.25rem;
+    text-decoration: none;
+    font-weight: 700;
+    box-shadow: 0 .5rem 1.25rem rgba(143, 179, 57, .35);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.pd-cta:hover { color: var(--pd-verde); transform: translateY(-3px); box-shadow: 0 .9rem 1.6rem rgba(143, 179, 57, .45); }
+
+.pd-cta-icono {
+    width: 3rem;
+    height: 3rem;
+    flex-shrink: 0;
+    border-radius: 1rem;
+    background: var(--pd-verde);
+    color: var(--pd-lima);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+}
+
+.pd-cta small { display: block; font-weight: 500; opacity: .8; font-size: .8rem; }
+
+/* ---- Animación de aparición al scrollear ----
+   Solo se ocultan si hay JavaScript (clase .js en <html>), así nunca queda contenido invisible. */
+.js .pd-reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity .6s ease, transform .6s cubic-bezier(.22, 1, .36, 1);
+    transition-delay: var(--pd-delay, 0s);
+}
+
+.js .pd-reveal.pd-visible {
+    opacity: 1;
+    transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .js .pd-reveal { opacity: 1; transform: none; transition: none; }
+    .pd-stat, .pd-tile, .pd-agenda-item, .pd-cta, .pd-tile-icono, .pd-anillo-valor { transition: none; }
+}
+
+/* ---- Celular ---- */
+@media (max-width: 576px) {
+    .pd-hero { padding: 1.4rem 1.25rem 1.25rem; border-radius: 1.25rem; }
+    .pd-acciones { display: grid; grid-template-columns: 1fr 1fr; }
+    .pd-acciones a { justify-content: center; }
+    .pd-acciones a:first-child:nth-last-child(odd) { grid-column: 1 / -1; }
+    .pd-stat { flex-direction: column; align-items: flex-start; gap: .5rem; padding: .9rem; }
+    .pd-stat-valor { font-size: 1.4rem; }
+    .pd-tile { padding: .95rem; }
+    .pd-tile-texto { display: none; }
+    .pd-anillo { width: 130px; height: 130px; }
+}
+
+
+/* =====================================================================
+   COMPLEMENTOS UX/UI PARA INICIO Y VISTAS INTERNAS
+   ===================================================================== */
+
+/* Transición suave en botones principales */
+.btn-custom-solid,
+.btn-custom-outline,
+.btn-custom-light {
+    transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease, color .2s ease;
+}
+
+.btn-custom-solid:hover {
+    background-color: var(--pd-verde-medio);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 .4rem .9rem rgba(26, 60, 52, .2);
+}
+
+.btn-custom-outline:hover {
+    background-color: var(--pd-lima-suave);
+    color: var(--pd-verde);
+    transform: translateY(-2px);
+}
+
+.btn-custom-light:hover {
+    background-color: #d4ec7a;
+    color: var(--pd-verde);
+    transform: translateY(-2px);
+    box-shadow: 0 .4rem .9rem rgba(0, 0, 0, .18);
+}
+
+/* Tarjetas de disciplinas en la página de inicio (zoom sutil en fotos) */
+.card-disciplina {
+    transition: transform .28s ease, box-shadow .28s ease;
+}
+
+.card-disciplina:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--pd-sombra-hover) !important;
+}
+
+.card-disciplina .card-img-top,
+.hero-img-zoom img {
+    transition: transform .45s cubic-bezier(.22, 1, .36, 1);
+}
+
+.card-disciplina:hover .card-img-top,
+.hero-img-zoom:hover img {
+    transform: scale(1.06);
+}
+
+/* Chips táctiles para elegir días de la semana (Turnos masivos / Asignar) */
+.pd-dias-grupo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .55rem;
+}
+
+.pd-dia-check {
+    position: relative;
+}
+
+.pd-dia-check input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.pd-dia-check label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .35rem;
+    padding: .5rem 1.05rem;
+    border-radius: 50rem;
+    border: 1.5px solid #cfd8d3;
+    background: #fff;
+    color: var(--pd-verde);
+    font-weight: 600;
+    font-size: .88rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .18s ease, box-shadow .2s ease;
+}
+
+.pd-dia-check label:hover {
+    background: var(--pd-lima-suave);
+    border-color: var(--pd-lima);
+    transform: translateY(-1px);
+}
+
+.pd-dia-check input[type="checkbox"]:checked + label {
+    background: var(--pd-verde);
+    color: #fff;
+    border-color: var(--pd-verde);
+    box-shadow: 0 .3rem .75rem rgba(26, 60, 52, .22);
+}
+
+.pd-dia-check input[type="checkbox"]:focus-visible + label {
+    outline: 3px solid rgba(197, 224, 99, .65);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .btn-custom-solid,
+    .btn-custom-outline,
+    .btn-custom-light,
+    .card-disciplina,
+    .card-disciplina .card-img-top,
+    .hero-img-zoom img,
+    .pd-dia-check label {
+        transition: none;
+    }
+}

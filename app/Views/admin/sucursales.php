@@ -10,7 +10,7 @@
     <div class="row">
         <!-- Formulario para agregar nueva sucursal -->
         <div class="col-md-4 mb-4">
-            <div class="card border-0 shadow-sm rounded-4" style="background-color: #F8F9F5;">
+            <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="background-color: #F8F9F5;">
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Nueva Sucursal</h5>
                     <form action="<?= base_url('admin/sucursales/guardar') ?>" method="POST">
@@ -37,7 +37,7 @@
 
         <!-- Tabla con el listado de sucursales -->
         <div class="col-md-8">
-            <div class="card border-0 shadow-sm rounded-4">
+            <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="--pd-delay: .08s">
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Sucursales Registradas</h5>
                     
@@ -63,15 +63,15 @@
                                             <td><?= esc($sucursal['direccion']) ?></td>
                                             <td><?= esc($sucursal['telefono']) ?: '-' ?></td>
                                             <td class="text-end">
+                                                <a href="<?= base_url('admin/sucursales/editar/' . $sucursal['id_sucursal']) ?>" 
+                                                class="btn btn-sm btn-outline-primary rounded-pill px-3 me-1">
+                                                    Editar
+                                                </a>
                                                 <form action="<?= base_url('admin/sucursales/eliminar/' . $sucursal['id_sucursal']) ?>" method="POST" class="d-inline"
                                                     onsubmit="return confirm('¿Estás seguro de eliminar esta sucursal?');">
                                                     <?= csrf_field() ?>
                                                     <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">Eliminar</button>
                                                 </form>
-                                                <a href="<?= base_url('admin/sucursales/editar/' . $sucursal['id_sucursal']) ?>" 
-                                                class="btn btn-sm btn-outline-primary rounded-pill px-3 me-1">
-                                                    Editar
-                                                </a>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

@@ -1,5 +1,5 @@
 <main class="container mt-5 mb-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
         <div>
             <h2 class="text-primary-dark fw-bold mb-0">Alumnos Inscriptos en el Turno</h2>
             <p class="text-muted small mb-0">
@@ -8,13 +8,16 @@
                 <?= date('d/m/Y', strtotime($turno['fecha'])) ?> a las <?= date('H:i', strtotime($turno['horario'])) ?> hs
             </p>
         </div>
-        <a href="<?= base_url('admin/turnos') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Volver a Turnos</a>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="<?= base_url('admin/turnos') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Volver a Turnos</a>
+            <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Volver al Panel</a>
+        </div>
     </div>
 
     <div class="row">
         <!-- Columna izquierda: inscribir un alumno puntual en este turno -->
         <div class="col-md-4 mb-4">
-            <div class="card border-0 shadow-sm rounded-4" style="background-color: #F8F9F5;">
+            <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="background-color: #F8F9F5;">
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-3">Inscribir Alumno</h5>
 
@@ -50,7 +53,7 @@
 
         <!-- Columna derecha: listado de inscriptos -->
         <div class="col-md-8">
-            <div class="card border-0 shadow-sm rounded-4">
+            <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="--pd-delay: .08s">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="fw-bold text-primary-dark mb-0">
@@ -177,4 +180,3 @@
 })();
 </script>
 <?php endif; ?>
-

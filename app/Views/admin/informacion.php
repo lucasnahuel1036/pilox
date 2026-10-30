@@ -44,7 +44,7 @@ $kpiHero = function ($etiqueta, $valor, $tipo, $detalle = '', $pct = null) use (
     $decimales = $tipo === 'porcentaje' ? 1 : 0;
     ?>
     <div class="col-lg-5">
-        <div class="kpi-hero">
+        <div class="kpi-hero pd-reveal">
             <div class="kpi-hero-etiqueta"><?= esc($etiqueta) ?></div>
             <div class="kpi-hero-valor">
                 <span class="contador" data-valor="<?= (float) $valor ?>" data-tipo="<?= $tipo ?>" data-decimales="<?= $decimales ?>"><?= $valorKpi($valor, $tipo) ?></span>
@@ -67,7 +67,7 @@ $kpiMini = function ($etiqueta, $valor, $tipo, $detalle = '', $clase = '') use (
     $decimales = $tipo === 'porcentaje' ? 1 : 0;
     ?>
     <div class="col-12 col-sm-4">
-        <div class="kpi-mini <?= $clase ?>">
+        <div class="kpi-mini pd-reveal <?= $clase ?>" style="--pd-delay: .06s">
             <div class="kpi-mini-etiqueta"><?= esc($etiqueta) ?></div>
             <div class="kpi-mini-valor">
                 <span class="contador" data-valor="<?= (float) $valor ?>" data-tipo="<?= $tipo ?>" data-decimales="<?= $decimales ?>"><?= $valorKpi($valor, $tipo) ?></span>
@@ -97,7 +97,7 @@ $barra = function ($pct) use ($colorBarra, $porc) {
 // Tarjeta con tabla de ocupación (actividad, sucursal o franja horaria)
 $tablaOcupacion = function ($titulo, $columna, $filas) use ($barra, $entero) {
     ?>
-    <div class="card border-0 shadow-sm rounded-4 h-100">
+    <div class="card border-0 shadow-sm rounded-4 h-100 pd-reveal">
         <div class="card-body p-4">
             <h6 class="fw-bold text-primary-dark mb-3"><?= esc($titulo) ?></h6>
             <?php if (empty($filas)): ?>
@@ -143,7 +143,7 @@ $tablaOcupacion = function ($titulo, $columna, $filas) use ($barra, $entero) {
     </div>
 
     <!-- Filtros -->
-    <div class="card border-0 shadow-sm rounded-4" style="background-color: #F8F9F5;">
+    <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="background-color: #F8F9F5;">
         <div class="card-body p-4">
             <form action="<?= base_url('admin/informacion') ?>" method="GET" class="row g-3 align-items-end">
                 <div class="col-md-3">
@@ -187,7 +187,7 @@ $tablaOcupacion = function ($titulo, $columna, $filas) use ($barra, $entero) {
     </nav>
 
     <!-- ===================== INGRESOS ===================== -->
-    <section id="ingresos" class="panel-seccion">
+    <section id="ingresos" class="panel-seccion pd-reveal">
         <?php $encabezado('💰', 'Ingresos', '¿Cuánto entró y cuánto falta cobrar?', 'Período: ' . $periodoTexto . ' · Todas las sucursales'); ?>
         <p class="nota-seccion">
             ℹ️ Los abonos sirven en todas las sucursales, por eso lo cobrado no se separa por sucursal.
@@ -277,7 +277,7 @@ $tablaOcupacion = function ($titulo, $columna, $filas) use ($barra, $entero) {
     </section>
 
     <!-- ===================== OCUPACIÓN ===================== -->
-    <section id="ocupacion" class="panel-seccion">
+    <section id="ocupacion" class="panel-seccion pd-reveal">
         <?php $encabezado('🏋️', 'Ocupación de las clases', '¿Qué clases se llenan y cuáles quedan vacías?', 'Período: ' . $periodoTexto . ' · ' . $nombreSucursal); ?>
 
         <div class="row g-3 mb-4">
@@ -320,7 +320,7 @@ $tablaOcupacion = function ($titulo, $columna, $filas) use ($barra, $entero) {
     </section>
 
     <!-- ===================== ASISTENCIA ===================== -->
-    <section id="asistencia" class="panel-seccion">
+    <section id="asistencia" class="panel-seccion pd-reveal">
         <?php $encabezado('✅', 'Asistencia', '¿Los alumnos vienen a lo que reservan?', 'Período: ' . $periodoTexto . ' · ' . $nombreSucursal); ?>
         <p class="nota-seccion">ℹ️ Solo cuenta las clases que ya se realizaron. El porcentaje se calcula sobre la asistencia ya registrada.</p>
 
@@ -397,7 +397,7 @@ $tablaOcupacion = function ($titulo, $columna, $filas) use ($barra, $entero) {
     </section>
 
     <!-- ===================== RESERVAS ===================== -->
-    <section id="reservas" class="panel-seccion">
+    <section id="reservas" class="panel-seccion pd-reveal">
         <?php $encabezado('📅', 'Reservas', '¿Cuánto se reserva y cuánto se cancela?', 'Período: ' . $periodoTexto . ' · ' . $nombreSucursal); ?>
 
         <div class="row g-3">
@@ -413,7 +413,7 @@ $tablaOcupacion = function ($titulo, $columna, $filas) use ($barra, $entero) {
     </section>
 
     <!-- ===================== ALUMNOS ===================== -->
-    <section id="alumnos" class="panel-seccion">
+    <section id="alumnos" class="panel-seccion pd-reveal">
         <?php $encabezado('👥', 'Alumnos', '¿A quién hay que renovarle o cobrarle?', 'Al día de hoy · Todas las sucursales'); ?>
 
         <div class="row g-3 mb-4">

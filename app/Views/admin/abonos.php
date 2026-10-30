@@ -10,7 +10,7 @@
     <div class="row">
         <!-- Formulario para asignar un abono -->
         <div class="col-md-4 mb-4">
-            <div class="card border-0 shadow-sm rounded-4" style="background-color: #F8F9F5;">
+            <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="background-color: #F8F9F5;">
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Asignar Abono</h5>
                     <form action="<?= base_url('admin/abonos/guardar') ?>" method="POST">
@@ -61,7 +61,7 @@
             </form>
 
             <!-- Vigentes -->
-            <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card border-0 shadow-sm rounded-4 mb-4 pd-reveal" style="--pd-delay: .06s">
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Abonos Vigentes</h5>
 
@@ -130,7 +130,7 @@
             </div>
 
             <!-- Historial -->
-            <div class="card border-0 shadow-sm rounded-4">
+            <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="--pd-delay: .12s">
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-1">Historial de Abonos</h5>
                     <p class="text-muted small mb-4">Abonos vencidos o agotados. Los que quedaron sin pagar figuran en amarillo y se pueden regularizar.</p>

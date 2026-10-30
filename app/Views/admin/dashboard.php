@@ -1,141 +1,102 @@
-<!-- app/Views/admin/dashboard.php -->
-<main class="container mt-5 mb-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="text-primary-dark fw-bold mb-0">Panel de Administración</h2>
-            <p class="text-muted small">Bienvenido, <?= esc(session()->get('nombre')) ?></p>
+<?php
+// app/Views/admin/dashboard.php
+// Saludo según la hora y fecha en español
+$hora    = (int) date('G');
+$saludo  = $hora < 12 ? 'Buen día' : ($hora < 20 ? 'Buenas tardes' : 'Buenas noches');
+$dias    = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+$meses   = [1 => 'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+$fechaHoy = $dias[(int) date('w')] . ' ' . date('j') . ' de ' . $meses[(int) date('n')];
+
+// Métricas: [valor, etiqueta, icono, clase del icono]
+$metricas = [
+    [$turnos_activos ?? 0,    'Clases programadas', 'bi-calendar-check', 'pd-icono-oscuro'],
+    [$total_alumnos ?? 0,     'Alumnos activos',    'bi-people',         ''],
+    [$total_docentes ?? 0,    'Docentes',           'bi-person-badge',   ''],
+    [$total_actividades ?? 0, 'Actividades',        'bi-activity',       ''],
+    [$total_sucursales ?? 0,  'Sucursales',         'bi-building',       ''],
+];
+
+// Módulos agrupados por uso: [url, icono, título, descripción]
+$operacion = [
+    ['admin/turnos',  'bi-calendar3',         'Turnos',  'Grilla de clases, inscriptos y asignaciones.'],
+    ['admin/abonos',  'bi-ticket-perforated', 'Abonos',  'Asigná abonos y controlá los pagos.'],
+    ['admin/alumnos', 'bi-people',            'Alumnos', 'Datos, estado y altas de alumnos.'],
+];
+$configuracion = [
+    ['admin/sucursales',  'bi-building',      'Sucursales',  'Locales de Pilox.'],
+    ['admin/actividades', 'bi-activity',      'Actividades', 'Pilates, Yoga, GAP y más.'],
+    ['admin/docentes',    'bi-person-badge',  'Docentes',    'Staff de profesores.'],
+    ['admin/tarifas',     'bi-cash-coin',     'Tarifas',     'Precios de 4, 8 y 12 clases.'],
+    ['perfil',            'bi-person-circle', 'Mi perfil',   'Tus datos de cuenta y contraseña.'],
+];
+?>
+<main class="container mt-4 mb-5">
+
+    <!-- Bienvenida + acciones rápidas -->
+    <section class="pd-hero pd-reveal">
+        <div class="pd-hero-fecha"><i class="bi bi-calendar-event me-1"></i><?= $fechaHoy ?></div>
+        <h1 class="pd-hero-titulo"><?= $saludo ?>, <?= esc(session()->get('nombre')) ?></h1>
+        <p class="pd-hero-sub">Panel de administración de Pilox. ¿Qué querés hacer hoy?</p>
+
+        <div class="pd-acciones">
+            <a href="<?= base_url('admin/turnos/asignar') ?>" class="pd-btn-lima"><i class="bi bi-person-check"></i> Asignar turno</a>
+            <a href="<?= base_url('admin/abonos') ?>" class="pd-btn-glass"><i class="bi bi-ticket-perforated"></i> Nuevo abono</a>
+            <a href="<?= base_url('admin/turnos') ?>" class="pd-btn-glass"><i class="bi bi-plus-circle"></i> Nuevo turno</a>
+            <a href="<?= base_url('admin/turnos/masivo') ?>" class="pd-btn-glass"><i class="bi bi-calendar-range"></i> Generar turnos por período</a>
         </div>
+    </section>
+
+    <!-- Resumen -->
+    <h2 class="pd-seccion-titulo">Resumen</h2>
+    <div class="row g-3">
+        <?php foreach ($metricas as $i => [$valor, $etiqueta, $icono, $claseIcono]): ?>
+            <div class="<?= $i === 0 ? 'col-12' : 'col-6' ?> col-md-4 col-xl">
+                <div class="pd-stat pd-reveal" style="--pd-delay: <?= $i * 0.06 ?>s">
+                    <div class="pd-stat-icono <?= $claseIcono ?>"><i class="bi <?= $icono ?>"></i></div>
+                    <div>
+                        <div class="pd-stat-valor" data-contar="<?= (int) $valor ?>"><?= (int) $valor ?></div>
+                        <div class="pd-stat-etiqueta"><?= $etiqueta ?></div>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
     </div>
 
-    <!-- Información general -->
-    <a href="<?= base_url('admin/informacion') ?>" class="text-decoration-none">
-        <div class="card border-0 shadow-sm rounded-4 mb-4 p-3" style="background-color: #1A3C34;">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h5 class="fw-bold mb-1" style="color: #C5E063;">📊 Información general</h5>
-                    <p class="small mb-0 text-white-50">Ingresos, ocupación, asistencia, reservas y alumnos del centro.</p>
-                </div>
-                <span class="btn btn-custom-light btn-sm">Ver métricas</span>
-            </div>
+    <!-- Operación diaria (Información general primera a la izquierda) -->
+    <h2 class="pd-seccion-titulo">Operación diaria</h2>
+    <div class="row g-3">
+        <div class="col-6 col-lg-3">
+            <a href="<?= base_url('admin/informacion') ?>" class="pd-tile pd-tile-destacado pd-reveal">
+                <i class="bi bi-arrow-right pd-tile-flecha"></i>
+                <div class="pd-tile-icono"><i class="bi bi-bar-chart-line"></i></div>
+                <h3 class="pd-tile-titulo">Información general</h3>
+                <p class="pd-tile-texto">Ingresos, ocupación, asistencia y alumnos.</p>
+            </a>
         </div>
-    </a>
-
-    <!-- Tarjetas de Métricas -->
-    <div class="row mb-5">
-        <div class="col-md-4 mb-3">
-            <div class="card border-0 shadow-sm rounded-4 text-center p-3" style="background-color: #e9f2c6;">
-                <h3 class="text-primary-dark fw-bold mb-0"><?= $total_alumnos ?? 0 ?></h3>
-                <p class="text-muted small mb-0">Alumnos Activos</p>
+        <?php foreach ($operacion as $i => [$url, $icono, $titulo, $texto]): ?>
+            <div class="col-6 col-lg-3">
+                <a href="<?= base_url($url) ?>" class="pd-tile pd-reveal" style="--pd-delay: <?= ($i + 1) * 0.06 ?>s">
+                    <i class="bi bi-arrow-right pd-tile-flecha"></i>
+                    <div class="pd-tile-icono"><i class="bi <?= $icono ?>"></i></div>
+                    <h3 class="pd-tile-titulo"><?= $titulo ?></h3>
+                    <p class="pd-tile-texto"><?= $texto ?></p>
+                </a>
             </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="card border-0 shadow-sm rounded-4 text-center p-3" style="background-color: #e9f2c6;">
-                <h3 class="text-primary-dark fw-bold mb-0"><?= $total_docentes ?? 0 ?></h3>
-                <p class="text-muted small mb-0">Docentes</p>
-            </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="card border-0 shadow-sm rounded-4 text-center p-3" style="background-color: #e9f2c6;">
-                <h3 class="text-primary-dark fw-bold mb-0"><?= $total_actividades ?? 0 ?></h3>
-                <p class="text-muted small mb-0">Actividades</p>
-            </div>
-        </div>
-        <div class="col-md-6 mb-3">
-            <div class="card border-0 shadow-sm rounded-4 text-center p-3" style="background-color: #e9f2c6;">
-                <h3 class="text-primary-dark fw-bold mb-0"><?= $total_sucursales ?? 0 ?></h3>
-                <p class="text-muted small mb-0">Sucursales Operativas</p>
-            </div>
-        </div>
-        <div class="col-md-6 mb-3">
-            <div class="card border-0 shadow-sm rounded-4 text-center p-3" style="background-color: #e9f2c6;">
-                <h3 class="text-primary-dark fw-bold mb-0"><?= $turnos_activos ?? 0 ?></h3>
-                <p class="text-muted small mb-0">Clases Programadas</p>
-            </div>
-        </div>
+        <?php endforeach; ?>
     </div>
 
-    <!-- Módulos de Gestión -->
-    <h4 class="text-primary-dark fw-bold border-bottom pb-2 mb-4">Módulos del Sistema</h4>
-    <div class="row">
-        <!-- Sucursales-->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 border-0 shadow-sm rounded-4" style="background-color: #e9f2c6;">
-                <div class="card-body">
-                    <h5 class="fw-bold text-primary-dark">🏢 Sucursales</h5>
-                    <p class="small text-muted">Gestioná los locales de Pilox.</p>
-                    <a href="<?= base_url('admin/sucursales') ?>" class="btn btn-sm btn-custom-solid">Gestionar</a>
-                </div>
+    <!-- Configuración del centro (incluye Mi perfil integrado) -->
+    <h2 class="pd-seccion-titulo">Configuración del centro</h2>
+    <div class="row g-3">
+        <?php foreach ($configuracion as $i => [$url, $icono, $titulo, $texto]): ?>
+            <div class="<?= $i === 4 ? 'col-12' : 'col-6' ?> col-md-4 col-xl">
+                <a href="<?= base_url($url) ?>" class="pd-tile pd-reveal" style="--pd-delay: <?= $i * 0.06 ?>s">
+                    <i class="bi bi-arrow-right pd-tile-flecha"></i>
+                    <div class="pd-tile-icono"><i class="bi <?= $icono ?>"></i></div>
+                    <h3 class="pd-tile-titulo"><?= $titulo ?></h3>
+                    <p class="pd-tile-texto"><?= $texto ?></p>
+                </a>
             </div>
-        </div>
-        <!-- Actividades -->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 border-0 shadow-sm rounded-4" style="background-color: #e9f2c6;">
-                <div class="card-body">
-                    <h5 class="fw-bold text-primary-dark">🧘‍♀️ Actividades</h5>
-                    <p class="small text-muted">Pilates, Yoga, GAP y más.</p>
-                    <a href="<?= base_url('admin/actividades') ?>" class="btn btn-sm btn-custom-solid">Gestionar</a>
-                </div>
-            </div>
-        </div>
-        <!-- Turnos  -->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 border-0 shadow-sm rounded-4" style="background-color: #e9f2c6;">
-                <div class="card-body">
-                    <h5 class="fw-bold text-primary-dark">🗓️ Turnos</h5>
-                    <p class="small text-muted">Configurá la grilla de horarios.</p>
-                    <a href="<?= base_url('admin/turnos') ?>" class="btn btn-sm btn-custom-solid">Gestionar</a>
-                </div>
-            </div>
-        </div>
-        <!-- Alumnos  -->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 border-0 shadow-sm rounded-4" style="background-color: #e9f2c6;">
-                <div class="card-body">
-                    <h5 class="fw-bold text-primary-dark">👥 Alumnos</h5>
-                    <p class="small text-muted">Consultá y modificá la información de los alumnos registrados.</p>
-                    <a href="<?= base_url('admin/alumnos') ?>" class="btn btn-sm btn-custom-solid">Gestionar</a>
-                </div>
-            </div>
-        </div>
-        <!-- Docentes  -->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 border-0 shadow-sm rounded-4" style="background-color: #e9f2c6;">
-                <div class="card-body">
-                    <h5 class="fw-bold text-primary-dark">👨‍🏫 Docentes</h5>
-                    <p class="small text-muted">Administrá el staff de profesores.</p>
-                    <a href="<?= base_url('admin/docentes') ?>" class="btn btn-sm btn-custom-solid">Gestionar</a>
-                </div>
-            </div>
-        </div>
-                <!-- Abonos -->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 border-0 shadow-sm rounded-4" style="background-color: #e9f2c6;">
-                <div class="card-body">
-                    <h5 class="fw-bold text-primary-dark">🎟️ Abonos</h5>
-                    <p class="small text-muted">Asigná abonos y controlá los pagos.</p>
-                    <a href="<?= base_url('admin/abonos') ?>" class="btn btn-sm btn-custom-solid">Gestionar</a>
-                </div>
-            </div>
-        </div>
-                <!-- Tarifas -->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 border-0 shadow-sm rounded-4" style="background-color: #e9f2c6;">
-                <div class="card-body">
-                    <h5 class="fw-bold text-primary-dark">💲 Tarifas</h5>
-                    <p class="small text-muted">Definí el precio de los abonos de 4, 8 y 12 clases.</p>
-                    <a href="<?= base_url('admin/tarifas') ?>" class="btn btn-sm btn-custom-solid">Configurar</a>
-                </div>
-            </div>
-        </div>
-        <!-- Mi Perfil -->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 border-0 shadow-sm rounded-4" style="background-color: #e9f2c6;">
-                <div class="card-body">
-                    <h5 class="fw-bold text-primary-dark">👤 Mi Perfil</h5>
-                    <p class="small text-muted">Actualizá tus datos de cuenta y tu contraseña de acceso.</p>
-                    <a href="<?= base_url('perfil') ?>" class="btn btn-sm btn-custom-solid">Editar perfil</a>
-                </div>
-            </div>
-        </div>
+        <?php endforeach; ?>
     </div>
 </main>

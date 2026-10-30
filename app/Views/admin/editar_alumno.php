@@ -1,5 +1,5 @@
 <main class="container mt-5 mb-5">
-    <div class="card border-0 shadow-sm rounded-4 mx-auto p-4" style="max-width: 600px; background-color: #F8F9F5;">
+    <div class="card border-0 shadow-sm rounded-4 mx-auto p-4 pd-reveal" style="max-width: 600px; background-color: #F8F9F5;">
         <h5 class="fw-bold text-primary-dark mb-4">Editar Perfil de Alumno</h5>
         <form action="<?= base_url('admin/alumnos/actualizar/' . $alumno['id_usuario']) ?>" method="POST">
             <?= csrf_field() ?>

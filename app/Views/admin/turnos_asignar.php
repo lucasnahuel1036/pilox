@@ -1,13 +1,16 @@
 <main class="container mt-5 mb-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
         <div>
             <h2 class="text-primary-dark fw-bold mb-0"><i class="bi bi-person-check"></i> Asignación Periódica a Alumno</h2>
-            <p class="text-muted small">Inscribí a un alumno en sus días y horario fijos dentro de la vigencia de su abono</p>
+            <p class="text-muted small mb-0">Inscribí a un alumno en sus días y horario fijos dentro de la vigencia de su abono</p>
         </div>
-        <a href="<?= base_url('admin/turnos') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Volver a Turnos</a>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="<?= base_url('admin/turnos') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Volver a Turnos</a>
+            <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Volver al Panel</a>
+        </div>
     </div>
 
-    <div class="card border-0 shadow-sm rounded-4" style="background-color: #F8F9F5;">
+    <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="background-color: #F8F9F5;">
         <div class="card-body p-4 p-md-5">
             <form action="<?= base_url('admin/turnos/guardar_asignacion') ?>" method="POST">
                 <?= csrf_field() ?>
@@ -56,30 +59,30 @@
 
                 <div class="mb-4">
                     <label class="form-label text-primary-dark small fw-bold d-block mb-3">Días de la semana que asiste el alumno:</label>
-                    <div class="d-flex flex-wrap gap-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="dias[]" value="1" id="dia1">
-                            <label class="form-check-label" for="dia1">Lunes</label>
+                    <div class="pd-dias-grupo">
+                        <div class="pd-dia-check">
+                            <input type="checkbox" name="dias[]" value="1" id="dia1">
+                            <label for="dia1">Lunes</label>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="dias[]" value="2" id="dia2">
-                            <label class="form-check-label" for="dia2">Martes</label>
+                        <div class="pd-dia-check">
+                            <input type="checkbox" name="dias[]" value="2" id="dia2">
+                            <label for="dia2">Martes</label>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="dias[]" value="3" id="dia3">
-                            <label class="form-check-label" for="dia3">Miércoles</label>
+                        <div class="pd-dia-check">
+                            <input type="checkbox" name="dias[]" value="3" id="dia3">
+                            <label for="dia3">Miércoles</label>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="dias[]" value="4" id="dia4">
-                            <label class="form-check-label" for="dia4">Jueves</label>
+                        <div class="pd-dia-check">
+                            <input type="checkbox" name="dias[]" value="4" id="dia4">
+                            <label for="dia4">Jueves</label>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="dias[]" value="5" id="dia5">
-                            <label class="form-check-label" for="dia5">Viernes</label>
+                        <div class="pd-dia-check">
+                            <input type="checkbox" name="dias[]" value="5" id="dia5">
+                            <label for="dia5">Viernes</label>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="dias[]" value="6" id="dia6">
-                            <label class="form-check-label" for="dia6">Sábado</label>
+                        <div class="pd-dia-check">
+                            <input type="checkbox" name="dias[]" value="6" id="dia6">
+                            <label for="dia6">Sábado</label>
                         </div>
                     </div>
                     <div class="form-text mt-2">
@@ -156,4 +159,3 @@
     });
 })();
 </script>
-

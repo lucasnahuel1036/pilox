@@ -50,6 +50,9 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
+    <!-- Animaciones de los paneles (aparición al scrollear, contadores) -->
+    <script src="<?= base_url('assets/js/panel.js') ?>"></script>
+
     <!-- SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
