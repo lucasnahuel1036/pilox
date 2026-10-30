@@ -6,11 +6,11 @@
             <div class="row">
                 <div class="col-6 mb-3">
                     <label class="form-label text-primary-dark small fw-bold">Fecha</label>
-                    <input type="date" class="form-control rounded-pill px-3" name="fecha" value="<?= $turno['fecha'] ?>" required>
+                    <input type="date" class="form-control rounded-pill px-3" name="fecha" min="<?= date('Y-m-d') ?>" value="<?= $turno['fecha'] ?>" required>
                 </div>
                 <div class="col-6 mb-3">
                     <label class="form-label text-primary-dark small fw-bold">Horario</label>
-                    <input type="time" class="form-control rounded-pill px-3" name="horario" value="<?= $turno['horario'] ?>" required>
+                    <input type="time" class="form-control rounded-pill px-3" name="horario" list="horariosPilox" value="<?= esc(substr($turno['horario'], 0, 5)) ?>" required>
                 </div>
             </div>
 

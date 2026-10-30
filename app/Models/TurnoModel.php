@@ -24,23 +24,25 @@ class TurnoModel extends Model
     /**
      * Esta función hace JOIN con las otras tablas para traer
      * el nombre de la actividad, la sucursal y el docente.
-     * $periodo: 'proximos' (de hoy en adelante) o 'anteriores'.
+     * $periodo: 'proximos' (aún no iniciados) o 'anteriores' (ya iniciados o pasados).
      * Devuelve el modelo para poder encadenar paginate() o findAll().
      */
     public function getTurnosConDetalles($periodo = 'proximos')
     {
+        $ahora = date('Y-m-d H:i:s');
+
         $this->select('turnos.*, actividades.nombre as actividad, sucursales.nombre as sucursal, usuarios.nombre as docente_nombre, usuarios.apellido as docente_apellido')
              ->join('actividades', 'actividades.id_actividad = turnos.id_actividad')
              ->join('sucursales', 'sucursales.id_sucursal = turnos.id_sucursal')
              ->join('usuarios', 'usuarios.id_usuario = turnos.id_docente');
 
         if ($periodo === 'anteriores') {
-            return $this->where('turnos.fecha <', date('Y-m-d'))
+            return $this->where("TIMESTAMP(turnos.fecha, turnos.horario) <= '" . $ahora . "'", null, false)
                         ->orderBy('turnos.fecha', 'DESC')
                         ->orderBy('turnos.horario', 'DESC');
         }
 
-        return $this->where('turnos.fecha >=', date('Y-m-d'))
+        return $this->where("TIMESTAMP(turnos.fecha, turnos.horario) > '" . $ahora . "'", null, false)
                     ->orderBy('turnos.fecha', 'ASC')
                     ->orderBy('turnos.horario', 'ASC');
     }
@@ -173,6 +175,7 @@ class TurnoModel extends Model
                     ->where('fecha <=', $fechaHasta)
                     ->where("TIMESTAMP(fecha, horario) > '" . $ahora . "'", null, false)
                     ->orderBy('fecha', 'ASC')
+                    ->orderBy('horario', 'ASC')
                     ->findAll();
     }
 }

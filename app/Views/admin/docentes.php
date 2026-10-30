@@ -92,7 +92,7 @@
                                             <td class="text-end">
                                                 <a href="<?= base_url('admin/docentes/editar/' . $docente['id_usuario']) ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3 me-1">Editar</a>
                                                 <form action="<?= base_url('admin/docentes/eliminar/' . $docente['id_usuario']) ?>" method="POST" class="d-inline"
-                                                    onsubmit="return confirm('¿Seguro que deseas eliminar este docente?');">
+                                                    data-confirmar="¿Seguro que deseas eliminar este docente?" data-confirmar-titulo="Eliminar docente" data-confirmar-boton="Sí, eliminar" data-confirmar-tipo="peligro">
                                                     <?= csrf_field() ?>
                                                      <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">Eliminar</button>
                                                 </form>

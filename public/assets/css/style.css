@@ -729,3 +729,32 @@ body {
         transition: none;
     }
 }
+
+/* ---- Modal de confirmación con estética Pilox ---- */
+#modalConfirmarPilox .modal-dialog {
+    max-width: 390px;
+}
+
+.pd-modal-confirm {
+    background-color: #ffffff;
+    border-radius: 1.35rem;
+    box-shadow: 0 1.25rem 3rem rgba(26, 60, 52, 0.24);
+    overflow: hidden;
+}
+
+.pd-modal-icono {
+    width: 3.6rem;
+    height: 3.6rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.65rem;
+    background-color: var(--pd-lima-suave);
+    color: var(--pd-verde);
+}
+
+.pd-modal-icono.pd-modal-icono-peligro {
+    background-color: #fde8e8;
+    color: #dc3545;
+}

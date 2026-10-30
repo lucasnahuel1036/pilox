@@ -100,7 +100,7 @@
                                             <?php if ($esFuturo): ?>
                                                 <td class="text-end">
                                                     <form action="<?= base_url('admin/turnos/cancelar_reserva/' . $alumno['id_reserva']) ?>" method="POST" class="d-inline"
-                                                          onsubmit="return confirm('¿Cancelar la reserva de <?= esc($alumno['nombre'] . ' ' . $alumno['apellido']) ?>? Se devolverá la clase a su abono.');">
+                                                          data-confirmar="¿Cancelar la reserva de <?= esc($alumno['nombre'] . ' ' . $alumno['apellido']) ?>? Se devolverá la clase a su abono." data-confirmar-titulo="Cancelar reserva" data-confirmar-boton="Sí, cancelar" data-confirmar-tipo="peligro">
                                                         <?= csrf_field() ?>
                                                         <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">
                                                             Cancelar reserva

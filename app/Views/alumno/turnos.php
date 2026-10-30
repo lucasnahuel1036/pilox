@@ -103,7 +103,7 @@
                                             <span class="badge bg-warning text-dark">Horario ocupado</span>
                                         <?php else: ?>
                                             <form action="<?= base_url('alumno/reservar/' . $turno['id_turno']) ?>" method="POST" class="d-inline"
-                                                 onsubmit="return confirm('¿Confirmás la reserva? Se descontará una clase de tu abono.');">
+                                                 data-confirmar="¿Confirmás la reserva? Se descontará una clase de tu abono." data-confirmar-titulo="Confirmar reserva" data-confirmar-boton="Sí, reservar">
                                                 <?= csrf_field() ?>
                                                 <button type="submit" class="btn btn-sm btn-custom-solid rounded-pill px-3">Reservar</button>
                                             </form>

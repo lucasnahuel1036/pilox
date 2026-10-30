@@ -12,7 +12,10 @@
 
     <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="background-color: #F8F9F5;">
         <div class="card-body p-4 p-md-5">
-            <form action="<?= base_url('admin/turnos/guardar_asignacion') ?>" method="POST">
+            <form action="<?= base_url('admin/turnos/guardar_asignacion') ?>" method="POST"
+                  data-confirmar="¿Confirmás la asignación periódica de turnos para este alumno?"
+                  data-confirmar-titulo="Confirmar asignación"
+                  data-confirmar-boton="Sí, asignar">
                 <?= csrf_field() ?>
 
                 <h5 class="fw-bold text-primary-dark mb-4 border-bottom pb-2">1. Seleccionar Alumno</h5>
@@ -53,7 +56,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label text-primary-dark small fw-bold">Horario de la clase</label>
-                        <input type="time" class="form-control rounded-pill px-3" name="horario" value="<?= esc(old('horario')) ?>" required>
+                        <input type="time" class="form-control rounded-pill px-3" name="horario" list="horariosPilox" value="<?= esc(old('horario')) ?>" required>
                     </div>
                 </div>
 
@@ -91,8 +94,7 @@
                 </div>
 
                 <div class="d-flex justify-content-end mt-4">
-                    <button type="submit" class="btn btn-custom-solid rounded-pill px-5 py-2"
-                            onclick="return confirm('¿Confirmás la asignación periódica de turnos para este alumno?');">
+                    <button type="submit" class="btn btn-custom-solid rounded-pill px-5 py-2">
                         Asignar Turnos
                     </button>
                 </div>

@@ -68,7 +68,7 @@
                                                     Editar
                                                 </a>
                                                 <form action="<?= base_url('admin/sucursales/eliminar/' . $sucursal['id_sucursal']) ?>" method="POST" class="d-inline"
-                                                    onsubmit="return confirm('¿Estás seguro de eliminar esta sucursal?');">
+                                                    data-confirmar="¿Estás seguro de eliminar esta sucursal?" data-confirmar-titulo="Eliminar sucursal" data-confirmar-boton="Sí, eliminar" data-confirmar-tipo="peligro">
                                                     <?= csrf_field() ?>
                                                     <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">Eliminar</button>
                                                 </form>

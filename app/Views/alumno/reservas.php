@@ -42,7 +42,7 @@
                                     <td class="text-end">
                                         <?php if ($r['puede_cancelar']): ?>
                                             <form action="<?= base_url('alumno/reservas/cancelar/' . $r['id_reserva']) ?>" method="POST" class="d-inline"
-                                                  onsubmit="return confirm('¿Cancelar esta reserva? Se te devolverá la clase a tu abono.');">
+                                                  data-confirmar="¿Cancelar esta reserva? Se te devolverá la clase a tu abono." data-confirmar-titulo="Cancelar reserva" data-confirmar-boton="Sí, cancelar" data-confirmar-tipo="peligro">
                                                 <?= csrf_field() ?>
                                                 <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">Cancelar</button>
                                             </form>

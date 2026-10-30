@@ -27,11 +27,11 @@
                         <div class="row">
                             <div class="col-6 mb-3">
                                 <label class="form-label text-primary-dark small fw-bold">Fecha</label>
-                                <input type="date" class="form-control rounded-pill px-3" name="fecha" required>
+                                <input type="date" class="form-control rounded-pill px-3" name="fecha" min="<?= date('Y-m-d') ?>" required>
                             </div>
                             <div class="col-6 mb-3">
                                 <label class="form-label text-primary-dark small fw-bold">Horario</label>
-                                <input type="time" class="form-control rounded-pill px-3" name="horario" required>
+                                <input type="time" class="form-control rounded-pill px-3" name="horario" list="horariosPilox" required>
                             </div>
                         </div>
 
@@ -133,9 +133,11 @@
                                             </td>
                                             <td class="text-end">
                                                 <a href="<?= base_url('admin/turnos/inscriptos/' . $turno['id_turno']) ?>" class="btn btn-sm btn-outline-dark rounded-pill px-3 me-1 mb-1">Inscriptos</a>
-                                                <a href="<?= base_url('admin/turnos/editar/' . $turno['id_turno']) ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3 me-1 mb-1">Editar</a>
+                                                <?php if (strtotime($turno['fecha'] . ' ' . $turno['horario']) > time()): ?>
+                                                    <a href="<?= base_url('admin/turnos/editar/' . $turno['id_turno']) ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3 me-1 mb-1">Editar</a>
+                                                <?php endif; ?>
                                                 <form action="<?= base_url('admin/turnos/eliminar/' . $turno['id_turno']) ?>" method="POST" class="d-inline"
-                                                    onsubmit="return confirm('¿Seguro que deseas eliminar este turno?');">
+                                                    data-confirmar="¿Seguro que deseas eliminar este turno?" data-confirmar-titulo="Eliminar turno" data-confirmar-boton="Sí, eliminar" data-confirmar-tipo="peligro">
                                                     <?= csrf_field() ?>
                                                     <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3 mb-1">Eliminar</button>
                                                 </form>

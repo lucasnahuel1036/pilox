@@ -50,6 +50,11 @@ class Turno extends BaseController
         $horario = $this->request->getPost('horario');
         $id_docente = $this->request->getPost('id_docente');
 
+        if (strtotime($fecha . ' ' . $horario) <= time()) {
+            session()->setFlashdata('error', 'No se puede crear un turno en una fecha u horario que ya pasó.');
+            return redirect()->back()->withInput();
+        }
+
         if ((int) $capacidad < 1) {
             session()->setFlashdata('error', 'La capacidad debe ser al menos 1.');
             return redirect()->back()->withInput();
@@ -93,6 +98,11 @@ class Turno extends BaseController
         $actividadModel = new ActividadModel();
         $usuarioModel = new UsuarioModel();
 
+        if (strtotime($turno['fecha'] . ' ' . $turno['horario']) <= time()) {
+            session()->setFlashdata('error', 'No se puede editar un turno que ya pasó.');
+            return redirect()->to('/admin/turnos?ver=anteriores');
+        }
+
         $data['turno'] = $turno;
         $data['sucursales'] = $sucursalModel->findAll();
         $data['actividades'] = $actividadModel->findAll();
@@ -107,6 +117,13 @@ class Turno extends BaseController
     {
         $model = new TurnoModel();
 
+        $turnoActual = $model->find($id);
+
+        if (!$turnoActual || strtotime($turnoActual['fecha'] . ' ' . $turnoActual['horario']) <= time()) {
+            session()->setFlashdata('error', 'No se puede editar un turno que ya pasó.');
+            return redirect()->to('/admin/turnos');
+        }
+
         $capacidad = (int) $this->request->getPost('capacidad');
 
         // Reservas confirmadas que ya tiene el turno
@@ -114,6 +131,11 @@ class Turno extends BaseController
                                 ->where('id_turno', $id)
                                 ->where('estado', 'confirmada')
                                 ->countAllResults();
+
+        if (strtotime($this->request->getPost('fecha') . ' ' . $this->request->getPost('horario')) <= time()) {
+            session()->setFlashdata('error', 'No se puede programar el turno en una fecha u horario que ya pasó.');
+            return redirect()->back()->withInput();
+        }
 
         if ($capacidad < 1 || $capacidad < $ocupados) {
             session()->setFlashdata('error', 'La capacidad no puede ser menor a las reservas confirmadas (' . $ocupados . ').');
@@ -201,6 +223,11 @@ class Turno extends BaseController
             return redirect()->back()->withInput();
         }
 
+        if ($inicioStr < date('Y-m-d')) {
+            session()->setFlashdata('error', 'La fecha de inicio no puede ser anterior a hoy.');
+            return redirect()->back()->withInput();
+        }
+
         if ($fecha_fin < $fecha_inicio) {
             session()->setFlashdata('error', 'La fecha de fin no puede ser anterior a la fecha de inicio.');
             return redirect()->back()->withInput();
@@ -223,6 +250,9 @@ class Turno extends BaseController
         foreach ($periodo as $fecha) {
             // El método format('N') devuelve 1 (Lunes) a 7 (Domingo)
             if (in_array($fecha->format('N'), $dias_seleccionados)) {
+                if (strtotime($fecha->format('Y-m-d') . ' ' . $hora) <= time()) {
+                    continue;
+                }
                 
                 $existeTurno = $model->where('fecha', $fecha->format('Y-m-d'))
                                      ->where('horario', $hora)

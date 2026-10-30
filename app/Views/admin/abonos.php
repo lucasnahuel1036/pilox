@@ -114,7 +114,7 @@
                                                     <?php endif; ?>
                                                 </form>
                                                 <form action="<?= base_url('admin/abonos/eliminar/' . $abono['id_abono']) ?>" method="POST" class="d-inline"
-                                                      onsubmit="return confirm('¿Seguro que deseas eliminar este abono?');">
+                                                      data-confirmar="¿Seguro que deseas eliminar este abono?" data-confirmar-titulo="Eliminar abono" data-confirmar-boton="Sí, eliminar" data-confirmar-tipo="peligro">
                                                     <?= csrf_field() ?>
                                                     <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">Eliminar</button>
                                                 </form>
