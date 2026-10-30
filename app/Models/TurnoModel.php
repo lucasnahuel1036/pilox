@@ -149,4 +149,30 @@ class TurnoModel extends Model
             'asistencias_pendientes' => (int) ($pendientes['total'] ?? 0),
         ];
     }
+
+        // Un turno puntual con los nombres de actividad, sucursal y docente
+    public function getTurnoConDetalles($idTurno)
+    {
+        return $this->select('turnos.*, actividades.nombre as actividad, sucursales.nombre as sucursal, usuarios.nombre as docente_nombre, usuarios.apellido as docente_apellido')
+                    ->join('actividades', 'actividades.id_actividad = turnos.id_actividad')
+                    ->join('sucursales', 'sucursales.id_sucursal = turnos.id_sucursal')
+                    ->join('usuarios', 'usuarios.id_usuario = turnos.id_docente')
+                    ->where('turnos.id_turno', $idTurno)
+                    ->first();
+    }
+
+    // Turnos futuros que coinciden con actividad, sucursal y horario dentro de un rango de fechas
+    public function getTurnosParaAsignacion($idActividad, $idSucursal, $horario, $fechaDesde, $fechaHasta)
+    {
+        $ahora = date('Y-m-d H:i:s');
+
+        return $this->where('id_actividad', $idActividad)
+                    ->where('id_sucursal', $idSucursal)
+                    ->where('horario', $horario)
+                    ->where('fecha >=', $fechaDesde)
+                    ->where('fecha <=', $fechaHasta)
+                    ->where("TIMESTAMP(fecha, horario) > '" . $ahora . "'", null, false)
+                    ->orderBy('fecha', 'ASC')
+                    ->findAll();
+    }
 }

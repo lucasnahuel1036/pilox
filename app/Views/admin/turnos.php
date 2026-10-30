@@ -4,10 +4,15 @@
             <h2 class="text-primary-dark fw-bold mb-0">Gestión de Turnos</h2>
             <p class="text-muted small">Configurá la grilla de clases y horarios</p>
         </div>
-        <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Volver al Panel</a>
-        <a href="<?= base_url('admin/turnos/masivo') ?>" class="btn btn-success btn-sm rounded-pill px-3 me-2">
-    <i class="bi bi-calendar-plus"></i> <strong>Generación por periodos</strong> 
-</a>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="<?= base_url('admin/turnos/asignar') ?>" class="btn btn-primary btn-sm rounded-pill px-3">
+                <i class="bi bi-person-check"></i> <strong>Asignar a alumno</strong>
+            </a>
+            <a href="<?= base_url('admin/turnos/masivo') ?>" class="btn btn-success btn-sm rounded-pill px-3">
+                <i class="bi bi-calendar-plus"></i> <strong>Generación por periodos</strong>
+            </a>
+            <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Volver al Panel</a>
+        </div>
     </div>
 
     <div class="row">
@@ -127,6 +132,7 @@
                                                 <span class="badge rounded-pill bg-success px-3"><?= $turno['cupos_disponibles'] ?> / <?= $turno['capacidad'] ?></span>
                                             </td>
                                             <td class="text-end">
+                                                <a href="<?= base_url('admin/turnos/inscriptos/' . $turno['id_turno']) ?>" class="btn btn-sm btn-outline-dark rounded-pill px-3 me-1 mb-1">Inscriptos</a>
                                                 <a href="<?= base_url('admin/turnos/editar/' . $turno['id_turno']) ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3 me-1 mb-1">Editar</a>
                                                 <form action="<?= base_url('admin/turnos/eliminar/' . $turno['id_turno']) ?>" method="POST" class="d-inline"
                                                     onsubmit="return confirm('¿Seguro que deseas eliminar este turno?');">

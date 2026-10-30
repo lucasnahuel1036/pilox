@@ -61,4 +61,80 @@ class ReservaModel extends Model
                     ->orderBy('usuarios.nombre', 'ASC')
                     ->findAll();
     }
+        // Descuenta cupo y clase del abono, e inserta la reserva en una transacción
+    public function registrarReserva($idUsuario, $idTurno, $idAbono): array
+    {
+        $db = db_connect();
+        $db->transBegin();
+
+        $db->table('turnos')
+           ->where('id_turno', $idTurno)
+           ->where('cupos_disponibles >', 0)
+           ->set('cupos_disponibles', 'cupos_disponibles - 1', false)
+           ->update();
+        $cupoOk = ($db->affectedRows() === 1);
+
+        $db->table('abonos')
+           ->where('id_abono', $idAbono)
+           ->where('clases_restantes >', 0)
+           ->set('clases_restantes', 'clases_restantes - 1', false)
+           ->update();
+        $claseOk = ($db->affectedRows() === 1);
+
+        if (!$cupoOk || !$claseOk) {
+            $db->transRollback();
+            return [
+                'ok'    => false,
+                'error' => !$cupoOk ? 'sin cupos disponibles' : 'sin clases restantes en el abono',
+            ];
+        }
+
+        $db->table('reservas')->insert([
+            'id_usuario' => $idUsuario,
+            'id_turno'   => $idTurno,
+            'id_abono'   => $idAbono,
+        ]);
+
+        if ($db->transStatus() === false) {
+            $db->transRollback();
+            return ['ok' => false, 'error' => 'error al guardar la reserva'];
+        }
+
+        $db->transCommit();
+        return ['ok' => true];
+    }
+
+    // Cancela una reserva confirmada, libera el cupo y devuelve la clase al abono
+    public function cancelarReservaConfirmada($reserva): bool
+    {
+        $db = db_connect();
+        $db->transBegin();
+
+        $db->table('reservas')
+           ->where('id_reserva', $reserva['id_reserva'])
+           ->where('estado', 'confirmada')
+           ->set('estado', 'cancelada')
+           ->update();
+        $reservaOk = ($db->affectedRows() === 1);
+
+        $db->table('turnos')
+           ->where('id_turno', $reserva['id_turno'])
+           ->set('cupos_disponibles', 'cupos_disponibles + 1', false)
+           ->update();
+        $cupoOk = ($db->affectedRows() === 1);
+
+        $db->table('abonos')
+           ->where('id_abono', $reserva['id_abono'])
+           ->set('clases_restantes', 'clases_restantes + 1', false)
+           ->update();
+        $claseOk = ($db->affectedRows() === 1);
+
+        if (!$reservaOk || !$cupoOk || !$claseOk || $db->transStatus() === false) {
+            $db->transRollback();
+            return false;
+        }
+
+        $db->transCommit();
+        return true;
+    }
 }

@@ -8,6 +8,8 @@ use App\Models\TurnoModel;
 use App\Models\SucursalModel;
 use App\Models\ActividadModel;
 use App\Models\UsuarioModel;
+use App\Models\AbonoModel;
+use App\Models\ReservaModel;
 
 class Turno extends BaseController
 {
@@ -244,5 +246,221 @@ class Turno extends BaseController
         
         session()->setFlashdata('success', "¡Grilla generada! Se crearon $turnos_creados clases automáticamente.");
         return redirect()->to('/admin/turnos');
+    }
+    
+    // Vista para asignar turnos periódicamente a un alumno
+    public function asignar()
+    {
+        $data['sucursales']  = (new SucursalModel())->findAll();
+        $data['actividades'] = (new ActividadModel())->findAll();
+
+        return view('templates/header')
+             . view('admin/turnos_asignar', $data)
+             . view('templates/footer');
+    }
+
+    // Procesa la asignación periódica de turnos a un alumno
+    public function guardar_asignacion()
+    {
+        $idUsuario         = (int) $this->request->getPost('id_usuario');
+        $idActividad       = (int) $this->request->getPost('id_actividad');
+        $idSucursal        = (int) $this->request->getPost('id_sucursal');
+        $horario           = $this->request->getPost('horario');
+        $diasSeleccionados = $this->request->getPost('dias'); // ej: [2, 4] para Martes y Jueves
+
+        if (empty($diasSeleccionados) || !is_array($diasSeleccionados)) {
+            session()->setFlashdata('error', 'Debés seleccionar al menos un día de la semana.');
+            return redirect()->back()->withInput();
+        }
+
+        $alumno = (new UsuarioModel())->where('id_usuario', $idUsuario)->where('rol', 'alumno')->first();
+        if (!$alumno || $alumno['estado'] !== 'activo') {
+            session()->setFlashdata('error', 'El alumno seleccionado no existe o no está activo.');
+            return redirect()->back()->withInput();
+        }
+
+        // Exigimos abono vigente y pagado (igual que cuando reserva el alumno)
+        $abono = (new AbonoModel())->getAbonoVigente($idUsuario);
+        if (!$abono) {
+            session()->setFlashdata('error', 'El alumno no tiene un abono vigente con clases disponibles.');
+            return redirect()->back()->withInput();
+        }
+        if ($abono['estado_pago'] !== 'pagado') {
+            session()->setFlashdata('error', 'El abono del alumno figura con pago pendiente. Regularizalo antes de asignar turnos.');
+            return redirect()->back()->withInput();
+        }
+
+        // Buscamos turnos dentro del rango de vigencia del abono
+        $fechaDesde = max(date('Y-m-d'), $abono['fecha_inicio']);
+        $fechaHasta = $abono['fecha_fin'];
+
+        $turnosCandidatos = (new TurnoModel())->getTurnosParaAsignacion(
+            $idActividad,
+            $idSucursal,
+            $horario,
+            $fechaDesde,
+            $fechaHasta
+        );
+
+        // Filtramos solo los que caen en los días de la semana elegidos (1 = Lunes ... 6 = Sábado)
+        $turnosFiltrados = array_filter($turnosCandidatos, function ($t) use ($diasSeleccionados) {
+            $diaSemana = date('N', strtotime($t['fecha']));
+            return in_array($diaSemana, $diasSeleccionados);
+        });
+
+        if (empty($turnosFiltrados)) {
+            session()->setFlashdata('error', 'No se encontraron turnos creados para esos días y horario dentro de la vigencia del abono del alumno (' . date('d/m/Y', strtotime($abono['fecha_inicio'])) . ' al ' . date('d/m/Y', strtotime($abono['fecha_fin'])) . ').');
+            return redirect()->back()->withInput();
+        }
+
+        $reservaModel    = new ReservaModel();
+        $clasesRestantes = (int) $abono['clases_restantes'];
+        $asignados       = 0;
+        $salteados       = [];
+
+        foreach ($turnosFiltrados as $turno) {
+            $fechaFormateada = date('d/m/Y', strtotime($turno['fecha']));
+
+            if ($clasesRestantes <= 0) {
+                $salteados[] = "$fechaFormateada (abono sin más clases disponibles)";
+                continue;
+            }
+
+            if ($reservaModel->existeReservaConfirmada($idUsuario, $turno['id_turno'])) {
+                $salteados[] = "$fechaFormateada (ya estaba inscripto)";
+                continue;
+            }
+
+            if ($reservaModel->existeReservaEnHorario($idUsuario, $turno['fecha'], $turno['horario'])) {
+                $salteados[] = "$fechaFormateada (tiene otra clase en ese horario)";
+                continue;
+            }
+
+            if ((int) $turno['cupos_disponibles'] <= 0) {
+                $salteados[] = "$fechaFormateada (cupo lleno)";
+                continue;
+            }
+
+            $resultado = $reservaModel->registrarReserva($idUsuario, $turno['id_turno'], $abono['id_abono']);
+            if ($resultado['ok']) {
+                $asignados++;
+                $clasesRestantes--;
+            } else {
+                $salteados[] = "$fechaFormateada ({$resultado['error']})";
+            }
+        }
+
+        if ($asignados === 0) {
+            $detalle = !empty($salteados) ? ' Motivos: ' . implode(', ', $salteados) . '.' : '';
+            session()->setFlashdata('error', 'No se pudo asignar ningún turno.' . $detalle);
+            return redirect()->back()->withInput();
+        }
+
+        $mensaje = "Se asignaron $asignados turno(s) a {$alumno['nombre']} {$alumno['apellido']}.";
+        if (!empty($salteados)) {
+            $mensaje .= ' Fechas salteadas: ' . implode('; ', $salteados) . '.';
+        }
+
+        session()->setFlashdata('success', $mensaje);
+        return redirect()->to('/admin/turnos');
+    }
+
+    // Ver alumnos inscriptos en un turno puntual (y permitir inscribir o cancelar)
+    public function inscriptos($idTurno)
+    {
+        $turno = (new TurnoModel())->getTurnoConDetalles($idTurno);
+        if (!$turno) {
+            session()->setFlashdata('error', 'El turno no existe.');
+            return redirect()->to('/admin/turnos');
+        }
+
+        $data['turno']      = $turno;
+        $data['inscriptos'] = (new ReservaModel())->getInscriptosDeTurno($idTurno);
+        $data['esFuturo']   = strtotime($turno['fecha'] . ' ' . $turno['horario']) > time();
+
+        return view('templates/header')
+             . view('admin/turnos_inscriptos', $data)
+             . view('templates/footer');
+    }
+
+    // Inscribir a un alumno en un turno puntual desde la vista de inscriptos
+    public function inscribir($idTurno)
+    {
+        $idUsuario    = (int) $this->request->getPost('id_usuario');
+        $turno        = (new TurnoModel())->find($idTurno);
+        $alumno       = (new UsuarioModel())->where('id_usuario', $idUsuario)->where('rol', 'alumno')->first();
+        $abonoModel   = new AbonoModel();
+        $reservaModel = new ReservaModel();
+
+        if (!$turno || strtotime($turno['fecha'] . ' ' . $turno['horario']) <= time()) {
+            session()->setFlashdata('error', 'El turno ya comenzó o no existe.');
+            return redirect()->to('/admin/turnos/inscriptos/' . $idTurno);
+        }
+
+        if (!$alumno || $alumno['estado'] !== 'activo') {
+            session()->setFlashdata('error', 'El alumno seleccionado no está activo.');
+            return redirect()->to('/admin/turnos/inscriptos/' . $idTurno);
+        }
+
+        $abono = $abonoModel->getAbonoVigente($idUsuario);
+        if (!$abono) {
+            session()->setFlashdata('error', 'El alumno no tiene un abono vigente con clases disponibles.');
+            return redirect()->to('/admin/turnos/inscriptos/' . $idTurno);
+        }
+
+        if ($abono['estado_pago'] !== 'pagado') {
+            session()->setFlashdata('error', 'El abono del alumno tiene el pago pendiente.');
+            return redirect()->to('/admin/turnos/inscriptos/' . $idTurno);
+        }
+
+        if ($turno['fecha'] < $abono['fecha_inicio'] || $turno['fecha'] > $abono['fecha_fin']) {
+            session()->setFlashdata('error', 'La fecha del turno está fuera de la vigencia del abono del alumno.');
+            return redirect()->to('/admin/turnos/inscriptos/' . $idTurno);
+        }
+
+        if ($reservaModel->existeReservaConfirmada($idUsuario, $idTurno)) {
+            session()->setFlashdata('error', 'El alumno ya está inscripto en este turno.');
+            return redirect()->to('/admin/turnos/inscriptos/' . $idTurno);
+        }
+
+        if ($reservaModel->existeReservaEnHorario($idUsuario, $turno['fecha'], $turno['horario'])) {
+            session()->setFlashdata('error', 'El alumno ya tiene otra reserva en ese mismo día y horario.');
+            return redirect()->to('/admin/turnos/inscriptos/' . $idTurno);
+        }
+
+        $resultado = $reservaModel->registrarReserva($idUsuario, $idTurno, $abono['id_abono']);
+        if (!$resultado['ok']) {
+            session()->setFlashdata('error', 'No se pudo inscribir al alumno: ' . $resultado['error'] . '.');
+            return redirect()->to('/admin/turnos/inscriptos/' . $idTurno);
+        }
+
+        session()->setFlashdata('success', 'Alumno inscripto correctamente en el turno.');
+        return redirect()->to('/admin/turnos/inscriptos/' . $idTurno);
+    }
+
+    // Cancelar la reserva de un alumno desde el panel Admin
+    public function cancelar_reserva($idReserva)
+    {
+        $reservaModel = new ReservaModel();
+        $reserva      = $reservaModel->find($idReserva);
+
+        if (!$reserva || $reserva['estado'] !== 'confirmada') {
+            session()->setFlashdata('error', 'La reserva no existe o ya fue cancelada.');
+            return redirect()->back();
+        }
+
+        $turno = (new TurnoModel())->find($reserva['id_turno']);
+        if (!$turno || strtotime($turno['fecha'] . ' ' . $turno['horario']) <= time()) {
+            session()->setFlashdata('error', 'No se puede cancelar una reserva de un turno que ya comenzó.');
+            return redirect()->to('/admin/turnos/inscriptos/' . $reserva['id_turno']);
+        }
+
+        if (!$reservaModel->cancelarReservaConfirmada($reserva)) {
+            session()->setFlashdata('error', 'No se pudo cancelar la reserva. Intentá nuevamente.');
+            return redirect()->to('/admin/turnos/inscriptos/' . $reserva['id_turno']);
+        }
+
+        session()->setFlashdata('success', 'Reserva cancelada. Se liberó el cupo y se devolvió la clase al abono del alumno.');
+        return redirect()->to('/admin/turnos/inscriptos/' . $reserva['id_turno']);
     }
 }

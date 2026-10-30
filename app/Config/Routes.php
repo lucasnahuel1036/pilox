@@ -73,6 +73,12 @@ $routes->group('admin', ['filter' => 'admin', 'namespace' => 'App\Controllers\Ad
     $routes->post('tarifas/actualizar', 'Tarifa::actualizar');
     // Informacion
     $routes->get('informacion', 'Informacion::index');
+    // Asignación de turnos a alumnos y gestión de inscriptos por Admin
+    $routes->get('turnos/asignar', 'Turno::asignar');
+    $routes->post('turnos/guardar_asignacion', 'Turno::guardar_asignacion');
+    $routes->get('turnos/inscriptos/(:num)', 'Turno::inscriptos/$1');
+    $routes->post('turnos/inscribir/(:num)', 'Turno::inscribir/$1');
+    $routes->post('turnos/cancelar_reserva/(:num)', 'Turno::cancelar_reserva/$1');
 });
 
 // Alumno
