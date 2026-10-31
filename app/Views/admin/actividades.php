@@ -7,8 +7,18 @@
         <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Volver al Panel</a>
     </div>
 
+    <!-- Accesos rápidos en celular -->
+    <nav class="pd-nav-secciones d-md-none" aria-label="Secciones de la página">
+        <a href="#seccion-registrar" class="pd-nav-principal">
+            <i class="bi bi-plus-circle"></i> Nueva Actividad
+        </a>
+        <a href="#seccion-listado">
+            <i class="bi bi-list-ul"></i> Disciplinas Registradas <i class="bi bi-arrow-down-short"></i>
+        </a>
+    </nav>
+
     <div class="row">
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 mb-4" id="seccion-registrar">
             <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="background-color: #F8F9F5;">
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Nueva Actividad</h5>
@@ -30,27 +40,32 @@
             </div>
         </div>
 
-        <div class="col-md-8">
+        <div class="col-md-8" id="seccion-listado">
             <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="--pd-delay: .08s">
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-md-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Disciplinas Registradas</h5>
                     <?php if(empty($actividades)): ?>
                         <div class="alert alert-light text-center text-muted" role="alert">Todavía no hay actividades.</div>
                     <?php else: ?>
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                            <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
                                         <th class="text-secondary small">NOMBRE</th>
-                                        <th class="text-secondary small">DESCRIPCIÓN</th>
+                                        <th class="text-secondary small d-none d-md-table-cell">DESCRIPCIÓN</th>
                                         <th class="text-secondary small text-end">ACCIONES</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach($actividades as $act): ?>
                                         <tr>
-                                            <td class="fw-bold text-primary-dark"><?= esc($act['nombre']) ?></td>
-                                            <td><small><?= esc($act['descripcion']) ?></small></td>
+                                            <td>
+                                                <div class="fw-bold text-primary-dark"><?= esc($act['nombre']) ?></div>
+                                                <?php if (!empty($act['descripcion'])): ?>
+                                                    <div class="d-md-none small text-muted mt-1"><?= esc($act['descripcion']) ?></div>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td class="d-none d-md-table-cell"><small><?= esc($act['descripcion']) ?></small></td>
                                             <td class="text-end text-nowrap">
                                                 <div class="d-inline-flex align-items-center gap-1">
                                                     <a href="<?= base_url('admin/actividades/editar/' . $act['id_actividad']) ?>"

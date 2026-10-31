@@ -97,9 +97,29 @@
         circulo.style.strokeDashoffset = circulo._largo * (1 - valor);
     }
 
+    // ---------- Auto-scroll al listado en celular tras buscar o paginar ----------
+    function autoScrollListadoCelular() {
+        if (window.innerWidth >= 768 || window.location.hash) { return; }
+        var params = new URLSearchParams(window.location.search);
+        var destino = null;
+
+        if (params.has('page_historial')) {
+            destino = document.getElementById('seccion-historial');
+        } else if (params.has('q') || params.has('ver') || params.has('page') || params.has('page_vigentes')) {
+            destino = document.getElementById('seccion-listado') || document.getElementById('seccion-vigentes');
+        }
+
+        if (destino) {
+            setTimeout(function () {
+                destino.scrollIntoView({ behavior: reducir ? 'auto' : 'smooth', block: 'start' });
+            }, 100);
+        }
+    }
+
     // ---------- Arranque ----------
     function iniciar() {
         iniciarConfirmaciones();
+        autoScrollListadoCelular();
 
         var revelar = document.querySelectorAll('.pd-reveal');
         var contadores = document.querySelectorAll('[data-contar]');

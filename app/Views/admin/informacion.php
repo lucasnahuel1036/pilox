@@ -98,7 +98,7 @@ $barra = function ($pct) use ($colorBarra, $porc) {
 $tablaOcupacion = function ($titulo, $columna, $filas) use ($barra, $entero) {
     ?>
     <div class="card border-0 shadow-sm rounded-4 h-100 pd-reveal">
-        <div class="card-body p-4">
+        <div class="card-body p-3 p-md-4">
             <h6 class="fw-bold text-primary-dark mb-3"><?= esc($titulo) ?></h6>
             <?php if (empty($filas)): ?>
                 <p class="text-muted small mb-0">No hay turnos en el período elegido.</p>
@@ -108,17 +108,22 @@ $tablaOcupacion = function ($titulo, $columna, $filas) use ($barra, $entero) {
                         <thead>
                             <tr>
                                 <th><?= esc($columna) ?></th>
-                                <th class="text-center">Turnos</th>
-                                <th class="text-center">Cupos usados</th>
-                                <th style="min-width: 150px;">Ocupación</th>
+                                <th class="text-center d-none d-md-table-cell">Turnos</th>
+                                <th class="text-center d-none d-md-table-cell">Cupos usados</th>
+                                <th style="min-width: 120px;">Ocupación</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($filas as $fila): ?>
                                 <tr>
-                                    <td class="fw-bold text-primary-dark"><?= esc($fila['etiqueta']) ?></td>
-                                    <td class="text-center"><?= $entero($fila['turnos']) ?></td>
-                                    <td class="text-center small"><?= $entero($fila['ocupados']) ?> / <?= $entero($fila['capacidad']) ?></td>
+                                    <td>
+                                        <div class="fw-bold text-primary-dark"><?= esc($fila['etiqueta']) ?></div>
+                                        <div class="d-md-none small text-muted">
+                                            <?= $entero($fila['turnos']) ?> turnos · <?= $entero($fila['ocupados']) ?>/<?= $entero($fila['capacidad']) ?> cupos
+                                        </div>
+                                    </td>
+                                    <td class="text-center d-none d-md-table-cell"><?= $entero($fila['turnos']) ?></td>
+                                    <td class="text-center small d-none d-md-table-cell"><?= $entero($fila['ocupados']) ?> / <?= $entero($fila['capacidad']) ?></td>
                                     <td><?php $barra($fila['pct']); ?></td>
                                 </tr>
                             <?php endforeach; ?>
@@ -242,7 +247,7 @@ $tablaOcupacion = function ($titulo, $columna, $filas) use ($barra, $entero) {
         </div>
 
         <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-body p-4">
+            <div class="card-body p-3 p-md-4">
                 <h6 class="fw-bold text-primary-dark mb-3">Pagos pendientes</h6>
                 <?php if (empty($deuda['lista'])): ?>
                     <p class="text-muted small mb-0">No hay abonos pendientes de pago.</p>
@@ -250,16 +255,27 @@ $tablaOcupacion = function ($titulo, $columna, $filas) use ($barra, $entero) {
                     <div class="table-responsive">
                         <table class="table table-sm align-middle tabla-informe mb-0">
                             <thead>
-                                <tr><th>Alumno</th><th>DNI</th><th>Abono</th><th>Desde</th><th class="text-end">Monto</th></tr>
+                                <tr>
+                                    <th>Alumno</th>
+                                    <th class="d-none d-md-table-cell">DNI</th>
+                                    <th class="d-none d-md-table-cell">Abono</th>
+                                    <th class="d-none d-md-table-cell">Desde</th>
+                                    <th class="text-end">Monto</th>
+                                </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($deuda['lista'] as $d): ?>
                                     <tr>
-                                        <td class="fw-bold text-primary-dark"><?= esc($d['apellido'] . ', ' . $d['nombre']) ?></td>
-                                        <td><?= esc($d['dni']) ?></td>
-                                        <td><?= $d['clases_totales'] ?> clases</td>
-                                        <td><?= $fechaCorta($d['fecha_inicio']) ?></td>
-                                        <td class="text-end"><?= $dinero($d['precio']) ?></td>
+                                        <td>
+                                            <div class="fw-bold text-primary-dark"><?= esc($d['apellido'] . ', ' . $d['nombre']) ?></div>
+                                            <div class="d-md-none small text-muted">
+                                                DNI <?= esc($d['dni']) ?> · <?= $d['clases_totales'] ?> clases · Desde <?= $fechaCorta($d['fecha_inicio']) ?>
+                                            </div>
+                                        </td>
+                                        <td class="d-none d-md-table-cell"><?= esc($d['dni']) ?></td>
+                                        <td class="d-none d-md-table-cell"><?= $d['clases_totales'] ?> clases</td>
+                                        <td class="d-none d-md-table-cell"><?= $fechaCorta($d['fecha_inicio']) ?></td>
+                                        <td class="text-end text-nowrap"><?= $dinero($d['precio']) ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -338,7 +354,7 @@ $tablaOcupacion = function ($titulo, $columna, $filas) use ($barra, $entero) {
         <div class="row g-4">
             <div class="col-lg-7">
                 <div class="card border-0 shadow-sm rounded-4 h-100">
-                    <div class="card-body p-4">
+                    <div class="card-body p-3 p-md-4">
                         <h6 class="fw-bold text-primary-dark mb-3">Asistencia por actividad</h6>
                         <?php if (empty($asistenciaActividad)): ?>
                             <p class="text-muted small mb-0">Todavía no hay clases realizadas en el período.</p>
@@ -348,17 +364,22 @@ $tablaOcupacion = function ($titulo, $columna, $filas) use ($barra, $entero) {
                                     <thead>
                                         <tr>
                                             <th>Actividad</th>
-                                            <th class="text-center">Presentes</th>
-                                            <th class="text-center">Ausentes</th>
-                                            <th style="min-width: 150px;">Asistencia</th>
+                                            <th class="text-center d-none d-md-table-cell">Presentes</th>
+                                            <th class="text-center d-none d-md-table-cell">Ausentes</th>
+                                            <th style="min-width: 120px;">Asistencia</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php foreach ($asistenciaActividad as $fila): ?>
                                             <tr>
-                                                <td class="fw-bold text-primary-dark"><?= esc($fila['etiqueta']) ?></td>
-                                                <td class="text-center"><?= $entero($fila['presentes']) ?></td>
-                                                <td class="text-center"><?= $entero($fila['ausentes']) ?></td>
+                                                <td>
+                                                    <div class="fw-bold text-primary-dark"><?= esc($fila['etiqueta']) ?></div>
+                                                    <div class="d-md-none small text-muted">
+                                                        Presentes: <?= $entero($fila['presentes']) ?> · Ausentes: <?= $entero($fila['ausentes']) ?>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center d-none d-md-table-cell"><?= $entero($fila['presentes']) ?></td>
+                                                <td class="text-center d-none d-md-table-cell"><?= $entero($fila['ausentes']) ?></td>
                                                 <td><?php $barra($fila['pct']); ?></td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -371,7 +392,7 @@ $tablaOcupacion = function ($titulo, $columna, $filas) use ($barra, $entero) {
             </div>
             <div class="col-lg-5">
                 <div class="card border-0 shadow-sm rounded-4 h-100">
-                    <div class="card-body p-4">
+                    <div class="card-body p-3 p-md-4">
                         <h6 class="fw-bold text-primary-dark mb-3">Clases con asistencia sin registrar</h6>
                         <?php if (empty($sinAsistencia)): ?>
                             <p class="text-muted small mb-0">Todas las clases realizadas tienen su asistencia registrada.</p>
@@ -430,7 +451,7 @@ $tablaOcupacion = function ($titulo, $columna, $filas) use ($barra, $entero) {
         <div class="row g-4">
             <div class="col-lg-6">
                 <div class="card border-0 shadow-sm rounded-4 h-100">
-                    <div class="card-body p-4">
+                    <div class="card-body p-3 p-md-4">
                         <h6 class="fw-bold text-primary-dark mb-3">Abonos que vencen en los próximos 7 días</h6>
                         <?php if (empty($alumnos['por_vencer'])): ?>
                             <p class="text-muted small mb-0">No hay abonos por vencer en la próxima semana.</p>
@@ -455,21 +476,28 @@ $tablaOcupacion = function ($titulo, $columna, $filas) use ($barra, $entero) {
             </div>
             <div class="col-lg-6">
                 <div class="card border-0 shadow-sm rounded-4 h-100">
-                    <div class="card-body p-4">
+                    <div class="card-body p-3 p-md-4">
                         <h6 class="fw-bold text-primary-dark mb-3">Alumnos activos sin abono vigente</h6>
                         <?php if (empty($alumnos['sin_abono'])): ?>
                             <p class="text-muted small mb-0">Todos los alumnos activos tienen un abono vigente.</p>
                         <?php else: ?>
                             <table class="table table-sm align-middle tabla-informe mb-0">
                                 <thead>
-                                    <tr><th>Alumno</th><th>DNI</th><th>Último vencimiento</th></tr>
+                                    <tr>
+                                        <th>Alumno</th>
+                                        <th class="d-none d-md-table-cell">DNI</th>
+                                        <th class="text-end text-md-start">Último vencimiento</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach (array_slice($alumnos['sin_abono'], 0, 10) as $a): ?>
                                         <tr>
-                                            <td class="fw-bold text-primary-dark"><?= esc($a['apellido'] . ', ' . $a['nombre']) ?></td>
-                                            <td><?= esc($a['dni']) ?></td>
-                                            <td><?= $a['ultimo_vencimiento'] ? $fechaCorta($a['ultimo_vencimiento']) : 'Sin abonos' ?></td>
+                                            <td>
+                                                <div class="fw-bold text-primary-dark"><?= esc($a['apellido'] . ', ' . $a['nombre']) ?></div>
+                                                <div class="d-md-none small text-muted">DNI <?= esc($a['dni']) ?></div>
+                                            </td>
+                                            <td class="d-none d-md-table-cell"><?= esc($a['dni']) ?></td>
+                                            <td class="text-end text-md-start text-nowrap"><?= $a['ultimo_vencimiento'] ? $fechaCorta($a['ultimo_vencimiento']) : 'Sin abonos' ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>

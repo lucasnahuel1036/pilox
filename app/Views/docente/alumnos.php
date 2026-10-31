@@ -38,7 +38,7 @@
     <?php endif; ?>
 
     <div class="card border-0 shadow-sm rounded-4 pd-reveal">
-        <div class="card-body p-4">
+        <div class="card-body p-3 p-md-4">
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
                 <h5 class="fw-bold text-primary-dark mb-2 mb-md-0">
                     Inscriptos: <?= count($inscriptos) ?> de <?= $clase['capacidad'] ?>
@@ -61,25 +61,28 @@
                 <?php endif; ?>
 
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
+                    <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="text-secondary small">#</th>
+                                <th class="text-secondary small d-none d-md-table-cell">#</th>
                                 <th class="text-secondary small">ALUMNO</th>
-                                <th class="text-secondary small">DNI</th>
-                                <th class="text-secondary small">ASISTENCIA</th>
+                                <th class="text-secondary small d-none d-md-table-cell">DNI</th>
+                                <th class="text-secondary small text-end text-md-start">ASISTENCIA</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($inscriptos as $i => $alumno): ?>
                                 <tr>
-                                    <td class="text-muted"><?= $i + 1 ?></td>
-                                    <td class="fw-bold text-primary-dark"><?= esc($alumno['apellido'] . ', ' . $alumno['nombre']) ?></td>
-                                    <td><?= esc($alumno['dni']) ?></td>
+                                    <td class="text-muted d-none d-md-table-cell"><?= $i + 1 ?></td>
                                     <td>
+                                        <div class="fw-bold text-primary-dark"><?= esc($alumno['apellido'] . ', ' . $alumno['nombre']) ?></div>
+                                        <div class="d-md-none small text-muted">DNI <?= esc($alumno['dni']) ?></div>
+                                    </td>
+                                    <td class="d-none d-md-table-cell"><?= esc($alumno['dni']) ?></td>
+                                    <td class="text-end text-md-start text-nowrap">
                                         <?php if ($estadoAsistencia === 'habilitada'): ?>
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" name="presentes[]"
+                                            <div class="form-check form-switch d-inline-flex align-items-center gap-2 mb-0">
+                                                <input class="form-check-input mt-0" type="checkbox" name="presentes[]"
                                                        value="<?= $alumno['id_reserva'] ?>" id="reserva_<?= $alumno['id_reserva'] ?>"
                                                        <?= ($alumno['asistencia'] !== null && (int) $alumno['asistencia'] === 1) ? 'checked' : '' ?>>
                                                 <label class="form-check-label small" for="reserva_<?= $alumno['id_reserva'] ?>">Presente</label>

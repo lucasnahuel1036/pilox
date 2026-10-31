@@ -39,10 +39,10 @@ $configuracion = [
         <p class="pd-hero-sub">Panel de administración de Pilox. ¿Qué querés hacer hoy?</p>
 
         <div class="pd-acciones">
-            <a href="<?= base_url('admin/turnos/asignar') ?>" class="pd-btn-lima"><i class="bi bi-person-check"></i> Asignar turno</a>
-            <a href="<?= base_url('admin/abonos') ?>" class="pd-btn-glass"><i class="bi bi-ticket-perforated"></i> Nuevo abono</a>
+            <a href="<?= base_url('admin/abonos') ?>" class="pd-btn-lima"><i class="bi bi-ticket-perforated"></i> Nuevo abono</a>
             <a href="<?= base_url('admin/turnos') ?>" class="pd-btn-glass"><i class="bi bi-plus-circle"></i> Nuevo turno</a>
             <a href="<?= base_url('admin/turnos/masivo') ?>" class="pd-btn-glass"><i class="bi bi-calendar-range"></i> Generar turnos por período</a>
+            <a href="<?= base_url('admin/turnos/asignar') ?>" class="pd-btn-glass"><i class="bi bi-person-check"></i> Asignar turnos recurrentes</a>
         </div>
     </section>
 

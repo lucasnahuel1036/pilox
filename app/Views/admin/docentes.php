@@ -7,8 +7,18 @@
         <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Volver al Panel</a>
     </div>
 
+    <!-- Accesos rápidos en celular -->
+    <nav class="pd-nav-secciones d-md-none" aria-label="Secciones de la página">
+        <a href="#seccion-registrar" class="pd-nav-principal">
+            <i class="bi bi-person-plus"></i> Nuevo Docente
+        </a>
+        <a href="#seccion-listado">
+            <i class="bi bi-people"></i> Staff Registrado <i class="bi bi-arrow-down-short"></i>
+        </a>
+    </nav>
+
     <div class="row">
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 mb-4" id="seccion-registrar">
             <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="background-color: #F8F9F5;">
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Nuevo Docente</h5>
@@ -24,9 +34,9 @@
                                 <input type="text" class="form-control rounded-pill px-3" name="apellido" required>
                             </div>
                             <div class="col-md-6 mb-3">
-                            <label class="form-label text-primary-dark small fw-bold">DNI</label>
-                            <input type="number" class="form-control rounded-pill px-3" name="dni" required placeholder="Sin puntos">
-                             </div>
+                                <label class="form-label text-primary-dark small fw-bold">DNI</label>
+                                <input type="number" class="form-control rounded-pill px-3" name="dni" required placeholder="Sin puntos">
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label text-primary-dark small fw-bold">Email (Usuario)</label>
@@ -52,9 +62,9 @@
             </div>
         </div>
 
-        <div class="col-md-8">
+        <div class="col-md-8" id="seccion-listado">
             <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="--pd-delay: .08s">
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-md-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Staff Registrado</h5>
                     <form action="<?= base_url('admin/docentes') ?>" method="GET" class="d-flex gap-2 mb-4">
                         <input type="text" class="form-control rounded-pill px-3" name="q"
@@ -70,25 +80,43 @@
                         </div>
                     <?php else: ?>
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                            <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
                                         <th class="text-secondary small">NOMBRE</th>
-                                        <th class="text-secondary small">EMAIL / TEL</th>
-                                        <th class="text-secondary small">ESPECIALIDAD / ESTADO</th>
+                                        <th class="text-secondary small d-none d-md-table-cell">EMAIL / TEL</th>
+                                        <th class="text-secondary small d-none d-md-table-cell">ESPECIALIDAD / ESTADO</th>
                                         <th class="text-secondary small text-end">ACCIONES</th>
                                     </tr>
                                 </thead>
-                            
                                 <tbody>
                                     <?php foreach($docentes as $docente): ?>
                                         <tr>
-                                            <td class="fw-bold text-primary-dark"> <?= esc($docente['nombre'] . ' ' . $docente['apellido']) ?><br> <span class="small text-muted fw-normal">DNI: <?= esc($docente['dni']) ?></span> </td>
                                             <td>
+                                                <div class="fw-bold text-primary-dark"><?= esc($docente['nombre'] . ' ' . $docente['apellido']) ?></div>
+                                                <div class="small text-muted">DNI: <?= esc($docente['dni']) ?></div>
+                                                <div class="d-md-none mt-1">
+                                                    <div class="d-flex flex-wrap gap-1 mb-1">
+                                                        <?php if (!empty($docente['especialidad'])): ?>
+                                                            <span class="badge bg-secondary"><?= esc($docente['especialidad']) ?></span>
+                                                        <?php endif; ?>
+                                                        <?php if ($docente['estado'] === 'activo'): ?>
+                                                            <span class="badge bg-success">Activo</span>
+                                                        <?php else: ?>
+                                                            <span class="badge bg-secondary">Inactivo</span>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                    <div class="small text-muted text-break"><?= esc($docente['email']) ?></div>
+                                                    <?php if (!empty($docente['telefono'])): ?>
+                                                        <div class="small text-muted"><?= esc($docente['telefono']) ?></div>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </td>
+                                            <td class="d-none d-md-table-cell">
                                                 <div class="small"><?= esc($docente['email']) ?></div>
                                                 <div class="small text-muted"><?= esc($docente['telefono']) ?></div>
                                             </td>
-                                            <td>
+                                            <td class="d-none d-md-table-cell">
                                                 <?php if (!empty($docente['especialidad'])): ?>
                                                     <span class="badge bg-secondary mb-1"><?= esc($docente['especialidad']) ?></span><br>
                                                 <?php endif; ?>

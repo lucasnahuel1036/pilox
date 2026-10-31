@@ -7,9 +7,22 @@
         <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Volver al Panel</a>
     </div>
 
+    <!-- Accesos rápidos en celular -->
+    <nav class="pd-nav-secciones d-md-none" aria-label="Secciones de la página">
+        <a href="#seccion-registrar" class="pd-nav-principal">
+            <i class="bi bi-plus-circle"></i> Asignar Abono
+        </a>
+        <a href="#seccion-vigentes">
+            <i class="bi bi-card-checklist"></i> Vigentes <i class="bi bi-arrow-down-short"></i>
+        </a>
+        <a href="#seccion-historial">
+            <i class="bi bi-clock-history"></i> Historial <i class="bi bi-arrow-down-short"></i>
+        </a>
+    </nav>
+
     <div class="row">
         <!-- Formulario para asignar un abono -->
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 mb-4" id="seccion-registrar">
             <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="background-color: #F8F9F5;">
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Asignar Abono</h5>
@@ -47,7 +60,7 @@
             </div>
         </div>
 
-                <!-- Abonos vigentes e historial -->
+        <!-- Abonos vigentes e historial -->
         <div class="col-md-8">
 
             <!-- Buscador (filtra las dos tablas) -->
@@ -61,8 +74,8 @@
             </form>
 
             <!-- Vigentes -->
-            <div class="card border-0 shadow-sm rounded-4 mb-4 pd-reveal" style="--pd-delay: .06s">
-                <div class="card-body p-4">
+            <div class="card border-0 shadow-sm rounded-4 mb-4 pd-reveal" id="seccion-vigentes" style="--pd-delay: .06s">
+                <div class="card-body p-3 p-md-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Abonos Vigentes</h5>
 
                     <?php if (empty($vigentes)): ?>
@@ -71,29 +84,43 @@
                         </div>
                     <?php else: ?>
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                            <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
                                         <th class="text-secondary small">ALUMNO</th>
-                                        <th class="text-secondary small">CLASES</th>
-                                        <th class="text-secondary small">VIGENCIA</th>
-                                        <th class="text-secondary small">PAGO</th>
+                                        <th class="text-secondary small d-none d-md-table-cell">CLASES</th>
+                                        <th class="text-secondary small d-none d-md-table-cell">VIGENCIA</th>
+                                        <th class="text-secondary small d-none d-md-table-cell">PAGO</th>
                                         <th class="text-secondary small text-end">ACCIONES</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($vigentes as $abono): ?>
                                         <tr>
-                                            <td class="fw-bold text-primary-dark">
-                                                <?= esc($abono['apellido'] . ', ' . $abono['nombre']) ?>
-                                                <div class="small text-muted fw-normal">DNI <?= esc($abono['dni']) ?></div>
+                                            <td>
+                                                <div class="fw-bold text-primary-dark"><?= esc($abono['apellido'] . ', ' . $abono['nombre']) ?></div>
+                                                <div class="small text-muted">DNI <?= esc($abono['dni']) ?></div>
+                                                <div class="d-md-none mt-1">
+                                                    <div class="d-flex align-items-center flex-wrap gap-1 mb-1">
+                                                        <span class="badge bg-secondary"><?= $abono['clases_restantes'] ?> / <?= $abono['clases_totales'] ?> clases</span>
+                                                        <?php if ($abono['estado_pago'] === 'pagado'): ?>
+                                                            <span class="badge bg-success">Pagado</span>
+                                                        <?php else: ?>
+                                                            <span class="badge bg-warning text-dark">Pendiente</span>
+                                                        <?php endif; ?>
+                                                        <span class="small text-muted fw-semibold">$<?= number_format((float) $abono['precio'], 0, ',', '.') ?></span>
+                                                    </div>
+                                                    <div class="small text-muted">
+                                                        <?= date('d/m/Y', strtotime($abono['fecha_inicio'])) ?> al <?= date('d/m/Y', strtotime($abono['fecha_fin'])) ?>
+                                                    </div>
+                                                </div>
                                             </td>
-                                            <td><?= $abono['clases_restantes'] ?> / <?= $abono['clases_totales'] ?></td>
-                                            <td class="small">
+                                            <td class="d-none d-md-table-cell"><?= $abono['clases_restantes'] ?> / <?= $abono['clases_totales'] ?></td>
+                                            <td class="small d-none d-md-table-cell">
                                                 <?= date('d/m/Y', strtotime($abono['fecha_inicio'])) ?>
                                                 al <?= date('d/m/Y', strtotime($abono['fecha_fin'])) ?>
                                             </td>
-                                            <td>
+                                            <td class="d-none d-md-table-cell">
                                                 <?php if ($abono['estado_pago'] === 'pagado'): ?>
                                                     <span class="badge bg-success">Pagado</span>
                                                     <?php if (!empty($abono['fecha_pago'])): ?>
@@ -138,8 +165,8 @@
             </div>
 
             <!-- Historial -->
-            <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="--pd-delay: .12s">
-                <div class="card-body p-4">
+            <div class="card border-0 shadow-sm rounded-4 pd-reveal" id="seccion-historial" style="--pd-delay: .12s">
+                <div class="card-body p-3 p-md-4">
                     <h5 class="fw-bold text-primary-dark mb-1">Historial de Abonos</h5>
                     <p class="text-muted small mb-4">Abonos vencidos o agotados. Los que quedaron sin pagar figuran en amarillo y se pueden regularizar.</p>
 
@@ -149,35 +176,51 @@
                         </div>
                     <?php else: ?>
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                            <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
                                         <th class="text-secondary small">ALUMNO</th>
-                                        <th class="text-secondary small">CLASES USADAS</th>
-                                        <th class="text-secondary small">VIGENCIA</th>
-                                        <th class="text-secondary small">MOTIVO</th>
-                                        <th class="text-secondary small">PAGO</th>
+                                        <th class="text-secondary small d-none d-md-table-cell">CLASES USADAS</th>
+                                        <th class="text-secondary small d-none d-md-table-cell">VIGENCIA</th>
+                                        <th class="text-secondary small d-none d-md-table-cell">MOTIVO</th>
+                                        <th class="text-secondary small d-none d-md-table-cell">PAGO</th>
                                         <th class="text-secondary small text-end">ACCIÓN</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($historial as $abono): ?>
                                         <tr class="<?= $abono['estado_pago'] === 'pendiente' ? 'table-warning' : '' ?>">
-                                            <td class="fw-bold text-primary-dark">
-                                                <?= esc($abono['apellido'] . ', ' . $abono['nombre']) ?>
-                                                <div class="small text-muted fw-normal">DNI <?= esc($abono['dni']) ?></div>
+                                            <td>
+                                                <div class="fw-bold text-primary-dark"><?= esc($abono['apellido'] . ', ' . $abono['nombre']) ?></div>
+                                                <div class="small text-muted">DNI <?= esc($abono['dni']) ?></div>
+                                                <div class="d-md-none mt-1">
+                                                    <div class="d-flex align-items-center flex-wrap gap-1 mb-1">
+                                                        <span class="badge bg-secondary">
+                                                            <?= $abono['clases_restantes'] <= 0 ? 'Agotado' : 'Vencido' ?>
+                                                        </span>
+                                                        <?php if ($abono['estado_pago'] === 'pagado'): ?>
+                                                            <span class="badge bg-success">Pagado</span>
+                                                        <?php else: ?>
+                                                            <span class="badge bg-warning text-dark">Pendiente</span>
+                                                        <?php endif; ?>
+                                                        <span class="small text-muted">(<?= $abono['clases_totales'] - $abono['clases_restantes'] ?>/<?= $abono['clases_totales'] ?> usadas)</span>
+                                                    </div>
+                                                    <div class="small text-muted">
+                                                        <?= date('d/m/Y', strtotime($abono['fecha_inicio'])) ?> al <?= date('d/m/Y', strtotime($abono['fecha_fin'])) ?>
+                                                    </div>
+                                                </div>
                                             </td>
-                                            <td><?= $abono['clases_totales'] - $abono['clases_restantes'] ?> / <?= $abono['clases_totales'] ?></td>
-                                            <td class="small">
+                                            <td class="d-none d-md-table-cell"><?= $abono['clases_totales'] - $abono['clases_restantes'] ?> / <?= $abono['clases_totales'] ?></td>
+                                            <td class="small d-none d-md-table-cell">
                                                 <?= date('d/m/Y', strtotime($abono['fecha_inicio'])) ?>
                                                 al <?= date('d/m/Y', strtotime($abono['fecha_fin'])) ?>
                                             </td>
-                                            <td>
+                                            <td class="d-none d-md-table-cell">
                                                 <span class="badge bg-secondary">
                                                     <?= $abono['clases_restantes'] <= 0 ? 'Agotado' : 'Vencido' ?>
                                                 </span>
                                             </td>
-                                            <td>
+                                            <td class="d-none d-md-table-cell">
                                                 <?php if ($abono['estado_pago'] === 'pagado'): ?>
                                                     <span class="badge bg-success">Pagado</span>
                                                 <?php else: ?>

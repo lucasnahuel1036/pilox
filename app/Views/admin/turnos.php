@@ -6,18 +6,28 @@
         </div>
         <div class="d-flex flex-wrap gap-2">
             <a href="<?= base_url('admin/turnos/asignar') ?>" class="btn btn-primary btn-sm rounded-pill px-3">
-                <i class="bi bi-person-check"></i> <strong>Asignar turno a alumno</strong>
+                <i class="bi bi-person-check"></i> <strong>Asignar turnos recurrentes</strong>
             </a>
             <a href="<?= base_url('admin/turnos/masivo') ?>" class="btn btn-success btn-sm rounded-pill px-3">
-                <i class="bi bi-calendar-plus"></i> <strong>Generación por periodos</strong>
+                <i class="bi bi-calendar-plus"></i> <strong>Generar turnos por período</strong>
             </a>
             <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Volver al Panel</a>
         </div>
     </div>
 
+    <!-- Accesos rápidos en celular -->
+    <nav class="pd-nav-secciones d-md-none" aria-label="Secciones de la página">
+        <a href="#seccion-registrar" class="pd-nav-principal">
+            <i class="bi bi-plus-circle"></i> Nuevo Turno
+        </a>
+        <a href="#seccion-listado">
+            <i class="bi bi-calendar3"></i> Grilla de Clases <i class="bi bi-arrow-down-short"></i>
+        </a>
+    </nav>
+
     <div class="row">
         <!-- Formulario para crear un nuevo turno -->
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 mb-4" id="seccion-registrar">
             <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="background-color: #F8F9F5;">
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Nuevo Turno</h5>
@@ -79,9 +89,9 @@
         </div>
 
         <!-- Tabla con el listado de turnos -->
-        <div class="col-md-8">
+        <div class="col-md-8" id="seccion-listado">
             <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="--pd-delay: .08s">
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-md-4">
                     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
                         <h5 class="fw-bold text-primary-dark mb-2 mb-sm-0">Grilla de Clases</h5>
                         <ul class="nav nav-pills">
@@ -101,13 +111,13 @@
                     <?php else: ?>
                         <?php $hoy = date('Y-m-d'); ?>
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                            <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
                                         <th class="text-secondary small">FECHA / HORA</th>
-                                        <th class="text-secondary small">ACTIVIDAD</th>
-                                        <th class="text-secondary small">DOCENTE / LUGAR</th>
-                                        <th class="text-secondary small text-center">CUPOS</th>
+                                        <th class="text-secondary small d-none d-md-table-cell">ACTIVIDAD</th>
+                                        <th class="text-secondary small d-none d-md-table-cell">DOCENTE / LUGAR</th>
+                                        <th class="text-secondary small text-center d-none d-md-table-cell">CUPOS</th>
                                         <th class="text-secondary small text-end">ACCIONES</th>
                                     </tr>
                                 </thead>
@@ -122,13 +132,21 @@
                                                     <?php endif; ?>
                                                 </div>
                                                 <div class="small text-muted"><?= date('H:i', strtotime($turno['horario'])) ?> hs</div>
+                                                <div class="d-md-none mt-1">
+                                                    <div class="d-flex align-items-center flex-wrap gap-1 mb-1">
+                                                        <span class="badge bg-secondary"><?= esc($turno['actividad']) ?></span>
+                                                        <span class="badge rounded-pill bg-success"><?= $turno['cupos_disponibles'] ?> / <?= $turno['capacidad'] ?></span>
+                                                    </div>
+                                                    <div class="small fw-semibold"><?= esc($turno['docente_nombre'] . ' ' . $turno['docente_apellido']) ?></div>
+                                                    <div class="small text-muted"><i class="bi bi-geo-alt"></i> <?= esc($turno['sucursal']) ?></div>
+                                                </div>
                                             </td>
-                                            <td><span class="badge bg-secondary"><?= esc($turno['actividad']) ?></span></td>
-                                            <td>
+                                            <td class="d-none d-md-table-cell"><span class="badge bg-secondary"><?= esc($turno['actividad']) ?></span></td>
+                                            <td class="d-none d-md-table-cell">
                                                 <div class="small fw-bold"><?= esc($turno['docente_nombre'] . ' ' . $turno['docente_apellido']) ?></div>
                                                 <div class="small text-muted"><i class="bi bi-geo-alt"></i> <?= esc($turno['sucursal']) ?></div>
                                             </td>
-                                            <td class="text-center">
+                                            <td class="text-center d-none d-md-table-cell">
                                                 <span class="badge rounded-pill bg-success px-3"><?= $turno['cupos_disponibles'] ?> / <?= $turno['capacidad'] ?></span>
                                             </td>
                                             <td class="text-end text-nowrap">

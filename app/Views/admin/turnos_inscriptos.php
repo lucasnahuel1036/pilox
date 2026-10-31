@@ -14,9 +14,19 @@
         </div>
     </div>
 
+    <!-- Accesos rápidos en celular -->
+    <nav class="pd-nav-secciones d-md-none" aria-label="Secciones de la página">
+        <a href="#seccion-inscribir" class="pd-nav-principal">
+            <i class="bi bi-person-plus"></i> Inscribir Alumno
+        </a>
+        <a href="#seccion-listado">
+            <i class="bi bi-people"></i> Inscriptos (<?= count($inscriptos) ?>) <i class="bi bi-arrow-down-short"></i>
+        </a>
+    </nav>
+
     <div class="row">
         <!-- Columna izquierda: inscribir un alumno puntual en este turno -->
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 mb-4" id="seccion-inscribir">
             <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="background-color: #F8F9F5;">
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-3">Inscribir Alumno</h5>
@@ -52,9 +62,9 @@
         </div>
 
         <!-- Columna derecha: listado de inscriptos -->
-        <div class="col-md-8">
+        <div class="col-md-8" id="seccion-listado">
             <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="--pd-delay: .08s">
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-md-4">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="fw-bold text-primary-dark mb-0">
                             Listado de Inscriptos (<?= count($inscriptos) ?> / <?= $turno['capacidad'] ?>)
@@ -70,13 +80,13 @@
                         </div>
                     <?php else: ?>
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                            <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th class="text-secondary small">#</th>
+                                        <th class="text-secondary small d-none d-md-table-cell">#</th>
                                         <th class="text-secondary small">ALUMNO</th>
-                                        <th class="text-secondary small">DNI</th>
-                                        <th class="text-secondary small">ASISTENCIA</th>
+                                        <th class="text-secondary small d-none d-md-table-cell">DNI</th>
+                                        <th class="text-secondary small <?= $esFuturo ? 'd-none d-md-table-cell' : 'text-end text-md-start' ?>">ASISTENCIA</th>
                                         <?php if ($esFuturo): ?>
                                             <th class="text-secondary small text-end">ACCIÓN</th>
                                         <?php endif; ?>
@@ -85,10 +95,24 @@
                                 <tbody>
                                     <?php foreach ($inscriptos as $i => $alumno): ?>
                                         <tr>
-                                            <td class="text-muted"><?= $i + 1 ?></td>
-                                            <td class="fw-bold text-primary-dark"><?= esc($alumno['apellido'] . ', ' . $alumno['nombre']) ?></td>
-                                            <td><?= esc($alumno['dni']) ?></td>
+                                            <td class="text-muted d-none d-md-table-cell"><?= $i + 1 ?></td>
                                             <td>
+                                                <div class="fw-bold text-primary-dark"><?= esc($alumno['apellido'] . ', ' . $alumno['nombre']) ?></div>
+                                                <div class="d-md-none small text-muted">DNI <?= esc($alumno['dni']) ?></div>
+                                                <?php if ($esFuturo): ?>
+                                                    <div class="d-md-none mt-1">
+                                                        <?php if ($alumno['asistencia'] === null): ?>
+                                                            <span class="badge bg-secondary">Sin registrar</span>
+                                                        <?php elseif ((int) $alumno['asistencia'] === 1): ?>
+                                                            <span class="badge bg-success">Presente</span>
+                                                        <?php else: ?>
+                                                            <span class="badge bg-danger">Ausente</span>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td class="d-none d-md-table-cell"><?= esc($alumno['dni']) ?></td>
+                                            <td class="<?= $esFuturo ? 'd-none d-md-table-cell' : 'text-end text-md-start text-nowrap' ?>">
                                                 <?php if ($alumno['asistencia'] === null): ?>
                                                     <span class="badge bg-secondary">Sin registrar</span>
                                                 <?php elseif ((int) $alumno['asistencia'] === 1): ?>
@@ -98,12 +122,12 @@
                                                 <?php endif; ?>
                                             </td>
                                             <?php if ($esFuturo): ?>
-                                                <td class="text-end">
+                                                <td class="text-end text-nowrap">
                                                     <form action="<?= base_url('admin/turnos/cancelar_reserva/' . $alumno['id_reserva']) ?>" method="POST" class="d-inline"
                                                           data-confirmar="¿Cancelar la reserva de <?= esc($alumno['nombre'] . ' ' . $alumno['apellido']) ?>? Se devolverá la clase a su abono." data-confirmar-titulo="Cancelar reserva" data-confirmar-boton="Sí, cancelar" data-confirmar-tipo="peligro">
                                                         <?= csrf_field() ?>
                                                         <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">
-                                                            Cancelar reserva
+                                                            Cancelar
                                                         </button>
                                                     </form>
                                                 </td>

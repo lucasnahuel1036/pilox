@@ -7,9 +7,19 @@
         <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Volver al Panel</a>
     </div>
 
+    <!-- Accesos rápidos en celular -->
+    <nav class="pd-nav-secciones d-md-none" aria-label="Secciones de la página">
+        <a href="#seccion-registrar" class="pd-nav-principal">
+            <i class="bi bi-person-plus"></i> Registrar Alumno
+        </a>
+        <a href="#seccion-listado">
+            <i class="bi bi-people"></i> Alumnos Registrados <i class="bi bi-arrow-down-short"></i>
+        </a>
+    </nav>
+
     <div class="row">
         <!-- Formulario de Alta Manual -->
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 mb-4" id="seccion-registrar">
             <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="background-color: #F8F9F5;">
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Registrar Alumno</h5>
@@ -54,9 +64,9 @@
         </div>
 
         <!-- Tabla de Alumnos -->
-        <div class="col-md-8">
+        <div class="col-md-8" id="seccion-listado">
             <div class="card border-0 shadow-sm rounded-4 pd-reveal" style="--pd-delay: .08s">
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-md-4">
                     <h5 class="fw-bold text-primary-dark mb-4">Alumnos Registrados</h5>
                     <form action="<?= base_url('admin/alumnos') ?>" method="GET" class="d-flex gap-2 mb-4">
                         <input type="text" class="form-control rounded-pill px-3" name="q"
@@ -72,24 +82,42 @@
                         </div>
                     <?php else: ?>
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                            <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
                                         <th class="text-secondary small">NOMBRE</th>
-                                        <th class="text-secondary small">CONTACTO</th>
-                                        <th class="text-secondary small">ESTADO</th>
+                                        <th class="text-secondary small d-none d-md-table-cell">CONTACTO</th>
+                                        <th class="text-secondary small d-none d-md-table-cell">ESTADO</th>
                                         <th class="text-secondary small text-end">ACCIONES</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach($alumnos as $alumno): ?>
                                         <tr>
-                                            <td class="fw-bold text-primary-dark"> <?= esc($alumno['nombre'] . ' ' . $alumno['apellido']) ?><br> <span class="small text-muted fw-normal">DNI: <?= esc($alumno['dni']) ?></span> </td>
                                             <td>
+                                                <div class="fw-bold text-primary-dark"><?= esc($alumno['nombre'] . ' ' . $alumno['apellido']) ?></div>
+                                                <div class="small text-muted">DNI: <?= esc($alumno['dni']) ?></div>
+                                                <div class="d-md-none mt-1">
+                                                    <div class="mb-1">
+                                                        <?php if($alumno['estado'] === 'activo'): ?>
+                                                            <span class="badge bg-success">Activo</span>
+                                                        <?php elseif($alumno['estado'] === 'moroso'): ?>
+                                                            <span class="badge bg-danger">Moroso</span>
+                                                        <?php else: ?>
+                                                            <span class="badge bg-secondary">Inactivo</span>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                    <div class="small text-muted text-break"><?= esc($alumno['email']) ?></div>
+                                                    <?php if (!empty($alumno['telefono'])): ?>
+                                                        <div class="small text-muted"><?= esc($alumno['telefono']) ?></div>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </td>
+                                            <td class="d-none d-md-table-cell">
                                                 <div class="small"><?= esc($alumno['email']) ?></div>
                                                 <div class="small text-muted"><?= esc($alumno['telefono']) ?></div>
                                             </td>
-                                            <td>
+                                            <td class="d-none d-md-table-cell">
                                                 <?php if($alumno['estado'] === 'activo'): ?>
                                                     <span class="badge bg-success">Activo</span>
                                                 <?php elseif($alumno['estado'] === 'moroso'): ?>
