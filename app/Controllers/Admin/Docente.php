@@ -88,7 +88,27 @@ class Docente extends BaseController
     {
         $model = new UsuarioModel();
 
-        $dni = (string) $this->request->getPost('dni');
+        $rol    = $this->request->getPost('rol');
+        $estado = $this->request->getPost('estado');
+        $dni    = (string) $this->request->getPost('dni');
+
+        if (!in_array($rol, ['alumno', 'docente'], true) || !in_array($estado, ['activo', 'inactivo'], true)) {
+            session()->setFlashdata('error', 'Rol o estado no válido.');
+            return redirect()->back()->withInput();
+        }
+
+        // Si el docente se pasa a inactivo o cambia de rol (ej. pasa a ser alumno),
+        // verificamos que no tenga clases futuras asignadas como profesor
+        if ($estado === 'inactivo' || $rol !== 'docente') {
+            $turnosFuturos = (new TurnoModel())->where('id_docente', $id)
+                                               ->where('fecha >=', date('Y-m-d'))
+                                               ->countAllResults();
+            if ($turnosFuturos > 0) {
+                session()->setFlashdata('error', 'No se puede dar de baja ni cambiar el rol del docente porque tiene ' . $turnosFuturos . ' clase(s) próxima(s) asignada(s). Reasigná esos turnos primero.');
+                return redirect()->back()->withInput();
+            }
+        }
+
         if (!preg_match('/^[0-9]{7,8}$/', $dni)) {
             session()->setFlashdata('error', 'El DNI ingresado no es válido. Debe tener números sin puntos.');
             return redirect()->back()->withInput();
@@ -111,6 +131,8 @@ class Docente extends BaseController
             'email'        => $this->request->getPost('email'),
             'especialidad' => $this->request->getPost('especialidad'),
             'telefono'     => $this->request->getPost('telefono'),
+            'rol'          => $rol,
+            'estado'       => $estado,
         ];
 
         // Si escribio una contraseña nueva, la actualizamos y controla cant de caracteres
@@ -127,6 +149,38 @@ class Docente extends BaseController
         
         session()->setFlashdata('success', 'Docente actualizado correctamente.');
         return redirect()->to('/admin/docentes');
+    }
+
+    public function cambiarEstado($id)
+    {
+        $model   = new UsuarioModel();
+        $docente = $model->find($id);
+
+        if (!$docente) {
+            session()->setFlashdata('error', 'El docente no existe.');
+            return redirect()->to('/admin/docentes');
+        }
+
+        $nuevoEstado = ($docente['estado'] === 'inactivo') ? 'activo' : 'inactivo';
+
+        if ($nuevoEstado === 'inactivo') {
+            $turnosFuturos = (new TurnoModel())->where('id_docente', $id)
+                                               ->where('fecha >=', date('Y-m-d'))
+                                               ->countAllResults();
+            if ($turnosFuturos > 0) {
+                session()->setFlashdata('error', 'No se puede pasar a inactivo porque tiene ' . $turnosFuturos . ' clase(s) próxima(s) asignada(s). Reasigná esos turnos primero.');
+                return redirect()->back();
+            }
+        }
+
+        $model->update($id, ['estado' => $nuevoEstado]);
+
+        $mensaje = ($nuevoEstado === 'inactivo')
+            ? 'Docente dado de baja (inactivo).'
+            : 'Docente reactivado correctamente.';
+
+        session()->setFlashdata('success', $mensaje);
+        return redirect()->back();
     }
 
     public function eliminar($id)

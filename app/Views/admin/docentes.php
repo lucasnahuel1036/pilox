@@ -75,7 +75,7 @@
                                     <tr>
                                         <th class="text-secondary small">NOMBRE</th>
                                         <th class="text-secondary small">EMAIL / TEL</th>
-                                        <th class="text-secondary small">ESPECIALIDAD</th>
+                                        <th class="text-secondary small">ESPECIALIDAD / ESTADO</th>
                                         <th class="text-secondary small text-end">ACCIONES</th>
                                     </tr>
                                 </thead>
@@ -88,14 +88,48 @@
                                                 <div class="small"><?= esc($docente['email']) ?></div>
                                                 <div class="small text-muted"><?= esc($docente['telefono']) ?></div>
                                             </td>
-                                            <td><span class="badge bg-secondary"><?= esc($docente['especialidad']) ?></span></td>
-                                            <td class="text-end">
-                                                <a href="<?= base_url('admin/docentes/editar/' . $docente['id_usuario']) ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3 me-1">Editar</a>
-                                                <form action="<?= base_url('admin/docentes/eliminar/' . $docente['id_usuario']) ?>" method="POST" class="d-inline"
-                                                    data-confirmar="¿Seguro que deseas eliminar este docente?" data-confirmar-titulo="Eliminar docente" data-confirmar-boton="Sí, eliminar" data-confirmar-tipo="peligro">
-                                                    <?= csrf_field() ?>
-                                                     <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">Eliminar</button>
-                                                </form>
+                                            <td>
+                                                <?php if (!empty($docente['especialidad'])): ?>
+                                                    <span class="badge bg-secondary mb-1"><?= esc($docente['especialidad']) ?></span><br>
+                                                <?php endif; ?>
+                                                <?php if ($docente['estado'] === 'activo'): ?>
+                                                    <span class="badge bg-success">Activo</span>
+                                                <?php else: ?>
+                                                    <span class="badge bg-secondary">Inactivo</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td class="text-end text-nowrap">
+                                                <div class="d-inline-flex align-items-center gap-1">
+                                                    <a href="<?= base_url('admin/docentes/editar/' . $docente['id_usuario']) ?>"
+                                                       class="btn btn-sm btn-outline-primary rounded-circle btn-icon"
+                                                       title="Editar docente">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <?php if ($docente['estado'] === 'inactivo'): ?>
+                                                        <form action="<?= base_url('admin/docentes/estado/' . $docente['id_usuario']) ?>" method="POST" class="d-inline"
+                                                              data-confirmar="¿Deseas reactivar a este docente?" data-confirmar-titulo="Reactivar docente" data-confirmar-boton="Sí, reactivar">
+                                                            <?= csrf_field() ?>
+                                                            <button type="submit" class="btn btn-sm btn-outline-success rounded-circle btn-icon" title="Reactivar docente">
+                                                                <i class="bi bi-person-check"></i>
+                                                            </button>
+                                                        </form>
+                                                    <?php else: ?>
+                                                        <form action="<?= base_url('admin/docentes/estado/' . $docente['id_usuario']) ?>" method="POST" class="d-inline"
+                                                              data-confirmar="¿Pasar este docente a estado inactivo?" data-confirmar-titulo="Dar de baja docente" data-confirmar-boton="Sí, pasar a inactivo" data-confirmar-tipo="peligro">
+                                                            <?= csrf_field() ?>
+                                                            <button type="submit" class="btn btn-sm btn-outline-secondary rounded-circle btn-icon" title="Dar de baja (pasar a inactivo)">
+                                                                <i class="bi bi-person-slash"></i>
+                                                            </button>
+                                                        </form>
+                                                    <?php endif; ?>
+                                                    <form action="<?= base_url('admin/docentes/eliminar/' . $docente['id_usuario']) ?>" method="POST" class="d-inline"
+                                                        data-confirmar="¿Seguro que deseas eliminar este docente?" data-confirmar-titulo="Eliminar docente" data-confirmar-boton="Sí, eliminar" data-confirmar-tipo="peligro">
+                                                        <?= csrf_field() ?>
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle btn-icon" title="Eliminar docente">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

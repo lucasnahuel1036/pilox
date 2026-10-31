@@ -1,8 +1,8 @@
-CREATE TABLE usuarios (
+CREATE TABLE IF NOT EXISTS usuarios (
     id_usuario INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     apellido VARCHAR(100) NOT NULL,
-    dni VARCHAR(15) NULL,
+    dni VARCHAR(15) NULL UNIQUE,
     email VARCHAR(150) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     rol ENUM('alumno', 'docente', 'admin') DEFAULT 'alumno',
@@ -13,14 +13,15 @@ CREATE TABLE usuarios (
     cargo VARCHAR(100)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE sucursales (
+CREATE TABLE IF NOT EXISTS sucursales (
     id_sucursal INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     direccion VARCHAR(200) NOT NULL,
-    telefono VARCHAR(20)
+    telefono VARCHAR(20),
+    estado ENUM('activo', 'inactivo') DEFAULT 'activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE actividades (
+CREATE TABLE IF NOT EXISTS actividades (
     id_actividad INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     descripcion TEXT
@@ -31,7 +32,7 @@ CREATE TABLE IF NOT EXISTS tarifas (
     precio DECIMAL(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE turnos (
+CREATE TABLE IF NOT EXISTS turnos (
     id_turno INT AUTO_INCREMENT PRIMARY KEY,
     fecha DATE NOT NULL,
     horario TIME NOT NULL,
@@ -45,7 +46,7 @@ CREATE TABLE turnos (
     CONSTRAINT fk_turnos_docente   FOREIGN KEY (id_docente)   REFERENCES usuarios(id_usuario)      ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE abonos (
+CREATE TABLE IF NOT EXISTS abonos (
     id_abono INT AUTO_INCREMENT PRIMARY KEY,
     fecha_inicio DATE NOT NULL,
     fecha_fin DATE NOT NULL,
@@ -58,7 +59,7 @@ CREATE TABLE abonos (
     CONSTRAINT fk_abonos_usuario FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE reservas (
+CREATE TABLE IF NOT EXISTS reservas (
     id_reserva INT AUTO_INCREMENT PRIMARY KEY,
     fecha_reserva DATETIME DEFAULT CURRENT_TIMESTAMP,
     estado ENUM('confirmada', 'cancelada') DEFAULT 'confirmada',
@@ -76,11 +77,11 @@ CREATE TABLE reservas (
 -- --------------------------------------------------------
 
 -- Insertar Administrador 
-INSERT INTO usuarios (nombre, apellido, dni, email, password, rol, estado) 
+INSERT IGNORE INTO usuarios (nombre, apellido, dni, email, password, rol, estado) 
 VALUES ('Administrador', 'Pilox', '11111111', 'admin@pilox.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 'activo');
 
 -- Insertar Docente para probar los turnos 
-INSERT INTO usuarios (nombre, apellido, dni, email, password, rol, estado, especialidad) 
+INSERT IGNORE INTO usuarios (nombre, apellido, dni, email, password, rol, estado, especialidad) 
 VALUES ('Juan', 'Pérez', '22222222', 'profe@pilox.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'docente', 'activo', 'Instructorado Múltiple');
 
 -- Insertar Sucursal
@@ -93,5 +94,10 @@ INSERT INTO actividades (nombre, descripcion) VALUES
 ('Yoga', 'Hatha Yoga para todos los niveles.'),
 ('GAP', 'Glúteos, Abdomen y Piernas.'),
 ('Pilates AFA', 'Pilates adaptado para rehabilitación.');
---  Insertar Tarifas Base
-INSERT INTO tarifas (clases, precio) VALUES (4, 25000), (8, 27000), (12, 30000);
+
+-- Insertar Tarifas Base
+INSERT INTO tarifas (clases, precio) VALUES
+(4, 25000.00),
+(8, 27000.00),
+(12, 30000.00)
+ON DUPLICATE KEY UPDATE precio = VALUES(precio);

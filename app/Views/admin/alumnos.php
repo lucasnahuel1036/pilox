@@ -98,13 +98,38 @@
                                                     <span class="badge bg-secondary">Inactivo</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td class="text-end">
-                                                <a href="<?= base_url('admin/alumnos/editar/' . $alumno['id_usuario']) ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3 me-1">Editar</a>
-                                                <form action="<?= base_url('admin/alumnos/eliminar/' . $alumno['id_usuario']) ?>" method="POST" class="d-inline"
-                                                    data-confirmar="¿Seguro que deseas eliminar este alumno?" data-confirmar-titulo="Eliminar alumno" data-confirmar-boton="Sí, eliminar" data-confirmar-tipo="peligro">
-                                                    <?= csrf_field() ?>
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">Eliminar</button>
-                                                </form>
+                                            <td class="text-end text-nowrap">
+                                                <div class="d-inline-flex align-items-center gap-1">
+                                                    <a href="<?= base_url('admin/alumnos/editar/' . $alumno['id_usuario']) ?>"
+                                                       class="btn btn-sm btn-outline-primary rounded-circle btn-icon"
+                                                       title="Editar alumno">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <?php if ($alumno['estado'] === 'inactivo'): ?>
+                                                        <form action="<?= base_url('admin/alumnos/estado/' . $alumno['id_usuario']) ?>" method="POST" class="d-inline"
+                                                              data-confirmar="¿Deseas reactivar a este alumno?" data-confirmar-titulo="Reactivar alumno" data-confirmar-boton="Sí, reactivar">
+                                                            <?= csrf_field() ?>
+                                                            <button type="submit" class="btn btn-sm btn-outline-success rounded-circle btn-icon" title="Reactivar alumno">
+                                                                <i class="bi bi-person-check"></i>
+                                                            </button>
+                                                        </form>
+                                                    <?php else: ?>
+                                                        <form action="<?= base_url('admin/alumnos/estado/' . $alumno['id_usuario']) ?>" method="POST" class="d-inline"
+                                                              data-confirmar="¿Pasar este alumno a estado inactivo?" data-confirmar-titulo="Dar de baja alumno" data-confirmar-boton="Sí, pasar a inactivo" data-confirmar-tipo="peligro">
+                                                            <?= csrf_field() ?>
+                                                            <button type="submit" class="btn btn-sm btn-outline-secondary rounded-circle btn-icon" title="Dar de baja (pasar a inactivo)">
+                                                                <i class="bi bi-person-slash"></i>
+                                                            </button>
+                                                        </form>
+                                                    <?php endif; ?>
+                                                    <form action="<?= base_url('admin/alumnos/eliminar/' . $alumno['id_usuario']) ?>" method="POST" class="d-inline"
+                                                        data-confirmar="¿Seguro que deseas eliminar este alumno?" data-confirmar-titulo="Eliminar alumno" data-confirmar-boton="Sí, eliminar" data-confirmar-tipo="peligro">
+                                                        <?= csrf_field() ?>
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle btn-icon" title="Eliminar alumno">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

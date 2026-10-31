@@ -51,13 +51,12 @@
                     </select>
                 </div>
                 
-                <!-- Selector de Rol (La magia del sistema) -->
+                <!-- Selector de Rol -->
                 <div class="col-md-6 mb-4">
                     <label class="form-label text-primary-dark small fw-bold">Rol en el Sistema</label>
                     <select class="form-select rounded-pill px-3" name="rol">
                         <option value="alumno" <?= $alumno['rol'] === 'alumno' ? 'selected' : '' ?>>Alumno</option>
                         <option value="docente" <?= $alumno['rol'] === 'docente' ? 'selected' : '' ?>>Docente</option>
-                        <option value="admin" <?= $alumno['rol'] === 'admin' ? 'selected' : '' ?>>Administrador</option>
                     </select>
                 </div>
             </div>

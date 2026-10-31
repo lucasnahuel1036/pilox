@@ -11,9 +11,17 @@
                 <label class="form-label text-primary-dark small fw-bold">Dirección</label>
                 <input type="text" class="form-control rounded-pill px-3" name="direccion" value="<?= esc($sucursal['direccion']) ?>" required>
             </div>
-            <div class="mb-4">
+            <div class="mb-3">
                 <label class="form-label text-primary-dark small fw-bold">Teléfono</label>
                 <input type="text" class="form-control rounded-pill px-3" name="telefono" value="<?= esc($sucursal['telefono']) ?>">
+            </div>
+            <div class="mb-4">
+                <label class="form-label text-primary-dark small fw-bold">Estado de la Sucursal</label>
+                <?php $estadoSuc = $sucursal['estado'] ?? 'activo'; ?>
+                <select class="form-select rounded-pill px-3" name="estado">
+                    <option value="activo" <?= $estadoSuc === 'activo' ? 'selected' : '' ?>>Activa</option>
+                    <option value="inactivo" <?= $estadoSuc === 'inactivo' ? 'selected' : '' ?>>Inactiva</option>
+                </select>
             </div>
             <div class="d-grid gap-2">
                 <button type="submit" class="btn btn-custom-solid rounded-pill py-2">Actualizar</button>

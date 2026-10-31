@@ -21,9 +21,9 @@ class PanelAdmin extends BaseController
 
         $data = [
             'total_alumnos'     => $usuarioModel->where('rol', 'alumno')->where('estado', 'activo')->countAllResults(),
-            'total_docentes'    => $usuarioModel->where('rol', 'docente')->countAllResults(),
+            'total_docentes'    => $usuarioModel->where('rol', 'docente')->where('estado', 'activo')->countAllResults(),
             'total_actividades' => $actividadModel->countAllResults(),
-            'total_sucursales'  => $sucursalModel->countAllResults(),
+            'total_sucursales'  => $sucursalModel->where('estado', 'activo')->countAllResults(),
             'turnos_activos'    => $turnoModel->where('fecha >=', date('Y-m-d'))->countAllResults()
         ];
 

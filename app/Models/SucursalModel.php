@@ -12,5 +12,5 @@ class SucursalModel extends Model
     protected $returnType       = 'array';
     
     // Los campos que el administrador puede llenar
-    protected $allowedFields    = ['nombre', 'direccion', 'telefono'];
+    protected $allowedFields    = ['nombre', 'direccion', 'telefono', 'estado'];
 }

@@ -32,6 +32,7 @@ class Sucursal extends BaseController
             'nombre'    => $this->request->getPost('nombre'),
             'direccion' => $this->request->getPost('direccion'),
             'telefono'  => $this->request->getPost('telefono'),
+            'estado'    => 'activo',
         ];
        
         // Validar que el nombre de la sucursal no exista
@@ -84,11 +85,24 @@ class Sucursal extends BaseController
     public function actualizar($id)
     {
         $model = new SucursalModel();
+        $estado = $this->request->getPost('estado');
+        if (!in_array($estado, ['activo', 'inactivo'])) {
+            $estado = 'activo';
+        }
+
+        if ($estado === 'inactivo') {
+            $turnoModel = new TurnoModel();
+            if ($turnoModel->where('id_sucursal', $id)->where('fecha >=', date('Y-m-d'))->countAllResults() > 0) {
+                session()->setFlashdata('error', 'No se puede desactivar la sucursal porque tiene turnos futuros asignados.');
+                return redirect()->back()->withInput();
+            }
+        }
         
         $data = [
             'nombre'    => $this->request->getPost('nombre'),
             'direccion' => $this->request->getPost('direccion'),
             'telefono'  => $this->request->getPost('telefono'),
+            'estado'    => $estado,
         ];
         
         $nombre = $this->request->getPost('nombre');
@@ -100,6 +114,37 @@ class Sucursal extends BaseController
         $model->update($id, $data);
         
         session()->setFlashdata('success', 'Sucursal modificada correctamente.');
+        return redirect()->to('/admin/sucursales');
+    }
+
+    // Cambia el estado de una sucursal (baja logica: activo / inactivo)
+    public function cambiarEstado($id)
+    {
+        $model = new SucursalModel();
+        $sucursal = $model->find($id);
+
+        if (!$sucursal) {
+            session()->setFlashdata('error', 'La sucursal no existe.');
+            return redirect()->to('/admin/sucursales');
+        }
+
+        $nuevoEstado = ($sucursal['estado'] === 'inactivo') ? 'activo' : 'inactivo';
+
+        if ($nuevoEstado === 'inactivo') {
+            $turnoModel = new TurnoModel();
+            if ($turnoModel->where('id_sucursal', $id)->where('fecha >=', date('Y-m-d'))->countAllResults() > 0) {
+                session()->setFlashdata('error', 'No se puede desactivar la sucursal porque tiene turnos futuros asignados.');
+                return redirect()->to('/admin/sucursales');
+            }
+        }
+
+        $model->update($id, ['estado' => $nuevoEstado]);
+
+        $mensaje = ($nuevoEstado === 'inactivo')
+            ? 'Sucursal dada de baja (inactiva) correctamente.'
+            : 'Sucursal reactivada correctamente.';
+
+        session()->setFlashdata('success', $mensaje);
         return redirect()->to('/admin/sucursales');
     }
 }

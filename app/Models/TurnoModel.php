@@ -58,6 +58,7 @@ class TurnoModel extends Model
              ->join('actividades', 'actividades.id_actividad = turnos.id_actividad')
              ->join('sucursales', 'sucursales.id_sucursal = turnos.id_sucursal')
              ->join('usuarios', 'usuarios.id_usuario = turnos.id_docente')
+             ->where('sucursales.estado', 'activo')
              ->where('turnos.cupos_disponibles >', 0)
              ->where("TIMESTAMP(turnos.fecha, turnos.horario) > '" . $ahora . "'", null, false);
 

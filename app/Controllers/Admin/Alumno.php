@@ -89,9 +89,14 @@ class Alumno extends BaseController
         $estado = $this->request->getPost('estado');
         $dni    = (string) $this->request->getPost('dni');
 
-        if (!in_array($rol, ['alumno', 'docente', 'admin'], true) || !in_array($estado, ['activo', 'inactivo', 'moroso'], true)) {
+        if (!in_array($rol, ['alumno', 'docente'], true) || !in_array($estado, ['activo', 'inactivo', 'moroso'], true)) {
             session()->setFlashdata('error', 'Rol o estado no válido.');
             return redirect()->back()->withInput();
+        }
+
+        // Un docente solo puede estar activo o inactivo
+        if ($rol === 'docente' && $estado === 'moroso') {
+            $estado = 'activo';
         }
 
         if (!preg_match('/^[0-9]{7,8}$/', $dni)) {
@@ -116,8 +121,8 @@ class Alumno extends BaseController
             'email'            => $this->request->getPost('email'),
             'telefono'         => $this->request->getPost('telefono'),
             'fecha_nacimiento' => $this->request->getPost('fecha_nacimiento') ?: null,
-            'rol'              => $this->request->getPost('rol'), // ACÁ PERMITIMOS CAMBIAR EL ROL
-            'estado'           => $this->request->getPost('estado') // Y EL ESTADO
+            'rol'              => $rol, // ACÁ PERMITIMOS CAMBIAR EL ROL
+            'estado'           => $estado // Y EL ESTADO
         ];
 
         
@@ -155,6 +160,28 @@ class Alumno extends BaseController
         
         session()->setFlashdata('success', 'Alumno eliminado del sistema.');
         return redirect()->to('/admin/alumnos');
+    }
+
+    // Baja / Alta lógica rápida desde la tabla (activo <-> inactivo)
+    public function cambiarEstado($id)
+    {
+        $model  = new UsuarioModel();
+        $alumno = $model->find($id);
+
+        if (!$alumno) {
+            session()->setFlashdata('error', 'El alumno no existe.');
+            return redirect()->to('/admin/alumnos');
+        }
+
+        $nuevoEstado = ($alumno['estado'] === 'inactivo') ? 'activo' : 'inactivo';
+        $model->update($id, ['estado' => $nuevoEstado]);
+
+        $mensaje = ($nuevoEstado === 'inactivo')
+            ? 'Alumno dado de baja (inactivo).'
+            : 'Alumno reactivado correctamente.';
+
+        session()->setFlashdata('success', $mensaje);
+        return redirect()->back();
     }
 
     // Búsqueda rápida de alumnos activos (JSON, para el buscador de abonos)

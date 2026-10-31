@@ -758,3 +758,19 @@ body {
     background-color: #fde8e8;
     color: #dc3545;
 }
+
+/* ---- Botones circulares de acciones en tablas (responsive y con micro-animación) ---- */
+.btn-icon {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.btn-icon:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(26, 60, 52, 0.15);
+}

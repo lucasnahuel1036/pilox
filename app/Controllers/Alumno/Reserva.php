@@ -33,7 +33,7 @@ class Reserva extends BaseController
         $data['filtros']     = $filtros;
         $data['turnos']      = (new TurnoModel())->getTurnosDisponibles($filtros);
         $data['actividades'] = (new ActividadModel())->findAll();
-        $data['sucursales']  = (new SucursalModel())->findAll();
+        $data['sucursales']  = (new SucursalModel())->where('estado', 'activo')->findAll();
         $data['abono']       = (new AbonoModel())->getAbonoVigente($idUsuario);
         $misReservas = $reservaModel->select('reservas.id_turno, turnos.fecha, turnos.horario')
                                     ->join('turnos', 'turnos.id_turno = reservas.id_turno')

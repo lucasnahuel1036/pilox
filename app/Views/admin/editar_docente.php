@@ -33,6 +33,29 @@
                 <label class="form-label text-primary-dark small fw-bold">Teléfono</label>
                 <input type="text" class="form-control rounded-pill px-3" name="telefono" value="<?= esc($docente['telefono']) ?>">
             </div>
+
+            <hr class="my-4">
+
+            <div class="row">
+                <!-- Selector de Estado -->
+                <div class="col-md-6 mb-4">
+                    <label class="form-label text-primary-dark small fw-bold">Estado del Docente</label>
+                    <select class="form-select rounded-pill px-3" name="estado">
+                        <option value="activo" <?= $docente['estado'] === 'activo' ? 'selected' : '' ?>>Activo</option>
+                        <option value="inactivo" <?= $docente['estado'] === 'inactivo' ? 'selected' : '' ?>>Inactivo</option>
+                    </select>
+                </div>
+
+                <!-- Selector de Rol -->
+                <div class="col-md-6 mb-4">
+                    <label class="form-label text-primary-dark small fw-bold">Rol en el Sistema</label>
+                    <select class="form-select rounded-pill px-3" name="rol">
+                        <option value="docente" <?= $docente['rol'] === 'docente' ? 'selected' : '' ?>>Docente</option>
+                        <option value="alumno" <?= $docente['rol'] === 'alumno' ? 'selected' : '' ?>>Alumno</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="d-grid gap-2">
                 <button type="submit" class="btn btn-custom-solid rounded-pill py-2">Actualizar</button>
                 <a href="<?= base_url('admin/docentes') ?>" class="btn btn-outline-secondary rounded-pill py-2">Cancelar</a>

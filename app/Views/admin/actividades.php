@@ -51,13 +51,21 @@
                                         <tr>
                                             <td class="fw-bold text-primary-dark"><?= esc($act['nombre']) ?></td>
                                             <td><small><?= esc($act['descripcion']) ?></small></td>
-                                            <td class="text-end">
-                                                <a href="<?= base_url('admin/actividades/editar/' . $act['id_actividad']) ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3 me-1">Editar</a>
-                                                <form action="<?= base_url('admin/actividades/eliminar/' . $act['id_actividad']) ?>" method="POST" class="d-inline"
-                                                    data-confirmar="¿Seguro que deseas eliminar esta actividad?" data-confirmar-titulo="Eliminar actividad" data-confirmar-boton="Sí, eliminar" data-confirmar-tipo="peligro">
-                                                    <?= csrf_field() ?>
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">Eliminar</button>
-                                                </form>
+                                            <td class="text-end text-nowrap">
+                                                <div class="d-inline-flex align-items-center gap-1">
+                                                    <a href="<?= base_url('admin/actividades/editar/' . $act['id_actividad']) ?>"
+                                                       class="btn btn-sm btn-outline-primary rounded-circle btn-icon"
+                                                       title="Editar actividad">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <form action="<?= base_url('admin/actividades/eliminar/' . $act['id_actividad']) ?>" method="POST" class="d-inline"
+                                                        data-confirmar="¿Seguro que deseas eliminar esta actividad?" data-confirmar-titulo="Eliminar actividad" data-confirmar-boton="Sí, eliminar" data-confirmar-tipo="peligro">
+                                                        <?= csrf_field() ?>
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle btn-icon" title="Eliminar actividad">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

@@ -49,10 +49,10 @@ class Abono extends BaseController
             return redirect()->back()->withInput();
         }
 
-        // El destinatario debe ser un alumno existente
+        // El destinatario debe ser un alumno existente y activo
         $alumno = $usuarioModel->where('id_usuario', $idUsuario)->where('rol', 'alumno')->first();
-        if (!$alumno) {
-            session()->setFlashdata('error', 'El alumno seleccionado no es válido.');
+        if (!$alumno || $alumno['estado'] === 'inactivo') {
+            session()->setFlashdata('error', 'El alumno seleccionado no es válido o se encuentra inactivo.');
             return redirect()->back()->withInput();
         }
 

@@ -104,20 +104,28 @@
                                                 <?php endif; ?>
                                                 <div class="small text-muted">$<?= number_format((float) $abono['precio'], 0, ',', '.') ?></div>
                                             </td>
-                                            <td class="text-end">
-                                                <form action="<?= base_url('admin/abonos/pago/' . $abono['id_abono']) ?>" method="POST" class="d-inline">
-                                                    <?= csrf_field() ?>
-                                                    <?php if ($abono['estado_pago'] === 'pagado'): ?>
-                                                        <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill px-3 me-1">Marcar pendiente</button>
-                                                    <?php else: ?>
-                                                        <button type="submit" class="btn btn-sm btn-outline-success rounded-pill px-3 me-1">Marcar pagado</button>
-                                                    <?php endif; ?>
-                                                </form>
-                                                <form action="<?= base_url('admin/abonos/eliminar/' . $abono['id_abono']) ?>" method="POST" class="d-inline"
-                                                      data-confirmar="¿Seguro que deseas eliminar este abono?" data-confirmar-titulo="Eliminar abono" data-confirmar-boton="Sí, eliminar" data-confirmar-tipo="peligro">
-                                                    <?= csrf_field() ?>
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">Eliminar</button>
-                                                </form>
+                                            <td class="text-end text-nowrap">
+                                                <div class="d-inline-flex align-items-center gap-1">
+                                                    <form action="<?= base_url('admin/abonos/pago/' . $abono['id_abono']) ?>" method="POST" class="d-inline">
+                                                        <?= csrf_field() ?>
+                                                        <?php if ($abono['estado_pago'] === 'pagado'): ?>
+                                                            <button type="submit" class="btn btn-sm btn-outline-secondary rounded-circle btn-icon" title="Marcar pago pendiente">
+                                                                <i class="bi bi-arrow-counterclockwise"></i>
+                                                            </button>
+                                                        <?php else: ?>
+                                                            <button type="submit" class="btn btn-sm btn-outline-success rounded-circle btn-icon" title="Marcar como pagado">
+                                                                <i class="bi bi-check-lg"></i>
+                                                            </button>
+                                                        <?php endif; ?>
+                                                    </form>
+                                                    <form action="<?= base_url('admin/abonos/eliminar/' . $abono['id_abono']) ?>" method="POST" class="d-inline"
+                                                          data-confirmar="¿Seguro que deseas eliminar este abono?" data-confirmar-titulo="Eliminar abono" data-confirmar-boton="Sí, eliminar" data-confirmar-tipo="peligro">
+                                                        <?= csrf_field() ?>
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle btn-icon" title="Eliminar abono">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -176,11 +184,13 @@
                                                     <span class="badge bg-warning text-dark">Pendiente</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td class="text-end">
+                                            <td class="text-end text-nowrap">
                                                 <?php if ($abono['estado_pago'] === 'pendiente'): ?>
                                                     <form action="<?= base_url('admin/abonos/pago/' . $abono['id_abono']) ?>" method="POST" class="d-inline">
                                                         <?= csrf_field() ?>
-                                                        <button type="submit" class="btn btn-sm btn-outline-success rounded-pill px-3">Marcar pagado</button>
+                                                        <button type="submit" class="btn btn-sm btn-outline-success rounded-circle btn-icon" title="Marcar como pagado">
+                                                            <i class="bi bi-check-lg"></i>
+                                                        </button>
                                                     </form>
                                                 <?php endif; ?>
                                             </td>

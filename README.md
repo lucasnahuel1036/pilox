@@ -1,69 +1,91 @@
-# CodeIgniter 4 Application Starter
+# Pilox — Sistema de Gestión para Centro Deportivo
 
-## What is CodeIgniter?
+Aplicación web desarrollada en **PHP (CodeIgniter 4)**, **MySQL** y **Bootstrap 5** para la gestión integral del centro deportivo **Pilox** (Pilates, Yoga, GAP y Pilates AFA).
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+Permite administrar sucursales, disciplinas, grilla de turnos (individuales y por período), abonos mensuales, tarifas, métricas de gestión, reservas de clases de alumnos y control de asistencia por parte de los docentes.
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+---
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+## 🛠️ Requisitos Previos
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+Para ejecutar el proyecto en un entorno local (como **WAMP**, **XAMPP**, **Laragon** o similar) necesitás:
 
-## Installation & updates
+- **PHP 8.2** o superior (con las extensiones `intl`, `mbstring`, `mysqli` y `json` habilitadas en `php.ini`).
+- **MySQL / MariaDB**.
+- **Servidor Web Apache** (con `mod_rewrite` activado) o el servidor integrado de CodeIgniter (`php spark serve`).
+- **Composer** (opcional si la carpeta `vendor/` ya está incluida; necesario para instalar dependencias desde cero).
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+---
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+## 🚀 Instalación Paso a Paso
 
-## Setup
+### 1. Clonar o descargar el proyecto
+Ubicá la carpeta del proyecto dentro del directorio público de tu servidor local:
+- En **WAMP**: `C:\wamp64\www\pilox`
+- En **XAMPP**: `C:\xampp\htdocs\pilox`
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+```bash
+git clone <URL_DEL_REPOSITORIO> pilox
+cd pilox
+```
 
-## Important Change with index.php
+### 2. Instalar dependencias (si no existe la carpeta `vendor/`)
+Ejecutá en la terminal desde la raíz del proyecto:
+```bash
+composer install
+```
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+### 3. Crear e importar la Base de Datos
+1. Abrí **phpMyAdmin** (o tu cliente MySQL) y creá una base de datos llamada `pilox` (cotejamiento recomendado: `utf8mb4_unicode_ci`).
+2. Importá el archivo [`database/pilox_db.sql`](database/pilox_db.sql) dentro de la base de datos recién creada.
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+### 4. Configurar el archivo `.env`
+1. En la raíz del proyecto encontrarás el archivo `.env.example`.
+2. Hacé una copia de ese archivo y renombrala a **`.env`**.
+3. Abrí el archivo `.env` y ajustá los datos de tu entorno local (URL base y conexión a MySQL):
 
-**Please** read the user guide for a better explanation of how CI4 works!
+```ini
+CI_ENVIRONMENT = development
 
-## Repository Management
+app.baseURL = 'http://localhost/pilox/public/'
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+database.default.hostname = localhost
+database.default.database = pilox
+database.default.username = root
+database.default.password = 
+database.default.DBDriver = MySQLi
+database.default.port = 3306
+```
+> **Nota para usuarios de WAMP:** verificá qué puerto utiliza tu servicio MySQL (suele ser `3306` o `3308`) y colocalo en `database.default.port`.
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+### 5. Iniciar la aplicación
+Tenés dos formas de abrir el sistema en el navegador:
 
-## Server Requirements
+- **Opción A — Con Apache (WAMP / XAMPP):**
+  Ingresá desde el navegador a:
+  `http://localhost/pilox/public/`
 
-PHP version 8.2 or higher is required, with the following extensions installed:
+- **Opción B — Con el servidor interno de CodeIgniter:**
+  Si ejecutás `php spark serve` en la terminal, recordá cambiar `app.baseURL = 'http://localhost:8080/'` en tu `.env` e ingresá a `http://localhost:8080/`.
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+---
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - The end of life date for PHP 8.1 was December 31, 2025.
-> - If you are still using below PHP 8.2, you should upgrade immediately.
-> - The end of life date for PHP 8.2 will be December 31, 2026.
+## 👥 Roles del Sistema
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+El sistema cuenta con tres paneles diferenciados según el rol del usuario:
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+- **Administrador (`admin`):**
+  - Dashboard general y panel de **Información General** (métricas de ingresos, deudas, ocupación por día/franja/actividad/sucursal, asistencia y alumnos).
+  - ABM de Sucursales, Actividades, Docentes y Alumnos.
+  - Configuración de Tarifas y asignación/cobro de Abonos mensuales (4, 8 y 12 clases).
+  - Gestión de Turnos individuales y **Generador Masivo de Turnos por período**.
+- **Alumno (`alumno`):**
+  - Consulta del estado y vigencia de su abono.
+  - Buscador de turnos disponibles con filtros (actividad, sucursal, fecha y franja horaria).
+  - Reserva y cancelación de clases con control automático de cupos y clases disponibles.
+- **Docente (`docente`):**
+  - Panel con resumen del día, agenda de clases de hoy y alertas de asistencias pendientes.
+  - Consulta de clases próximas e historial de clases dictadas.
+  - Registro de asistencia de alumnos inscriptos.
+- **Perfil de Usuario (todos los roles):**
+  - Edición de datos personales y cambio de contraseña desde `/perfil`.

@@ -24,10 +24,10 @@ class Turno extends BaseController
         $periodo = ($this->request->getGet('ver') === 'anteriores') ? 'anteriores' : 'proximos';
 
         // Mandamos los datos para llenar los <select> del formulario
-        $data['sucursales'] = $sucursalModel->findAll();
+        $data['sucursales'] = $sucursalModel->where('estado', 'activo')->findAll();
         $data['actividades'] = $actividadModel->findAll();
-        // Solo traemos a los usuarios que son docentes
-        $data['docentes'] = $usuarioModel->where('rol', 'docente')->findAll();
+        // Solo traemos a los usuarios que son docentes activos
+        $data['docentes'] = $usuarioModel->where('rol', 'docente')->where('estado', 'activo')->findAll();
         
         // Mandamos la lista de turnos paginada según el período elegido
         $data['turnos']  = $turnoModel->getTurnosConDetalles($periodo)->paginate(10);
@@ -104,9 +104,18 @@ class Turno extends BaseController
         }
 
         $data['turno'] = $turno;
-        $data['sucursales'] = $sucursalModel->findAll();
+        $data['sucursales'] = $sucursalModel->groupStart()
+                                                ->where('estado', 'activo')
+                                                ->orWhere('id_sucursal', $turno['id_sucursal'])
+                                            ->groupEnd()
+                                            ->findAll();
         $data['actividades'] = $actividadModel->findAll();
-        $data['docentes'] = $usuarioModel->where('rol', 'docente')->findAll();
+        $data['docentes'] = $usuarioModel->where('rol', 'docente')
+                                         ->groupStart()
+                                             ->where('estado', 'activo')
+                                             ->orWhere('id_usuario', $turno['id_docente'])
+                                         ->groupEnd()
+                                         ->findAll();
 
         return view('templates/header')
              . view('admin/editar_turno', $data)
@@ -188,9 +197,9 @@ class Turno extends BaseController
         $actividadModel = new ActividadModel();
         $usuarioModel = new UsuarioModel();
 
-        $data['sucursales'] = $sucursalModel->findAll();
+        $data['sucursales'] = $sucursalModel->where('estado', 'activo')->findAll();
         $data['actividades'] = $actividadModel->findAll();
-        $data['docentes'] = $usuarioModel->where('rol', 'docente')->findAll();
+        $data['docentes'] = $usuarioModel->where('rol', 'docente')->where('estado', 'activo')->findAll();
 
         return view('templates/header')
              . view('admin/turnos_masivo', $data)
@@ -281,7 +290,7 @@ class Turno extends BaseController
     // Vista para asignar turnos periódicamente a un alumno
     public function asignar()
     {
-        $data['sucursales']  = (new SucursalModel())->findAll();
+        $data['sucursales']  = (new SucursalModel())->where('estado', 'activo')->findAll();
         $data['actividades'] = (new ActividadModel())->findAll();
 
         return view('templates/header')

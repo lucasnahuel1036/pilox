@@ -131,16 +131,28 @@
                                             <td class="text-center">
                                                 <span class="badge rounded-pill bg-success px-3"><?= $turno['cupos_disponibles'] ?> / <?= $turno['capacidad'] ?></span>
                                             </td>
-                                            <td class="text-end">
-                                                <a href="<?= base_url('admin/turnos/inscriptos/' . $turno['id_turno']) ?>" class="btn btn-sm btn-outline-dark rounded-pill px-3 me-1 mb-1">Inscriptos</a>
-                                                <?php if (strtotime($turno['fecha'] . ' ' . $turno['horario']) > time()): ?>
-                                                    <a href="<?= base_url('admin/turnos/editar/' . $turno['id_turno']) ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3 me-1 mb-1">Editar</a>
-                                                <?php endif; ?>
-                                                <form action="<?= base_url('admin/turnos/eliminar/' . $turno['id_turno']) ?>" method="POST" class="d-inline"
-                                                    data-confirmar="¿Seguro que deseas eliminar este turno?" data-confirmar-titulo="Eliminar turno" data-confirmar-boton="Sí, eliminar" data-confirmar-tipo="peligro">
-                                                    <?= csrf_field() ?>
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3 mb-1">Eliminar</button>
-                                                </form>
+                                            <td class="text-end text-nowrap">
+                                                <div class="d-inline-flex align-items-center gap-1">
+                                                    <a href="<?= base_url('admin/turnos/inscriptos/' . $turno['id_turno']) ?>"
+                                                       class="btn btn-sm btn-outline-dark rounded-circle btn-icon"
+                                                       title="Ver alumnos inscriptos">
+                                                        <i class="bi bi-people"></i>
+                                                    </a>
+                                                    <?php if (strtotime($turno['fecha'] . ' ' . $turno['horario']) > time()): ?>
+                                                        <a href="<?= base_url('admin/turnos/editar/' . $turno['id_turno']) ?>"
+                                                           class="btn btn-sm btn-outline-primary rounded-circle btn-icon"
+                                                           title="Editar turno">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
+                                                    <?php endif; ?>
+                                                    <form action="<?= base_url('admin/turnos/eliminar/' . $turno['id_turno']) ?>" method="POST" class="d-inline"
+                                                        data-confirmar="¿Seguro que deseas eliminar este turno?" data-confirmar-titulo="Eliminar turno" data-confirmar-boton="Sí, eliminar" data-confirmar-tipo="peligro">
+                                                        <?= csrf_field() ?>
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle btn-icon" title="Eliminar turno">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

@@ -35,6 +35,7 @@ $routes->group('admin', ['filter' => 'admin', 'namespace' => 'App\Controllers\Ad
     $routes->post('sucursales/eliminar/(:num)', 'Sucursal::eliminar/$1');
     $routes->get('sucursales/editar/(:num)', 'Sucursal::editar/$1');
     $routes->post('sucursales/actualizar/(:num)', 'Sucursal::actualizar/$1');
+    $routes->post('sucursales/estado/(:num)', 'Sucursal::cambiarEstado/$1');
     // ABM de Actividades
     $routes->get('actividades', 'Actividad::index');
     $routes->post('actividades/guardar', 'Actividad::guardar');
@@ -47,12 +48,14 @@ $routes->group('admin', ['filter' => 'admin', 'namespace' => 'App\Controllers\Ad
     $routes->post('docentes/eliminar/(:num)', 'Docente::eliminar/$1');
     $routes->get('docentes/editar/(:num)', 'Docente::editar/$1');
     $routes->post('docentes/actualizar/(:num)', 'Docente::actualizar/$1');
+    $routes->post('docentes/estado/(:num)', 'Docente::cambiarEstado/$1');
     // ABM de Alumnos
     $routes->get('alumnos', 'Alumno::index');
     $routes->post('alumnos/guardar', 'Alumno::guardar');
     $routes->post('alumnos/eliminar/(:num)', 'Alumno::eliminar/$1');
     $routes->get('alumnos/editar/(:num)', 'Alumno::editar/$1');
     $routes->post('alumnos/actualizar/(:num)', 'Alumno::actualizar/$1');
+    $routes->post('alumnos/estado/(:num)', 'Alumno::cambiarEstado/$1');
     $routes->get('alumnos/buscar', 'Alumno::buscar');
     // ABM de Turnos
     $routes->get('turnos', 'Turno::index');

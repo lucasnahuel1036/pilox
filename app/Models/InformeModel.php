@@ -309,7 +309,7 @@ class InformeModel
             "SELECT u.nombre, u.apellido, a.fecha_fin, a.clases_restantes
              FROM abonos a
              JOIN usuarios u ON u.id_usuario = a.id_usuario
-             WHERE a.fecha_fin BETWEEN ? AND ? AND a.clases_restantes > 0
+             WHERE u.estado != 'inactivo' AND a.fecha_fin BETWEEN ? AND ? AND a.clases_restantes > 0
              ORDER BY a.fecha_fin ASC",
             [$hoy, date('Y-m-d', strtotime('+7 days'))]
         )->getResultArray();
