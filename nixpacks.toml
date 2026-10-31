@@ -1,6 +1,0 @@
-[phases.setup]
-nixPkgs = ["php82", "php82Extensions.intl", "php82Extensions.mbstring", "php82Extensions.mysqli", "php82Packages.composer"]
-
-[start]
-cmd = "chmod -R 777 writable && php -S 0.0.0.0:${PORT:-8080} -t public"
-
