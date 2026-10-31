@@ -33,11 +33,14 @@ html {
     font-weight: 600;
     text-decoration: none;
     background: #fff;
+    transition: background-color .2s ease, color .2s ease, box-shadow .2s ease;
 }
 
-.indice-informe a:hover {
+.indice-informe a:hover,
+.indice-informe a.activo {
     background: #1A3C34;
     color: #fff;
+    box-shadow: 0 3px 8px rgba(26, 60, 52, .22);
 }
 
 /* Cada sección es un bloque con fondo propio */

@@ -554,6 +554,58 @@ $tablaOcupacion = function ($titulo, $columna, $filas) use ($barra, $entero) {
         requestAnimationFrame(paso);
     });
 
+    // ---- Scrollspy: resalta la píldora de la sección visible al scrollear ----
+    const navIndice = document.querySelector('.indice-informe');
+    const linksIndice = navIndice ? Array.from(navIndice.querySelectorAll('a[href^="#"]')) : [];
+    const seccionesIndice = linksIndice
+        .map(function (a) { return document.querySelector(a.getAttribute('href')); })
+        .filter(Boolean);
+
+    if (seccionesIndice.length > 0) {
+        let linkActivoActual = null;
+        let rafScroll = false;
+
+        function marcarSeccionActiva() {
+            rafScroll = false;
+            const puntoReferencia = 140; // margen debajo de la barra sticky
+            let activa = seccionesIndice[0];
+
+            // Si llegó al final de la página, activamos la última sección
+            if ((window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 20)) {
+                activa = seccionesIndice[seccionesIndice.length - 1];
+            } else {
+                for (let i = 0; i < seccionesIndice.length; i++) {
+                    if (seccionesIndice[i].getBoundingClientRect().top <= puntoReferencia) {
+                        activa = seccionesIndice[i];
+                    }
+                }
+            }
+
+            const idActiva = '#' + activa.id;
+            linksIndice.forEach(function (a) {
+                const esActiva = a.getAttribute('href') === idActiva;
+                a.classList.toggle('activo', esActiva);
+                if (esActiva && linkActivoActual !== a) {
+                    linkActivoActual = a;
+                    // En celular, si la barra tiene scroll horizontal, mantiene visible la píldora activa
+                    if (navIndice.scrollWidth > navIndice.clientWidth) {
+                        const izq = a.offsetLeft - (navIndice.clientWidth / 2) + (a.offsetWidth / 2);
+                        navIndice.scrollTo({ left: Math.max(0, izq), behavior: reducirMovimiento ? 'auto' : 'smooth' });
+                    }
+                }
+            });
+        }
+
+        window.addEventListener('scroll', function () {
+            if (!rafScroll) {
+                rafScroll = true;
+                requestAnimationFrame(marcarSeccionActiva);
+            }
+        }, { passive: true });
+
+        marcarSeccionActiva();
+    }
+
     // ---- Gráficos ----
     function sinGrafico(canvas) {
         canvas.parentElement.innerHTML = '<p class="text-muted small mb-0">No se pudo cargar el gráfico. Los datos están en las tarjetas y tablas.</p>';
