@@ -10,13 +10,12 @@ use App\Models\TarifaModel;
 
 class Abono extends BaseController
 {
-
-       public function index()
+    public function index()
     {
         $abonoModel = new AbonoModel();
         $busqueda   = $this->request->getGet('q');
 
-        $data['tarifas'] = (new TarifaModel())->getTarifas();
+        $data['tarifas']   = (new TarifaModel())->getTarifas();
         $data['vigentes']  = $abonoModel->vigentesConDetalles($busqueda)->paginate(10, 'vigentes');
         $data['historial'] = $abonoModel->historialConDetalles($busqueda)->paginate(10, 'historial');
         $data['pager']     = $abonoModel->pager;
@@ -87,6 +86,11 @@ class Abono extends BaseController
             'precio'           => $precio,
         ]);
 
+        // Como el abono inicia pendiente de pago, el alumno queda en estado moroso hasta abonar
+        if ($alumno['estado'] === 'activo') {
+            $usuarioModel->update($idUsuario, ['estado' => 'moroso']);
+        }
+
         session()->setFlashdata('success', 'Abono asignado correctamente.');
         return redirect()->to('/admin/abonos');
     }
@@ -95,6 +99,12 @@ class Abono extends BaseController
     public function eliminar($id)
     {
         $abonoModel = new AbonoModel();
+        $abono      = $abonoModel->find($id);
+
+        if (!$abono) {
+            session()->setFlashdata('error', 'El abono no existe.');
+            return redirect()->to('/admin/abonos');
+        }
 
         if (db_connect()->table('reservas')->where('id_abono', $id)->countAllResults() > 0) {
             session()->setFlashdata('error', 'No se puede eliminar el abono porque tiene reservas asociadas.');
@@ -102,12 +112,13 @@ class Abono extends BaseController
         }
 
         $abonoModel->delete($id);
+        $this->sincronizarEstadoMoroso((int) $abono['id_usuario']);
 
         session()->setFlashdata('success', 'Abono eliminado.');
         return redirect()->back();
     }
 
-        // Alterna el estado de pago de un abono (pagado <-> pendiente)
+    // Alterna el estado de pago de un abono (pagado <-> pendiente)
     public function cambiarPago($id)
     {
         $abonoModel = new AbonoModel();
@@ -124,21 +135,29 @@ class Abono extends BaseController
             'fecha_pago'  => ($nuevo === 'pagado') ? date('Y-m-d') : null,
         ]);
 
-        // Si se regulariza el pago el alumno moroso vuelve a estar activo
-        if ($nuevo === 'pagado') {
-            $pendientes = $abonoModel->where('id_usuario', $abono['id_usuario'])
-                                     ->where('estado_pago', 'pendiente')
-                                     ->countAllResults();
-            if ($pendientes === 0) {
-                $usuarioModel = new UsuarioModel();
-                $alumno = $usuarioModel->find($abono['id_usuario']);
-                if ($alumno && $alumno['estado'] === 'moroso') {
-                    $usuarioModel->update($alumno['id_usuario'], ['estado' => 'activo']);
-                }
-            }
-        }
+        $this->sincronizarEstadoMoroso((int) $abono['id_usuario']);
 
         session()->setFlashdata('success', 'Estado de pago actualizado a ' . $nuevo . '.');
         return redirect()->back();
+    }
+
+    // Sincroniza el estado del alumno (moroso <-> activo) según si tiene abonos pendientes de pago
+    private function sincronizarEstadoMoroso(int $idUsuario): void
+    {
+        $usuarioModel = new UsuarioModel();
+        $alumno       = $usuarioModel->find($idUsuario);
+
+        if (!$alumno || $alumno['estado'] === 'inactivo') {
+            return;
+        }
+
+        $pendientes = (new AbonoModel())->where('id_usuario', $idUsuario)
+                                        ->where('estado_pago', 'pendiente')
+                                        ->countAllResults();
+
+        $nuevoEstado = ($pendientes > 0) ? 'moroso' : 'activo';
+        if ($alumno['estado'] !== $nuevoEstado) {
+            $usuarioModel->update($idUsuario, ['estado' => $nuevoEstado]);
+        }
     }
 }
