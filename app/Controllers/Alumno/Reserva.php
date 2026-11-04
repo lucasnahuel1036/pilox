@@ -102,45 +102,17 @@ class Reserva extends BaseController
             return redirect()->back();
         }
 
-        // 7. Descontamos cupo y clase, y creamos la reserva en una sola transacción.
-        //    Los UPDATE con condición evitan que dos alumnos tomen el último cupo.
-        $db = db_connect();
-        $db->transBegin();
-
-        $db->table('turnos')
-           ->where('id_turno', $idTurno)
-           ->where('cupos_disponibles >', 0)
-           ->set('cupos_disponibles', 'cupos_disponibles - 1', false)
-           ->update();
-        $cupoOk = ($db->affectedRows() === 1);
-
-        $db->table('abonos')
-           ->where('id_abono', $abono['id_abono'])
-           ->where('clases_restantes >', 0)
-           ->set('clases_restantes', 'clases_restantes - 1', false)
-           ->update();
-        $claseOk = ($db->affectedRows() === 1);
-
-        if (!$cupoOk || !$claseOk) {
-            $db->transRollback();
-            $mensaje = !$cupoOk ? 'El turno se quedó sin cupos.' : 'No te quedan clases disponibles en tu abono.';
+        // 7. Descontamos cupo y clase, y creamos la reserva en una sola transacción a través del modelo.
+        $resultado = $reservaModel->registrarReserva($idUsuario, $idTurno, $abono['id_abono']);
+        if (!$resultado['ok']) {
+            $mensaje = match ($resultado['error'] ?? '') {
+                'sin cupos disponibles'            => 'El turno se quedó sin cupos.',
+                'sin clases restantes en el abono' => 'No te quedan clases disponibles en tu abono.',
+                default                            => 'No se pudo realizar la reserva. Intentá nuevamente.',
+            };
             session()->setFlashdata('error', $mensaje);
             return redirect()->back();
         }
-
-        $db->table('reservas')->insert([
-            'id_usuario' => $idUsuario,
-            'id_turno'   => $idTurno,
-            'id_abono'   => $abono['id_abono'],
-        ]);
-
-        if ($db->transStatus() === false) {
-            $db->transRollback();
-            session()->setFlashdata('error', 'No se pudo realizar la reserva. Intentá nuevamente.');
-            return redirect()->back();
-        }
-
-        $db->transCommit();
 
         session()->setFlashdata('success', 'Reserva confirmada. Se descontó una clase de tu abono.');
         return redirect()->back();
@@ -207,36 +179,11 @@ class Reserva extends BaseController
             return redirect()->to('/alumno/reservas');
         }
 
-        // Todo o nada: marcamos cancelada, liberamos el cupo y devolvemos la clase
-        $db = db_connect();
-        $db->transBegin();
-
-        $db->table('reservas')
-           ->where('id_reserva', $idReserva)
-           ->where('estado', 'confirmada')
-           ->set('estado', 'cancelada')
-           ->update();
-        $reservaOk = ($db->affectedRows() === 1);
-
-        $db->table('turnos')
-           ->where('id_turno', $reserva['id_turno'])
-           ->set('cupos_disponibles', 'cupos_disponibles + 1', false)
-           ->update();
-        $cupoOk = ($db->affectedRows() === 1);
-
-        $db->table('abonos')
-           ->where('id_abono', $reserva['id_abono'])
-           ->set('clases_restantes', 'clases_restantes + 1', false)
-           ->update();
-        $claseOk = ($db->affectedRows() === 1);
-
-        if (!$reservaOk || !$cupoOk || !$claseOk || $db->transStatus() === false) {
-            $db->transRollback();
+        // Todo o nada: marcamos cancelada, liberamos el cupo y devolvemos la clase desde el modelo
+        if (!$reservaModel->cancelarReservaConfirmada($reserva)) {
             session()->setFlashdata('error', 'No se pudo cancelar la reserva. Intentá nuevamente.');
             return redirect()->to('/alumno/reservas');
         }
-
-        $db->transCommit();
 
         session()->setFlashdata('success', 'Reserva cancelada. Se te devolvió la clase a tu abono.');
         return redirect()->to('/alumno/reservas');
